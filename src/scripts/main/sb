@@ -1,0 +1,21 @@
+#!/bin/bash
+
+BIN_DIR=$(dirname $0)
+SAVANT_HOME=${BIN_DIR%%\/bin}
+
+if [ ! -d $SAVANT_HOME/lib ]; then
+  echo "Unable to locate SAVANT_HOME. Please set variable"
+  exit 1
+fi
+
+CLASSPATH=
+for f in $(ls $SAVANT_HOME/lib); do
+  CLASSPATH=$CLASSPATH:$SAVANT_HOME/lib/$f
+done
+
+if [[ $(uname -a | grep -i cygwin) != "" ]]; then
+  CLASSPATH=$(cygpath -wp $RUNTIME_CLASSPATH)
+  SAVANT_HOME=$(cygpath -wa $SAVANT_HOME)
+fi
+
+java $SAVANT_OPTS -cp $CLASSPATH org.savantbuild.run.Main $@

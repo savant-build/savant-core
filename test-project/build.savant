@@ -1,0 +1,17 @@
+project(name: "test-project", group: "org.savantbuild.test", version: "2.0-A1")
+
+workflow {
+  fetch {
+    cache("${user.home}/.savant/cache")
+    url("http://repository.savantbuild.org")
+  }
+  publish {
+    cache("${user.home}/.savant/cache")
+  }
+}
+
+plugin("org.savantbuild.plugin:java-plugin:0.1")
+
+target("compile", description: "Compile the java") {
+
+}
