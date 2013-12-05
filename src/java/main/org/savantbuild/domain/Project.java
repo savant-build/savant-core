@@ -16,6 +16,8 @@
 package org.savantbuild.domain;
 
 import org.savantbuild.dep.domain.Version;
+import org.savantbuild.dep.graph.Graph;
+import org.savantbuild.dep.graph.HashGraph;
 import org.savantbuild.dep.workflow.Workflow;
 
 import java.nio.file.Path;
@@ -28,7 +30,13 @@ import java.util.Map;
  * @author Brian Pontarelli
  */
 public class Project {
+  public static final Object GRAPH_EDGE = new Object();
+
   public final Map<String, Target> targets = new HashMap<>();
+
+  public final Map<String, String> plugins = new HashMap<>();
+
+  public final Graph<Target, Object> targetGraph = new HashGraph<>();
 
   public Path directory;
 

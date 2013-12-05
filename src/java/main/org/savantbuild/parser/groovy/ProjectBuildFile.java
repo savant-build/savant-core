@@ -17,9 +17,6 @@ package org.savantbuild.parser.groovy;
 
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.domain.VersionException;
-import org.savantbuild.dep.workflow.FetchWorkflow;
-import org.savantbuild.dep.workflow.PublishWorkflow;
-import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
 import org.savantbuild.parser.ParseException;
@@ -43,10 +40,13 @@ public abstract class ProjectBuildFile extends Script {
   public Project project;
 
   /**
-   * Sets up the project information in the build file. This method is called with a Map of values like this:
+   * Sets up the project information in the build file. This method is called with a Map of values and a closure like
+   * this:
    * <p>
    * <pre>
-   *   project(group: "org.example", name: "my-project", version: "1.1")
+   *   project(group: "org.example", name: "my-project", version: "1.1") {
+   *
+   *   }
    * </pre>
    * <p>
    * The require attributes are:
@@ -60,19 +60,22 @@ public abstract class ProjectBuildFile extends Script {
    * @param attributes The attributes.
    * @return The project.
    */
-  public Project project(Map<String, String> attributes) {
-    if (!attributes.containsKey("group") && !attributes.containsKey("name") && !attributes.containsKey("version")) {
+  public Project project(Map<String, Object> attributes, Closure closure) {
+    if (!GroovyTools.hasAttributes(attributes, "group", "name", "version")) {
       throw new ParseException("Invalid project definition. It should look like:\n\n" +
           "  project(group: \"org.example\", name: \"my-project\", version: \"1.1\")");
     }
 
-    project.group = attributes.get("group");
-    project.name = attributes.get("name");
+    project.group = GroovyTools.toString(attributes, "group");
+    project.name = GroovyTools.toString(attributes, "name");
     try {
-      project.version = new Version(attributes.get("version"));
+      project.version = new Version(GroovyTools.toString(attributes, "version"));
     } catch (VersionException e) {
       throw new ParseException("Invalid project version. You must specify a valid Savant version (semantic version).");
     }
+
+    closure.setDelegate(new ProjectDelegate(project));
+    closure.run();
 
     return project;
   }
@@ -97,53 +100,19 @@ public abstract class ProjectBuildFile extends Script {
    * @return The Target.
    */
   public Target target(Map<String, Object> attributes, Closure closure) {
-    if (!attributes.containsKey("name")) {
+    if (!GroovyTools.hasAttributes(attributes, "name")) {
       throw new ParseException("Invalid target definition. It should look like:\n\n" +
           "  target(name: \"compile\") {\n" +
           "  }");
     }
 
     Target target = new Target();
-    target.name = safeToString(attributes.get("name"));
-    target.description = safeToString(attributes.get("description"));
+    target.name = GroovyTools.toString(attributes, "name");
+    target.description = GroovyTools.toString(attributes, "description");
     target.invocation = closure;
+    target.dependencies = GroovyTools.toListOfStrings(attributes.get("dependsOn"));
 
     project.targets.put(target.name, target);
     return target;
-  }
-
-  /**
-   * Configures the project workflow. This method is called with a closure that contains the workflow definition. It
-   * should look like:
-   * <p>
-   * <pre>
-   *   workflow {
-   *     fetch {
-   *       cache()
-   *       url("http://repository.savantbuild.org")
-   *     }
-   *     publish {
-   *       cache()
-   *     }
-   *   }
-   * </pre>
-   *
-   * @param closure The closure that is called to setup the workflow configuration. This closure uses the delegate class
-   *                {@link WorkflowDelegate}.
-   * @return The workflow.
-   */
-  public Workflow workflow(Closure closure) {
-    project.workflow = new Workflow(new FetchWorkflow(), new PublishWorkflow());
-    closure.setDelegate(new WorkflowDelegate(project.workflow));
-    closure.run();
-    return project.workflow;
-  }
-
-  private String safeToString(Object value) {
-    if (value == null) {
-      return null;
-    }
-
-    return value.toString();
   }
 }

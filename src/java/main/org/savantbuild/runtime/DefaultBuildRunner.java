@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2010, Inversoft, All Rights Reserved
+ * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,18 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-package org.savantbuild.domain;
+package org.savantbuild.runtime;
 
-import java.util.List;
+import org.savantbuild.domain.Project;
 
 /**
- * This class defines a target within the build file.
+ * Default build runner. This loads the plugins, updates the Groovy runtime, and runs the targets.
  *
  * @author Brian Pontarelli
  */
-public class Target {
-  public List<String> dependencies;
+public class DefaultBuildRunner implements BuildRunner {
+  @Override
+  public void run(Project project, Iterable<String> targets) {
 
-  public String description;
-
-  public Runnable invocation;
-
-  public String name;
+  }
 }

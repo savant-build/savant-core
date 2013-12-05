@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2010, Inversoft, All Rights Reserved
+ * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,21 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-package org.savantbuild.domain;
+package org.savantbuild.runtime;
 
-import java.util.List;
+import org.savantbuild.domain.Project;
 
 /**
- * This class defines a target within the build file.
+ * Runs the build using the {@link Project} and the commands from the user.
  *
  * @author Brian Pontarelli
  */
-public class Target {
-  public List<String> dependencies;
-
-  public String description;
-
-  public Runnable invocation;
-
-  public String name;
+public interface BuildRunner {
+  /**
+   * Executes the given targets on the given project.
+   *
+   * @param project The project.
+   * @param targets The targets to run.
+   */
+  void run(Project project, Iterable<String> targets);
 }

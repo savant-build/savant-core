@@ -21,8 +21,10 @@ import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.Process;
 import org.savantbuild.dep.workflow.process.URLProcess;
+import org.savantbuild.parser.ParseException;
 
 import java.util.List;
+import java.util.Map;
 
 import groovy.lang.Closure;
 
@@ -73,41 +75,27 @@ public class WorkflowDelegate {
     }
 
     /**
-     * Adds a {@link URLProcess} to the workflow that uses the given URL. This URL must not require authentication.
+     * Adds a {@link URLProcess} to the workflow that uses the given attributes.
      *
-     * @param url The URL.
+     * @param attributes The URL attributes.
      */
-    public void url(String url) {
-      processes.add(new URLProcess(url, null, null));
+    public void url(Map<String, Object> attributes) {
+      if (!GroovyTools.hasAttributes(attributes, "url")) {
+        throw new ParseException("Invalid url workflow definition. It should look like:\n\n" +
+            "  url(url: \"http://repository.savantbuild.org\")");
+      }
+
+      processes.add(new URLProcess(GroovyTools.toString(attributes, "url"), GroovyTools.toString(attributes, "username"),
+          GroovyTools.toString(attributes, "password")));
     }
 
     /**
-     * Adds a {@link URLProcess} to the workflow that uses the given protected URL with the given username and
-     * password.
+     * Adds a {@link CacheProcess} to the workflow that uses the given attributes.
      *
-     * @param url      The URL.
-     * @param username The username to use with the URL.
-     * @param password The password to use with the URL.
+     * @param attributes The attributes.
      */
-    public void url(String url, String username, String password) {
-      processes.add(new URLProcess(url, username, password));
-    }
-
-    /**
-     * Adds a {@link CacheProcess} to the workflow that uses the default cache directory of
-     * <code>${user.home}/.savant/cache</code>.
-     */
-    public void cache() {
-      processes.add(new CacheProcess(null));
-    }
-
-    /**
-     * Adds a {@link CacheProcess} to the workflow that uses the given cache directory.
-     *
-     * @param dir The cache directory.
-     */
-    public void cache(String dir) {
-      processes.add(new CacheProcess(dir));
+    public void cache(Map<String, Object> attributes) {
+      processes.add(new CacheProcess(GroovyTools.toString(attributes, "dir")));
     }
   }
 }

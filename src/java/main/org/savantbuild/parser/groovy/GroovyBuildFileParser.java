@@ -17,6 +17,7 @@ package org.savantbuild.parser.groovy;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.savantbuild.domain.Project;
+import org.savantbuild.domain.Target;
 import org.savantbuild.parser.BuildFileParser;
 import org.savantbuild.parser.ParseException;
 
@@ -56,9 +57,28 @@ public class GroovyBuildFileParser implements BuildFileParser {
       script.project = project;
       script.run();
 
+      buildTargetGraph(project);
+
       return project;
     } catch (IOException | InstantiationException | IllegalAccessException e) {
       throw new ParseException("Unable to parse project build file", e);
     }
+  }
+
+  private void buildTargetGraph(Project project) {
+    project.targets.forEach((name, target) -> {
+      if (target.dependencies == null) {
+        return;
+      }
+
+      target.dependencies.forEach((dependency) -> {
+        Target dependencyTarget = project.targets.get(dependency);
+        if (dependencyTarget == null) {
+          throw new ParseException("Invalid dependsOn for target [" + name + "]. Target [" + dependency + "] does not exist");
+        }
+
+        project.targetGraph.addEdge(target, dependencyTarget, Project.GRAPH_EDGE);
+      });
+    });
   }
 }

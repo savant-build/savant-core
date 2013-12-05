@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2010, Inversoft, All Rights Reserved
+ * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,25 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-package org.savantbuild.domain;
+package org.savantbuild.util;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * This class defines a target within the build file.
+ * Builds Maps.
  *
  * @author Brian Pontarelli
  */
-public class Target {
-  public List<String> dependencies;
+public class MapBuilder<T, U> {
+  public Map<T, U> map = new HashMap<>();
 
-  public String description;
+  public MapBuilder<T, U> put(T key, U value) {
+    map.put(key, value);
+    return this;
+  }
 
-  public Runnable invocation;
-
-  public String name;
+  public Map<T, U> done() {
+    return map;
+  }
 }
