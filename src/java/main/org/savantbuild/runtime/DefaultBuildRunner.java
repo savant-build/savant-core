@@ -16,6 +16,10 @@
 package org.savantbuild.runtime;
 
 import org.savantbuild.domain.Project;
+import org.savantbuild.domain.Target;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Default build runner. This loads the plugins, updates the Groovy runtime, and runs the targets.
@@ -23,8 +27,37 @@ import org.savantbuild.domain.Project;
  * @author Brian Pontarelli
  */
 public class DefaultBuildRunner implements BuildRunner {
+  /**
+   * Runs the targets by finding each target and then performing a graph traversal of that targets dependencies. This
+   * ensures that a target is not called twice.
+   *
+   * @param project The project.
+   * @param targets The targets to run.
+   */
   @Override
   public void run(Project project, Iterable<String> targets) {
+    Set<String> calledTargets = new HashSet<>();
+    targets.forEach((targetName) -> {
+      Target target = project.targets.get(targetName);
+      if (target == null) {
+        throw new BuildRunException("Invalid target [" + targetName + "]");
+      }
 
+      target.invocation.run();
+      calledTargets.add(targetName);
+
+      // Traverse the target dependency graph if the target has dependencies (is in the graph)
+      if (project.targetGraph.contains(target)) {
+        project.targetGraph.traverse(target, (origin, destination, edge, depth) -> {
+          if (calledTargets.contains(destination.name)) {
+            return false;
+          }
+
+          destination.invocation.run();
+          calledTargets.add(destination.name);
+          return true;
+        });
+      }
+    });
   }
 }

@@ -23,6 +23,7 @@ import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
+import org.savantbuild.parser.DefaultTargetGraphBuilder;
 import org.savantbuild.util.MapBuilder;
 import org.testng.annotations.Test;
 
@@ -40,7 +41,7 @@ import static org.testng.Assert.assertTrue;
 public class GroovyBuildFileParserTest extends BaseTest {
   @Test
   public void parse() {
-    GroovyBuildFileParser parser = new GroovyBuildFileParser();
+    GroovyBuildFileParser parser = new GroovyBuildFileParser(new DefaultTargetGraphBuilder());
     Project project = parser.parse(projectDir.resolve("src/java/test/org/savantbuild/parser/groovy/simple.savant"));
     assertEquals(project.group, "group");
     assertEquals(project.name, "name");
