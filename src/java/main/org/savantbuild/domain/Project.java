@@ -38,11 +38,11 @@ public class Project {
 
   public final Map<String, Target> targets = new HashMap<>();
 
+  public final Path directory;
+
   public ArtifactGraph artifactGraph;
 
   public Dependencies dependencies;
-
-  public Path directory;
 
   public String group;
 
@@ -55,6 +55,10 @@ public class Project {
   public Version version;
 
   public Workflow workflow;
+
+  public Project(Path directory) {
+    this.directory = directory;
+  }
 
   /**
    * Converts this project into an Artifact. This artifact uses the project's name for the item name and it has a type

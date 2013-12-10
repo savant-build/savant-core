@@ -43,11 +43,11 @@ public class GroovyBuildFileParser implements BuildFileParser {
   /**
    * Executes the script using a GroovyClassLoader and the ProjectBuildFileMetaClass.
    *
-   * @param file The file.
+   * @param buildFile The file.
    * @return The Project.
    */
   @Override
-  public Project parse(Path file) {
+  public Project parse(Path buildFile) {
     try {
       Map<String, Boolean> optimizationOptions = new HashMap<>();
       optimizationOptions.put("indy", true);
@@ -57,9 +57,9 @@ public class GroovyBuildFileParser implements BuildFileParser {
       compilerConfig.setOptimizationOptions(optimizationOptions);
 
       GroovyClassLoader groovyClassLoader = new GroovyClassLoader(ClassLoader.getSystemClassLoader(), compilerConfig);
-      Class<?> buildClass = groovyClassLoader.parseClass(file.toFile());
+      Class<?> buildClass = groovyClassLoader.parseClass(buildFile.toFile());
       ProjectBuildFile script = (ProjectBuildFile) buildClass.newInstance();
-      Project project = new Project();
+      Project project = new Project(buildFile.getParent());
       script.project = project;
       script.run();
 

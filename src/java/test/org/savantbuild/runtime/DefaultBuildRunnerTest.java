@@ -16,110 +16,29 @@
 package org.savantbuild.runtime;
 
 import org.savantbuild.BaseTest;
-import org.savantbuild.domain.Project;
-import org.savantbuild.domain.Target;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
-import org.savantbuild.parser.TargetGraphBuilder;
+import org.savantbuild.parser.groovy.GroovyBuildFileParser;
 import org.testng.annotations.Test;
 
+import java.nio.file.Files;
+
 import static java.util.Arrays.asList;
-import static org.easymock.EasyMock.createStrictMock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 /**
- * Tests the default build runner.
+ * Tests the build runner.
  *
  * @author Brian Pontarelli
  */
 public class DefaultBuildRunnerTest extends BaseTest {
-  public TargetGraphBuilder targetGraphBuilder = new DefaultTargetGraphBuilder();
-
   @Test
-  public void runDependencies() {
-    Runnable compileRunner = makeRunnerMock();
-    Runnable copyResourcesRunner = makeRunnerMock();
-    Runnable testRunner = makeRunnerMock();
-    Runnable intRunner = makeRunnerMock();
-    Runnable cleanRunner = makeUncalledRunnerMock();
+  public void javaProject() {
+    BuildRunner runner = new DefaultBuildRunner(new GroovyBuildFileParser(new DefaultTargetGraphBuilder()), new DefaultProjectRunner());
+    runner.run(projectDir.resolve("test-project/build.savant"), asList("clean"));
+    assertFalse(Files.isDirectory(projectDir.resolve("test-project/build")));
 
-    Project project = new Project();
-    project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
-    project.targets.put("compile", new Target("compile", "Compiles the project", compileRunner));
-    project.targets.put("copyResources", new Target("copyResources", "Copies the resources to the build dir", copyResourcesRunner));
-    project.targets.put("test", new Target("test", "Tests the project", testRunner, "compile", "copyResources"));
-    project.targets.put("int", new Target("int", "Integrates the project", intRunner, "test"));
-    project.targetGraph = targetGraphBuilder.build(project);
-
-    BuildRunner runner = new DefaultBuildRunner();
-    runner.run(project, asList("int"));
-
-    verify(compileRunner);
-    verify(copyResourcesRunner);
-    verify(testRunner);
-    verify(intRunner);
-    verify(cleanRunner);
-  }
-
-  @Test
-  public void runMissingTarget() {
-    Runnable cleanRunner = createStrictMock(Runnable.class);
-    replay(cleanRunner);
-
-    Project project = new Project();
-    project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
-    project.targetGraph = targetGraphBuilder.build(project);
-
-    BuildRunner runner = new DefaultBuildRunner();
-    try {
-      runner.run(project, asList("clear")); // Simulates a user typo
-      fail("Should have failed");
-    } catch (BuildRunException e) {
-      // Expected
-      assertTrue(e.getMessage().contains("clear"));
-    }
-
-    verify(cleanRunner);
-  }
-
-  @Test
-  public void runNoDependencies() {
-    Runnable compileRunner = makeUncalledRunnerMock();
-    Runnable copyResourcesRunner = makeUncalledRunnerMock();
-    Runnable testRunner = makeUncalledRunnerMock();
-    Runnable intRunner = makeUncalledRunnerMock();
-    Runnable cleanRunner = makeRunnerMock();
-
-    Project project = new Project();
-    project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
-    project.targets.put("compile", new Target("compile", "Compiles the project", compileRunner));
-    project.targets.put("copyResources", new Target("compile", "Compiles the project", copyResourcesRunner));
-    project.targets.put("test", new Target("test", "Tests the project", testRunner, "compile", "copyResources"));
-    project.targets.put("int", new Target("int", "Integrates the project", intRunner, "test"));
-    project.targetGraph = targetGraphBuilder.build(project);
-
-    BuildRunner runner = new DefaultBuildRunner();
-    runner.run(project, asList("clean"));
-
-    verify(compileRunner);
-    verify(copyResourcesRunner);
-    verify(testRunner);
-    verify(intRunner);
-    verify(cleanRunner);
-  }
-
-  private Runnable makeRunnerMock() {
-    Runnable runner = createStrictMock(Runnable.class);
-    runner.run();
-    replay(runner);
-    return runner;
-  }
-
-  private Runnable makeUncalledRunnerMock() {
-    Runnable runner = createStrictMock(Runnable.class);
-    replay(runner);
-    return runner;
+    runner.run(projectDir.resolve("test-project/build.savant"), asList("compile"));
+    assertTrue(Files.isRegularFile(projectDir.resolve("test-project/build/classes/main/MyClass.class")));
   }
 }

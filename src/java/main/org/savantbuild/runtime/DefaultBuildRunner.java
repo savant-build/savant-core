@@ -15,49 +15,39 @@
  */
 package org.savantbuild.runtime;
 
+import org.savantbuild.dep.LicenseException;
+import org.savantbuild.dep.domain.CompatibilityException;
+import org.savantbuild.dep.domain.VersionException;
+import org.savantbuild.dep.graph.CyclicException;
+import org.savantbuild.dep.io.MD5Exception;
+import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
+import org.savantbuild.dep.workflow.ArtifactMissingException;
+import org.savantbuild.dep.workflow.process.ProcessFailureException;
 import org.savantbuild.domain.Project;
-import org.savantbuild.domain.Target;
+import org.savantbuild.parser.BuildFileParser;
+import org.savantbuild.parser.ParseException;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.nio.file.Path;
 
 /**
- * Default build runner. This loads the plugins, updates the Groovy runtime, and runs the targets.
- *
  * @author Brian Pontarelli
  */
 public class DefaultBuildRunner implements BuildRunner {
-  /**
-   * Runs the targets by finding each target and then performing a graph traversal of that targets dependencies. This
-   * ensures that a target is not called twice.
-   *
-   * @param project The project.
-   * @param targets The targets to run.
-   */
+  private final BuildFileParser buildFileParser;
+
+  private final ProjectRunner projectRunner;
+
+  public DefaultBuildRunner(BuildFileParser buildFileParser, ProjectRunner projectRunner) {
+    this.buildFileParser = buildFileParser;
+    this.projectRunner = projectRunner;
+  }
+
   @Override
-  public void run(Project project, Iterable<String> targets) {
-    Set<String> calledTargets = new HashSet<>();
-    targets.forEach((targetName) -> {
-      Target target = project.targets.get(targetName);
-      if (target == null) {
-        throw new BuildRunException("Invalid target [" + targetName + "]");
-      }
-
-      target.invocation.run();
-      calledTargets.add(targetName);
-
-      // Traverse the target dependency graph if the target has dependencies (is in the graph)
-      if (project.targetGraph.contains(target)) {
-        project.targetGraph.traverse(target, (origin, destination, edge, depth) -> {
-          if (calledTargets.contains(destination.name)) {
-            return false;
-          }
-
-          destination.invocation.run();
-          calledTargets.add(destination.name);
-          return true;
-        });
-      }
-    });
+  public void run(Path buildFile, Iterable<String> targets)
+  throws ArtifactMetaDataMissingException, ArtifactMissingException, BuildRunException, BuildFailureException,
+  CompatibilityException, CyclicException, LicenseException, MD5Exception, ParseException, ProcessFailureException,
+  VersionException {
+    Project project = buildFileParser.parse(buildFile);
+    projectRunner.run(project, targets);
   }
 }

@@ -1,5 +1,7 @@
 import org.savantbuild.dep.DefaultDependencyService
 import org.savantbuild.dep.DependencyService
+import org.savantbuild.dep.graph.ResolvedArtifactGraph
+import org.savantbuild.domain.Project
 import org.savantbuild.runtime.BuildFailureException
 
 import java.nio.file.*
@@ -16,29 +18,29 @@ class JavaLayout {
 }
 
 class JavaSettings {
-  def version
-  def compilerArguments = ""
-  def dependencyResolveConfiguration = new DependencyService.ResolveConfiguration()
+  String version
+  String compilerArguments = ""
+  DependencyService.ResolveConfiguration mainDependencyResolveConfiguration = new DependencyService.ResolveConfiguration()
+      .with("compile", new DependencyService.ResolveConfiguration.TypeResolveConfiguration(true, false))
+  DependencyService.ResolveConfiguration testDependencyResolveConfiguration = new DependencyService.ResolveConfiguration()
       .with("compile", new DependencyService.ResolveConfiguration.TypeResolveConfiguration(true, false))
 }
 
 class JavaPlugin {
-  static def PROPERTIES_FILE = "${SYS['user.home']}/.savant/java-plugin.properties"
   def layout = new JavaLayout()
   def settings = new JavaSettings()
   def properties = new Properties()
   def project
 
-  def JavaPlugin(project) {
+  def JavaPlugin(Project project, Path propertiesFile) {
     this.project = project
 
-    def propertiesFile = Paths.get(PROPERTIES_FILE)
     if (Files.isRegularFile(propertiesFile)) {
       propertiesFile.toFile().withInputStream { inputStream ->
         properties.load(inputStream)
       }
     } else {
-      fail("You must create a file at [${PROPERTIES_FILE}] that contains the system configuration for the Java plugin. " +
+      fail("You must create a file at [${propertiesFile}] that contains the system configuration for the Java plugin. " +
           "This file should include the location of the JDK (java and javac) by version. These properties look like this:\n\n" +
           "  1.6=/Library/Java/JavaVirtualMachines/1.6.0_65-b14-462.jdk/Contents/Home\n" +
           "  1.7=/Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home\n" +
@@ -47,15 +49,17 @@ class JavaPlugin {
   }
 
   def clean() {
-    if (!Files.isDirectory(layout.buildDir)) {
+    Path buildDir = project.directory.resolve(layout.buildDir)
+    println "Cleaning ${buildDir}"
+    if (!Files.isDirectory(buildDir)) {
       return
     }
 
-    if (Files.isSymbolicLink(layout.buildDir)) {
-      Files.delete(layout.buildDir);
+    if (Files.isSymbolicLink(buildDir)) {
+      Files.delete(buildDir);
     }
 
-    Files.walkFileTree(layout.buildDir, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(buildDir, new SimpleFileVisitor<Path>() {
       public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
         Files.delete(dir);
         return FileVisitResult.CONTINUE;
@@ -69,10 +73,25 @@ class JavaPlugin {
   }
 
   def compileMain() {
-    def javacPath = initialize()
-    def command = javacPath.toString() + " " + settings.compilerArguments + " -classpath " + classpath(settings.dependencyResolveConfiguration) + " -sourcepath " + layout.mainSrcDir + " -d " + layout.buildMainClassDir
-    def process = command.execute()
-    process.consumeProcessOutput(System.out, System.err)
+    println "Compiling"
+    Path javacPath = initialize()
+    println "Javac ${javacPath}"
+    String command = "${javacPath} ${settings.compilerArguments} ${classpath(settings.mainDependencyResolveConfiguration)} -sourcepath ${layout.mainSrcDir} -d ${layout.buildMainClassDir}"
+    println "Executing ${command} in ${project.directory.toAbsolutePath()}"
+    Files.createDirectories(project.directory.resolve(layout.buildMainClassDir))
+    Process process = command.execute(new String[0], project.directory.toFile())
+    process.consumeProcessOutput((Appendable) System.out, System.err)
+    process.waitFor()
+    if (!process.exitValue()) {
+      fail("Build failed")
+    }
+  }
+
+  def compileTest() {
+    Path javacPath = initialize()
+    String command = "${javacPath} ${settings.compilerArguments} ${classpath(settings.testDependencyResolveConfiguration)} -sourcepath ${layout.testSrcDir} -d ${layout.buildTestClassDir}"
+    Process process = command.execute(new String[0], project.directory.toFile())
+    process.consumeProcessOutput((Appendable) System.out, System.err)
     process.waitFor()
     if (!process.exitValue()) {
       fail("Build failed")
@@ -90,19 +109,8 @@ class JavaPlugin {
       project.artifactGraph = service.reduce(dependencyGraph)
     }
 
-    def resolvedArtifactGraph = service.resolve(project.artifactGraph, project.workflow, resolveConfiguration)
-    return resolvedArtifactGraph.toClasspath()
-  }
-
-  def compileTest() {
-    def javacPath = initialize()
-    def command = javacPath.toString() + " " + settings.compilerArguments + " -classpath " + classpath(settings.dependencyResolveConfiguration) + " -sourcepath " + layout.testSrcDir + " -d " + layout.buildTestClassDir
-    def process = command.execute()
-    process.consumeProcessOutput(System.out, System.err)
-    process.waitFor()
-    if (!process.exitValue()) {
-      fail("Build failed")
-    }
+    ResolvedArtifactGraph resolvedArtifactGraph = service.resolve(project.artifactGraph, project.workflow, resolveConfiguration)
+    return "-classpath ${resolvedArtifactGraph.toClasspath()}"
   }
 
   def initialize() {
@@ -111,7 +119,7 @@ class JavaPlugin {
           "  java.settings.version=\"1.7\"")
     }
 
-    def javaHome = properties.get(settings.version)
+    String javaHome = properties.getProperty(settings.version)
     if (!javaHome) {
       fail("No JDK is configured for version [${settings.version}]. You must configure the JDK locations in the " +
           "~/.savant/java-plugin.properties file. It will look something like this:\n\n" +
@@ -120,7 +128,7 @@ class JavaPlugin {
           "  1.8=/Library/Java/JavaVirtualMachines/jdk1.8.0.jdk/Contents/Home\n")
     }
 
-    def javacPath = Paths.get(javaHome, "bin", "javac")
+    def javacPath = Paths.get(javaHome, "bin/javac")
     if (!Files.isExecutable(javacPath)) {
       fail("The javac compiler [${javacPath.toAbsolutePath()}] is not executable.")
     }
@@ -147,7 +155,8 @@ project(name: "test-project", group: "org.savantbuild.test", version: "0.1", lic
   }
 }
 
-def java = new JavaPlugin(project)
+def java = new JavaPlugin(project, Paths.get("${SYS['user.home']}/.savant/plugins/java.properties"))
+java.settings.version = "1.7"
 
 target(name: "clean", description: "Cleans the project") {
   java.clean()
@@ -155,5 +164,5 @@ target(name: "clean", description: "Cleans the project") {
 
 target(name: "compile", description: "Compile the java") {
   java.compileMain()
-  java.compileTest()
+//  java.compileTest()
 }
