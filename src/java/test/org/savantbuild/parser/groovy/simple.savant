@@ -1,6 +1,6 @@
 package org.savantbuild.parser.groovy
 
-project(group: "group", name: "name", version: "1.1") {
+project(group: "group", name: "name", version: "1.1", license: "Commercial") {
   workflow {
     fetch {
       cache(dir: "${SYS['user.home']}/.savant/cache")
@@ -11,8 +11,15 @@ project(group: "group", name: "name", version: "1.1") {
     }
   }
 
-  plugin(localName: "java", artifact: "org.savantbuild.plugins:java:0.1")
-  plugin(localName: "testng", artifact: "org.savantbuild.plugins:testng:0.2")
+  dependencies {
+    group(type: "compile") {
+      dependency("org.example:compile:1.0")
+    }
+    group(type: "test-compile", export: false) {
+      dependency("org.example:test:1.0")
+      dependency("org.example:test2:2.0", true)
+    }
+  }
 }
 
 target(name: "compile", description: "This target compiles everything") {

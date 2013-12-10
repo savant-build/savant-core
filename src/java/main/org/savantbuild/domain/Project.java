@@ -15,7 +15,12 @@
  */
 package org.savantbuild.domain;
 
+import org.savantbuild.dep.domain.Artifact;
+import org.savantbuild.dep.domain.ArtifactID;
+import org.savantbuild.dep.domain.Dependencies;
+import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
+import org.savantbuild.dep.graph.ArtifactGraph;
 import org.savantbuild.dep.graph.Graph;
 import org.savantbuild.dep.workflow.Workflow;
 
@@ -33,17 +38,31 @@ public class Project {
 
   public final Map<String, Target> targets = new HashMap<>();
 
-  public final Map<String, String> plugins = new HashMap<>();
+  public ArtifactGraph artifactGraph;
 
-  public Graph<Target, Object> targetGraph;
+  public Dependencies dependencies;
 
   public Path directory;
 
   public String group;
 
+  public License license;
+
   public String name;
+
+  public Graph<Target, Object> targetGraph;
 
   public Version version;
 
   public Workflow workflow;
+
+  /**
+   * Converts this project into an Artifact. This artifact uses the project's name for the item name and it has a type
+   * of {@code project} rather than the Java standard {@code jar}.
+   *
+   * @return The project artifact.
+   */
+  public Artifact toArtifact() {
+    return new Artifact(new ArtifactID(group, name, name, "project"), version, license);
+  }
 }

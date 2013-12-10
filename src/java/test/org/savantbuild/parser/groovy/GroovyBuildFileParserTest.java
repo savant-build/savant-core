@@ -16,6 +16,9 @@
 package org.savantbuild.parser.groovy;
 
 import org.savantbuild.BaseTest;
+import org.savantbuild.dep.domain.Dependencies;
+import org.savantbuild.dep.domain.Dependency;
+import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.graph.Graph;
 import org.savantbuild.dep.graph.HashGraph;
@@ -24,7 +27,6 @@ import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
-import org.savantbuild.util.MapBuilder;
 import org.testng.annotations.Test;
 
 import static java.util.Arrays.asList;
@@ -76,9 +78,10 @@ public class GroovyBuildFileParserTest extends BaseTest {
     assertEquals(project.workflow.publishWorkflow.processes.size(), 1);
     assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(0)).dir, System.getProperty("user.home") + "/.savant/cache");
 
-    // Verify the plugins
-    assertEquals(project.plugins, new MapBuilder<>().put("java", "org.savantbuild.plugins:java:0.1")
-                                                    .put("testng", "org.savantbuild.plugins:testng:0.2")
-                                                    .done());
+    // Verify the dependencies
+    Dependencies expectedDependencies = new Dependencies(
+        new DependencyGroup("compile", true, new Dependency("org.example:compile:1.0", false)),
+        new DependencyGroup("test-compile", false, new Dependency("org.example:test:1.0", false), new Dependency("org.example:test2:2.0", true)));
+    assertEquals(project.dependencies, expectedDependencies);
   }
 }

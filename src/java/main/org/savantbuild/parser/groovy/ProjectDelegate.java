@@ -15,13 +15,11 @@
  */
 package org.savantbuild.parser.groovy;
 
+import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.domain.Project;
-import org.savantbuild.parser.ParseException;
-
-import java.util.Map;
 
 import groovy.lang.Closure;
 
@@ -39,22 +37,29 @@ public class ProjectDelegate {
   }
 
   /**
-   * Configures a plugin that the project needs. This method is called with a Map of attributes that contains the
-   * specification of the plugin's artifact and the local name of the plugin. It should look like:
+   * Configures the project dependencies. This method is called with a closure that contains the dependencies
+   * definition. It should look like:
    * <p>
    * <pre>
-   *   plugin(localName: "plugin", artifact: "org.example:my-plugin:1.0")
+   *   dependencies {
+   *     group(type: "compile") {
+   *       dependency("org.example:compile:1.0")
+   *     }
+   *     group(type: "test-compile") {
+   *       dependency("org.example:test:1.0")
+   *     }
+   *   }
    * </pre>
    *
-   * @param attributes The attributes.
+   * @param closure The closure that is called to setup the workflow configuration. This closure uses the delegate class
+   *                {@link WorkflowDelegate}.
+   * @return The workflow.
    */
-  public void plugin(Map<String, Object> attributes) {
-    if (!GroovyTools.hasAttributes(attributes, "localName", "artifact")) {
-      throw new ParseException("Invalid plugin definition. It should look like:\n\n" +
-          "  plugin(localName: \"plugin\", artifact: \"org.example:my-plugin:1.0\")");
-    }
-
-    project.plugins.put(GroovyTools.toString(attributes, "localName"), GroovyTools.toString(attributes, "artifact"));
+  public Dependencies dependencies(Closure closure) {
+    project.dependencies = new Dependencies();
+    closure.setDelegate(new DependenciesDelegate(project.dependencies));
+    closure.run();
+    return project.dependencies;
   }
 
   /**

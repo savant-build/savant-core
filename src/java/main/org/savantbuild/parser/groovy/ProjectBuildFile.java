@@ -15,6 +15,7 @@
  */
 package org.savantbuild.parser.groovy;
 
+import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.domain.VersionException;
 import org.savantbuild.domain.Project;
@@ -26,6 +27,7 @@ import java.util.Properties;
 
 import groovy.lang.Closure;
 import groovy.lang.Script;
+import static java.util.Arrays.asList;
 
 /**
  * Base class from the project build file Groovy script.
@@ -61,17 +63,26 @@ public abstract class ProjectBuildFile extends Script {
    * @return The project.
    */
   public Project project(Map<String, Object> attributes, Closure closure) {
-    if (!GroovyTools.hasAttributes(attributes, "group", "name", "version")) {
+    if (!GroovyTools.hasAttributes(attributes, "group", "name", "version", "license")) {
       throw new ParseException("Invalid project definition. It should look like:\n\n" +
-          "  project(group: \"org.example\", name: \"my-project\", version: \"1.1\")");
+          "  project(group: \"org.example\", name: \"my-project\", version: \"1.1\", license: \"Commercial\")");
     }
 
     project.group = GroovyTools.toString(attributes, "group");
     project.name = GroovyTools.toString(attributes, "name");
+
+    String licenseStr = GroovyTools.toString(attributes, "license");
     try {
-      project.version = new Version(GroovyTools.toString(attributes, "version"));
+      project.license = License.valueOf(licenseStr);
+    } catch (IllegalArgumentException e) {
+      throw new ParseException("Invalid license [" + licenseStr + "]. It must be one of these values " + asList(License.values()));
+    }
+
+    String versionStr = GroovyTools.toString(attributes, "version");
+    try {
+      project.version = new Version(versionStr);
     } catch (VersionException e) {
-      throw new ParseException("Invalid project version. You must specify a valid Savant version (semantic version).");
+      throw new ParseException("Invalid project version [" + versionStr + "]. You must specify a valid Savant version (semantic version).");
     }
 
     closure.setDelegate(new ProjectDelegate(project));

@@ -38,18 +38,28 @@ public class DefaultBuildRunnerTest extends BaseTest {
   public TargetGraphBuilder targetGraphBuilder = new DefaultTargetGraphBuilder();
 
   @Test
-  public void runNoDependencies() {
-    Runnable cleanRunner = createStrictMock(Runnable.class);
-    cleanRunner.run();
-    replay(cleanRunner);
+  public void runDependencies() {
+    Runnable compileRunner = makeRunnerMock();
+    Runnable copyResourcesRunner = makeRunnerMock();
+    Runnable testRunner = makeRunnerMock();
+    Runnable intRunner = makeRunnerMock();
+    Runnable cleanRunner = makeUncalledRunnerMock();
 
     Project project = new Project();
     project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
+    project.targets.put("compile", new Target("compile", "Compiles the project", compileRunner));
+    project.targets.put("copyResources", new Target("copyResources", "Copies the resources to the build dir", copyResourcesRunner));
+    project.targets.put("test", new Target("test", "Tests the project", testRunner, "compile", "copyResources"));
+    project.targets.put("int", new Target("int", "Integrates the project", intRunner, "test"));
     project.targetGraph = targetGraphBuilder.build(project);
 
     BuildRunner runner = new DefaultBuildRunner();
-    runner.run(project, asList("clean"));
+    runner.run(project, asList("int"));
 
+    verify(compileRunner);
+    verify(copyResourcesRunner);
+    verify(testRunner);
+    verify(intRunner);
     verify(cleanRunner);
   }
 
@@ -72,5 +82,44 @@ public class DefaultBuildRunnerTest extends BaseTest {
     }
 
     verify(cleanRunner);
+  }
+
+  @Test
+  public void runNoDependencies() {
+    Runnable compileRunner = makeUncalledRunnerMock();
+    Runnable copyResourcesRunner = makeUncalledRunnerMock();
+    Runnable testRunner = makeUncalledRunnerMock();
+    Runnable intRunner = makeUncalledRunnerMock();
+    Runnable cleanRunner = makeRunnerMock();
+
+    Project project = new Project();
+    project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
+    project.targets.put("compile", new Target("compile", "Compiles the project", compileRunner));
+    project.targets.put("copyResources", new Target("compile", "Compiles the project", copyResourcesRunner));
+    project.targets.put("test", new Target("test", "Tests the project", testRunner, "compile", "copyResources"));
+    project.targets.put("int", new Target("int", "Integrates the project", intRunner, "test"));
+    project.targetGraph = targetGraphBuilder.build(project);
+
+    BuildRunner runner = new DefaultBuildRunner();
+    runner.run(project, asList("clean"));
+
+    verify(compileRunner);
+    verify(copyResourcesRunner);
+    verify(testRunner);
+    verify(intRunner);
+    verify(cleanRunner);
+  }
+
+  private Runnable makeRunnerMock() {
+    Runnable runner = createStrictMock(Runnable.class);
+    runner.run();
+    replay(runner);
+    return runner;
+  }
+
+  private Runnable makeUncalledRunnerMock() {
+    Runnable runner = createStrictMock(Runnable.class);
+    replay(runner);
+    return runner;
   }
 }
