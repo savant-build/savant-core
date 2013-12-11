@@ -4,8 +4,15 @@ import org.savantbuild.dep.graph.ResolvedArtifactGraph
 import org.savantbuild.domain.Project
 import org.savantbuild.runtime.BuildFailureException
 
-import java.nio.file.*
+import java.nio.file.FileVisitResult
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
+import java.util.function.Function
+import java.util.function.Predicate
+import java.util.stream.Collectors
 
 class JavaLayout {
   def buildDir = Paths.get("build")
@@ -76,15 +83,35 @@ class JavaPlugin {
     println "Compiling"
     Path javacPath = initialize()
     println "Javac ${javacPath}"
-    String command = "${javacPath} ${settings.compilerArguments} ${classpath(settings.mainDependencyResolveConfiguration)} -sourcepath ${layout.mainSrcDir} -d ${layout.buildMainClassDir}"
+    List<String> javaFilesToCompile = determineJavaFilesToCompile(layout.mainSrcDir, layout.buildMainClassDir)
+    if (javaFilesToCompile.isEmpty()) {
+      return
+    }
+
+    String command = "${javacPath} ${settings.compilerArguments} ${classpath(settings.mainDependencyResolveConfiguration)} -sourcepath ${layout.mainSrcDir} -d ${layout.buildMainClassDir} ${javaFilesToCompile.join(" ")}"
     println "Executing ${command} in ${project.directory.toAbsolutePath()}"
     Files.createDirectories(project.directory.resolve(layout.buildMainClassDir))
     Process process = command.execute(new String[0], project.directory.toFile())
     process.consumeProcessOutput((Appendable) System.out, System.err)
     process.waitFor()
-    if (!process.exitValue()) {
+
+    int exitCode = process.exitValue()
+    if (exitCode != 0) {
       fail("Build failed")
     }
+  }
+
+  List<String> determineJavaFilesToCompile(Path sourceDir, Path outputDir) {
+    Path projectSourceDir = project.directory.resolve(sourceDir)
+    if (!Files.isDirectory(projectSourceDir)) {
+      println "Source directory [${projectSourceDir.toString()}] does not exist. Skipping compilation"
+      return Collections.emptyList()
+    }
+
+    return Files.walk(projectSourceDir).filter({ Path path ->
+      Path outputFile = outputDir.resolve(path)
+      return path.toString().endsWith(".java") && (!Files.isRegularFile(outputFile) || Files.getLastModifiedTime(outputFile) < Files.getLastModifiedTime(path))
+    } as Predicate).map({ path -> path.subpath(project.directory.getNameCount(), path.getNameCount()).toString() } as Function).collect(Collectors.toList())
   }
 
   def compileTest() {
@@ -129,6 +156,9 @@ class JavaPlugin {
     }
 
     def javacPath = Paths.get(javaHome, "bin/javac")
+    if (!Files.isRegularFile(javacPath)) {
+      fail("The javac compiler [${javacPath.toAbsolutePath()}] does not exist.")
+    }
     if (!Files.isExecutable(javacPath)) {
       fail("The javac compiler [${javacPath.toAbsolutePath()}] is not executable.")
     }
