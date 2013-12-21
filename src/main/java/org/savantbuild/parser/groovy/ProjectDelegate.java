@@ -20,6 +20,7 @@ import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.domain.Project;
+import org.savantbuild.output.Output;
 
 import groovy.lang.Closure;
 
@@ -30,9 +31,11 @@ import groovy.lang.Closure;
  * @author Brian Pontarelli
  */
 public class ProjectDelegate {
-  public Project project;
+  public final Output output;
+  public final Project project;
 
-  public ProjectDelegate(Project project) {
+  public ProjectDelegate(Output output, Project project) {
+    this.output = output;
     this.project = project;
   }
 
@@ -83,8 +86,8 @@ public class ProjectDelegate {
    * @return The workflow.
    */
   public Workflow workflow(Closure closure) {
-    project.workflow = new Workflow(new FetchWorkflow(), new PublishWorkflow());
-    closure.setDelegate(new WorkflowDelegate(project.workflow));
+    project.workflow = new Workflow(new FetchWorkflow(output), new PublishWorkflow());
+    closure.setDelegate(new WorkflowDelegate(output, project.workflow));
     closure.run();
     return project.workflow;
   }

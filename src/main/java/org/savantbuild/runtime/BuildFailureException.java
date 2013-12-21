@@ -21,7 +21,15 @@ package org.savantbuild.runtime;
  * @author Brian Pontarelli
  */
 public class BuildFailureException extends RuntimeException {
+  public BuildFailureException() {
+    super();
+  }
+
   public BuildFailureException(String message) {
     super(message);
+  }
+
+  public BuildFailureException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

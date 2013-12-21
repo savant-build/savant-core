@@ -25,6 +25,7 @@ import org.savantbuild.dep.graph.Graph;
 import org.savantbuild.dep.workflow.Workflow;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,17 +57,19 @@ public class Project {
 
   public Workflow workflow;
 
+  public Path pluginConfigurationDirectory = Paths.get(System.getProperty("user.home") + "/.savant/plugins");
+
   public Project(Path directory) {
     this.directory = directory;
   }
 
   /**
    * Converts this project into an Artifact. This artifact uses the project's name for the item name and it has a type
-   * of {@code project} rather than the Java standard {@code jar}.
+   * of {@code jar}.
    *
    * @return The project artifact.
    */
   public Artifact toArtifact() {
-    return new Artifact(new ArtifactID(group, name, name, "project"), version, license);
+    return new Artifact(new ArtifactID(group, name, name, "jar"), version, license);
   }
 }

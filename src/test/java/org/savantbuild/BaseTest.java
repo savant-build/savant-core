@@ -21,6 +21,8 @@ import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
+import org.savantbuild.output.Output;
+import org.savantbuild.output.SystemOutOutput;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -41,6 +43,8 @@ import static org.testng.AssertJUnit.fail;
  */
 @Test(groups = {"unit", "integration", "acceptance", "functional"})
 public abstract class BaseTest {
+  public static final Output output = new SystemOutOutput(System.out, false);
+
   public static Path projectDir;
 
   public static Path cache;
@@ -57,8 +61,8 @@ public abstract class BaseTest {
     cache = projectDir.resolve("build/test/cache");
 
     workflow = new Workflow(
-        new FetchWorkflow(new CacheProcess(cache.toString()), new URLProcess("http://localhost:7000/test-deps/savant", null, null)),
-        new PublishWorkflow(new CacheProcess(cache.toString()))
+        new FetchWorkflow(output, new CacheProcess(output, cache.toString()), new URLProcess(output, "http://localhost:7000/test-deps/savant", null, null)),
+        new PublishWorkflow(new CacheProcess(output, cache.toString()))
     );
   }
 

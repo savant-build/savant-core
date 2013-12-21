@@ -34,7 +34,7 @@ import static org.testng.Assert.assertTrue;
 public class DefaultBuildRunnerTest extends BaseTest {
   @Test
   public void javaProject() {
-    BuildRunner runner = new DefaultBuildRunner(new GroovyBuildFileParser(new DefaultTargetGraphBuilder()), new DefaultProjectRunner());
+    BuildRunner runner = new DefaultBuildRunner(new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner());
     runner.run(projectDir.resolve("test-project/build.savant"), asList("clean"));
     assertFalse(Files.isDirectory(projectDir.resolve("test-project/build")));
 

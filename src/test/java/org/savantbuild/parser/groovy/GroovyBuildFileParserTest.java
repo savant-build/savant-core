@@ -43,7 +43,7 @@ import static org.testng.Assert.assertTrue;
 public class GroovyBuildFileParserTest extends BaseTest {
   @Test
   public void parse() {
-    GroovyBuildFileParser parser = new GroovyBuildFileParser(new DefaultTargetGraphBuilder());
+    GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
     Project project = parser.parse(projectDir.resolve("src/java/test/org/savantbuild/parser/groovy/simple.savant"));
     assertEquals(project.group, "group");
     assertEquals(project.name, "name");

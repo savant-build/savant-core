@@ -17,6 +17,7 @@ package org.savantbuild.parser.groovy;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.savantbuild.domain.Project;
+import org.savantbuild.output.Output;
 import org.savantbuild.parser.BuildFileParser;
 import org.savantbuild.parser.ParseException;
 import org.savantbuild.parser.TargetGraphBuilder;
@@ -36,7 +37,10 @@ import groovy.lang.GroovyClassLoader;
 public class GroovyBuildFileParser implements BuildFileParser {
   private final TargetGraphBuilder targetGraphBuilder;
 
-  public GroovyBuildFileParser(TargetGraphBuilder targetGraphBuilder) {
+  private final Output output;
+
+  public GroovyBuildFileParser(Output output, TargetGraphBuilder targetGraphBuilder) {
+    this.output = output;
     this.targetGraphBuilder = targetGraphBuilder;
   }
 
@@ -61,6 +65,7 @@ public class GroovyBuildFileParser implements BuildFileParser {
       ProjectBuildFile script = (ProjectBuildFile) buildClass.newInstance();
       Project project = new Project(buildFile.getParent());
       script.project = project;
+      script.output = output;
       script.run();
 
       project.targetGraph = targetGraphBuilder.build(project);

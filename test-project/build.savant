@@ -2,13 +2,10 @@ import org.savantbuild.dep.DefaultDependencyService
 import org.savantbuild.dep.DependencyService
 import org.savantbuild.dep.graph.ResolvedArtifactGraph
 import org.savantbuild.domain.Project
+import org.savantbuild.output.Output
 import org.savantbuild.runtime.BuildFailureException
 
-import java.nio.file.FileVisitResult
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.nio.file.SimpleFileVisitor
+import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.function.Function
 import java.util.function.Predicate
@@ -38,9 +35,11 @@ class JavaPlugin {
   def settings = new JavaSettings()
   def properties = new Properties()
   def project
+  def output
 
-  def JavaPlugin(Project project, Path propertiesFile) {
+  def JavaPlugin(Project project, Output output, Path propertiesFile) {
     this.project = project
+    this.output = output
 
     if (Files.isRegularFile(propertiesFile)) {
       propertiesFile.toFile().withInputStream { inputStream ->
@@ -57,7 +56,7 @@ class JavaPlugin {
 
   def clean() {
     Path buildDir = project.directory.resolve(layout.buildDir)
-    println "Cleaning ${buildDir}"
+    output.info "Cleaning [${buildDir}]"
     if (!Files.isDirectory(buildDir)) {
       return
     }
@@ -80,16 +79,15 @@ class JavaPlugin {
   }
 
   def compileMain() {
-    println "Compiling"
     Path javacPath = initialize()
-    println "Javac ${javacPath}"
     List<String> javaFilesToCompile = determineJavaFilesToCompile(layout.mainSrcDir, layout.buildMainClassDir)
     if (javaFilesToCompile.isEmpty()) {
       return
     }
 
+    output.info "Compiling [${javaFilesToCompile.size()}] Java classes from [${layout.mainSrcDir}] to [${layout.buildMainClassDir}]"
+
     String command = "${javacPath} ${settings.compilerArguments} ${classpath(settings.mainDependencyResolveConfiguration)} -sourcepath ${layout.mainSrcDir} -d ${layout.buildMainClassDir} ${javaFilesToCompile.join(" ")}"
-    println "Executing ${command} in ${project.directory.toAbsolutePath()}"
     Files.createDirectories(project.directory.resolve(layout.buildMainClassDir))
     Process process = command.execute(new String[0], project.directory.toFile())
     process.consumeProcessOutput((Appendable) System.out, System.err)
@@ -99,19 +97,6 @@ class JavaPlugin {
     if (exitCode != 0) {
       fail("Build failed")
     }
-  }
-
-  List<String> determineJavaFilesToCompile(Path sourceDir, Path outputDir) {
-    Path projectSourceDir = project.directory.resolve(sourceDir)
-    if (!Files.isDirectory(projectSourceDir)) {
-      println "Source directory [${projectSourceDir.toString()}] does not exist. Skipping compilation"
-      return Collections.emptyList()
-    }
-
-    return Files.walk(projectSourceDir).filter({ Path path ->
-      Path outputFile = outputDir.resolve(path)
-      return path.toString().endsWith(".java") && (!Files.isRegularFile(outputFile) || Files.getLastModifiedTime(outputFile) < Files.getLastModifiedTime(path))
-    } as Predicate).map({ path -> path.subpath(project.directory.getNameCount(), path.getNameCount()).toString() } as Function).collect(Collectors.toList())
   }
 
   def compileTest() {
@@ -125,12 +110,25 @@ class JavaPlugin {
     }
   }
 
-  def classpath(DependencyService.ResolveConfiguration resolveConfiguration) {
+  private List<String> determineJavaFilesToCompile(Path sourceDir, Path outputDir) {
+    Path projectSourceDir = project.directory.resolve(sourceDir)
+    if (!Files.isDirectory(projectSourceDir)) {
+      output.warning "Source directory [${projectSourceDir.toString()}] does not exist. Skipping compilation"
+      return Collections.emptyList()
+    }
+
+    return Files.walk(projectSourceDir).filter({ Path path ->
+      Path outputFile = outputDir.resolve(path)
+      return path.toString().endsWith(".java") && (!Files.isRegularFile(outputFile) || Files.getLastModifiedTime(outputFile) < Files.getLastModifiedTime(path))
+    } as Predicate).map({ path -> path.subpath(project.directory.getNameCount(), path.getNameCount()).toString() } as Function).collect(Collectors.toList())
+  }
+
+  private String classpath(DependencyService.ResolveConfiguration resolveConfiguration) {
     if (!project.dependencies) {
       return ""
     }
 
-    DependencyService service = new DefaultDependencyService()
+    DependencyService service = new DefaultDependencyService(output)
     if (!project.artifactGraph) {
       def dependencyGraph = service.buildGraph(project.toArtifact(), project.dependencies, project.workflow)
       project.artifactGraph = service.reduce(dependencyGraph)
@@ -140,7 +138,7 @@ class JavaPlugin {
     return "-classpath ${resolvedArtifactGraph.toClasspath()}"
   }
 
-  def initialize() {
+  private Path initialize() {
     if (!settings.version) {
       fail("You must configure the Java version to use with the settings object. It will look something like this:\n\n" +
           "  java.settings.version=\"1.7\"")

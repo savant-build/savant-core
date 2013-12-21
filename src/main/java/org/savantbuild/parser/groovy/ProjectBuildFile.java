@@ -20,6 +20,7 @@ import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.domain.VersionException;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
+import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
 
 import java.util.Map;
@@ -38,6 +39,8 @@ public abstract class ProjectBuildFile extends Script {
   public final Map<String, String> ENV = System.getenv();
 
   public final Properties SYS = System.getProperties();
+
+  public Output output;
 
   public Project project;
 
@@ -85,7 +88,7 @@ public abstract class ProjectBuildFile extends Script {
       throw new ParseException("Invalid project version [" + versionStr + "]. You must specify a valid Savant version (semantic version).");
     }
 
-    closure.setDelegate(new ProjectDelegate(project));
+    closure.setDelegate(new ProjectDelegate(output, project));
     closure.run();
 
     return project;

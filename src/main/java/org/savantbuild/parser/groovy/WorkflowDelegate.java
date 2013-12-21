@@ -21,6 +21,7 @@ import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.Process;
 import org.savantbuild.dep.workflow.process.URLProcess;
+import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
 
 import java.util.List;
@@ -35,9 +36,11 @@ import groovy.lang.Closure;
  * @author Brian Pontarelli
  */
 public class WorkflowDelegate {
-  public Workflow workflow;
+  public final Output output;
+  public final Workflow workflow;
 
-  public WorkflowDelegate(Workflow workflow) {
+  public WorkflowDelegate(Output output, Workflow workflow) {
+    this.output = output;
     this.workflow = workflow;
   }
 
@@ -47,7 +50,7 @@ public class WorkflowDelegate {
    * @param closure The closure. This closure uses the delegate class {@link ProcessDelegate}.
    */
   public void fetch(Closure closure) {
-    closure.setDelegate(new ProcessDelegate(workflow.fetchWorkflow.processes));
+    closure.setDelegate(new ProcessDelegate(output, workflow.fetchWorkflow.processes));
     closure.run();
   }
 
@@ -57,7 +60,7 @@ public class WorkflowDelegate {
    * @param closure The closure. This closure uses the delegate class {@link ProcessDelegate}.
    */
   public void publish(Closure closure) {
-    closure.setDelegate(new ProcessDelegate(workflow.publishWorkflow.processes));
+    closure.setDelegate(new ProcessDelegate(output, workflow.publishWorkflow.processes));
     closure.run();
   }
 
@@ -68,9 +71,11 @@ public class WorkflowDelegate {
    * @author Brian Pontarelli
    */
   public static class ProcessDelegate {
-    public List<Process> processes;
+    public final Output output;
+    public final List<Process> processes;
 
-    public ProcessDelegate(List<Process> processes) {
+    public ProcessDelegate(Output output, List<Process> processes) {
+      this.output = output;
       this.processes = processes;
     }
 
@@ -85,7 +90,7 @@ public class WorkflowDelegate {
             "  url(url: \"http://repository.savantbuild.org\")");
       }
 
-      processes.add(new URLProcess(GroovyTools.toString(attributes, "url"), GroovyTools.toString(attributes, "username"),
+      processes.add(new URLProcess(output, GroovyTools.toString(attributes, "url"), GroovyTools.toString(attributes, "username"),
           GroovyTools.toString(attributes, "password")));
     }
 
@@ -95,7 +100,7 @@ public class WorkflowDelegate {
      * @param attributes The attributes.
      */
     public void cache(Map<String, Object> attributes) {
-      processes.add(new CacheProcess(GroovyTools.toString(attributes, "dir")));
+      processes.add(new CacheProcess(output, GroovyTools.toString(attributes, "dir")));
     }
   }
 }
