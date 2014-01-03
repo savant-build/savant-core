@@ -18,7 +18,7 @@ package org.savantbuild.runtime;
 import org.savantbuild.dep.LicenseException;
 import org.savantbuild.dep.domain.CompatibilityException;
 import org.savantbuild.dep.domain.VersionException;
-import org.savantbuild.dep.graph.CyclicException;
+import org.savantbuild.util.CyclicException;
 import org.savantbuild.dep.io.MD5Exception;
 import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
 import org.savantbuild.dep.workflow.ArtifactMissingException;

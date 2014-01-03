@@ -170,8 +170,11 @@ class JavaPlugin {
 }
 
 
+groovy = loadPlugin("org.savantbuild.plugin:groovy:0.1.0")
+groovy.settings.groovyVersion = "2.2"
+groovy.settings.javaVersion = "1.8"
 
-project(name: "test-project", group: "org.savantbuild.test", version: "0.1", license: "Commercial") {
+project(name: "test-project", group: "org.savantbuild.test", version: "0.1.0", license: "Commercial") {
   workflow {
     fetch {
       cache(dir: "${SYS['user.home']}/.savant/cache")
@@ -181,16 +184,26 @@ project(name: "test-project", group: "org.savantbuild.test", version: "0.1", lic
       cache(dir: "${SYS['user.home']}/.savant/cache")
     }
   }
+
+  publications {
+    publication(name: "test-project", file: "build/jars/${project.name}-${project.version}.jar", sourceFile: "build/jars/${project.name}-${project.version}-src.jar")
+    publication(name: "test-project-test", file: "build/jars/${project.name}-test-${project.version}.jar", sourceFile: "build/jars/${project.name}-test-${project.version}-src.jar")
+  }
 }
 
-def java = new JavaPlugin(project, Paths.get("${SYS['user.home']}/.savant/plugins/java.properties"))
-java.settings.version = "1.7"
-
-target(name: "clean", description: "Cleans the project") {
-  java.clean()
+target(name: "compile", description: "This target compiles everything") {
+  groovy.compileMain()
+  groovy.compileTest()
 }
 
-target(name: "compile", description: "Compile the java") {
-  java.compileMain()
-//  java.compileTest()
+target(name: "jar", description: "This runs the tests", dependsOn: ["compile"]) {
+  groovy.jar()
+}
+
+target(name: "test", description: "This runs the tests", dependsOn: ["jar"]) {
+  // Skip for now
+}
+
+target(name: "int", description: "Performs an integration release of the project", dependsOn: ["test"]) {
+  savant.integrationRelease()
 }

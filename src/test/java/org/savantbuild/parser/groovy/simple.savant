@@ -13,18 +13,29 @@ project(group: "group", name: "name", version: "1.1", license: "Commercial") {
 
   dependencies {
     group(type: "compile") {
-      dependency("org.example:compile:1.0")
+      dependency(id: "org.example:compile:1.0")
     }
     group(type: "test-compile", export: false) {
-      dependency("org.example:test:1.0")
-      dependency("org.example:test2:2.0", true)
+      dependency(id: "org.example:test:1.0")
+      dependency(id: "org.example:test2:2.0", optional: true)
     }
   }
 }
+
+java = plugin("org.savantbuild.plugin:groovy:0.1")
 
 target(name: "compile", description: "This target compiles everything") {
   project.name = "changed"
 }
 
-target(name: "test", description: "This runs the tests", dependsOn: ["compile"]) {
+target(name: "jar", description: "This runs the tests", dependsOn: ["compile"]) {
+
+}
+
+target(name: "test", description: "This runs the tests", dependsOn: ["jar"]) {
+
+}
+
+target(name: "int", description: "Performs an integration release of the project", dependsOn: ["test"]) {
+
 }

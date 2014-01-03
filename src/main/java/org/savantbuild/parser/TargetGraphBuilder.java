@@ -15,7 +15,7 @@
  */
 package org.savantbuild.parser;
 
-import org.savantbuild.dep.graph.Graph;
+import org.savantbuild.util.Graph;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
 

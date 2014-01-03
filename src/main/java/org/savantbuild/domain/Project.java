@@ -21,7 +21,7 @@ import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.graph.ArtifactGraph;
-import org.savantbuild.dep.graph.Graph;
+import org.savantbuild.util.Graph;
 import org.savantbuild.dep.workflow.Workflow;
 
 import java.nio.file.Path;

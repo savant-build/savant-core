@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-package org.savantbuild.plugin;
+package org.savantbuild.plugin.groovy;
 
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.domain.Project;
@@ -26,18 +26,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * Abstract base class for plugins. This defines some helper methods that all plugins will need and it also allows
  * Savant to pass the {@link Project} and {@link Output} objects to plugins.
  *
  * @author Brian Pontarelli
  */
-public abstract class AbstractPlugin {
+public class Plugin extends GroovyObjectSupport {
   public final Output output;
 
   public final Project project;
 
-  protected AbstractPlugin(Project project, Output output) {
+  protected Plugin(Project project, Output output) {
     this.project = project;
     this.output = output;
   }
@@ -74,12 +76,10 @@ public abstract class AbstractPlugin {
       fail(errorMessage, configFile);
     }
 
-    try {
-      try (FileInputStream fis = new FileInputStream(configFile.toFile())) {
-        Properties properties = new Properties();
-        properties.load(fis);
-        return properties;
-      }
+    try (FileInputStream fis = new FileInputStream(configFile.toFile())) {
+      Properties properties = new Properties();
+      properties.load(fis);
+      return properties;
     } catch (IOException e) {
       throw new BuildFailureException("Failed to load the plugin configuration file [" + configFile + "]", e);
     }
