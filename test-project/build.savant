@@ -186,8 +186,8 @@ project(name: "test-project", group: "org.savantbuild.test", version: "0.1.0", l
   }
 
   publications {
-    publication(name: "test-project", file: "build/jars/${project.name}-${project.version}.jar", sourceFile: "build/jars/${project.name}-${project.version}-src.jar")
-    publication(name: "test-project-test", file: "build/jars/${project.name}-test-${project.version}.jar", sourceFile: "build/jars/${project.name}-test-${project.version}-src.jar")
+    publication(name: "test-project", type: "jar", file: "build/jars/${project.name}-${project.version}.jar", sourceFile: "build/jars/${project.name}-${project.version}-src.jar")
+    publication(name: "test-project-test", type: "jar", file: "build/jars/${project.name}-test-${project.version}.jar", sourceFile: "build/jars/${project.name}-test-${project.version}-src.jar")
   }
 }
 

@@ -45,7 +45,7 @@ public class DefaultProjectRunnerTest extends BaseTest {
     Runnable intRunner = makeRunnerMock();
     Runnable cleanRunner = makeUncalledRunnerMock();
 
-    Project project = new Project(null);
+    Project project = new Project(null, output);
     project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
     project.targets.put("compile", new Target("compile", "Compiles the project", compileRunner));
     project.targets.put("copyResources", new Target("copyResources", "Copies the resources to the build dir", copyResourcesRunner));
@@ -68,7 +68,7 @@ public class DefaultProjectRunnerTest extends BaseTest {
     Runnable cleanRunner = createStrictMock(Runnable.class);
     replay(cleanRunner);
 
-    Project project = new Project(null);
+    Project project = new Project(null, output);
     project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
     project.targetGraph = targetGraphBuilder.build(project);
 
@@ -92,7 +92,7 @@ public class DefaultProjectRunnerTest extends BaseTest {
     Runnable intRunner = makeUncalledRunnerMock();
     Runnable cleanRunner = makeRunnerMock();
 
-    Project project = new Project(null);
+    Project project = new Project(null, output);
     project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
     project.targets.put("compile", new Target("compile", "Compiles the project", compileRunner));
     project.targets.put("copyResources", new Target("compile", "Compiles the project", copyResourcesRunner));

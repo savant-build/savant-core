@@ -17,6 +17,9 @@ package org.savantbuild.parser.groovy;
 
 import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.DependencyGroup;
+import org.savantbuild.parser.ParseException;
+
+import java.util.Map;
 
 /**
  * Groovy delegate that defines the dependencies.
@@ -31,28 +34,23 @@ public class DependencyDelegate {
   }
 
   /**
-   * Defines a dependency. This takes the specification for the dependency. This dependency is not optional.
+   * Defines a dependency. This takes a Map of attributes but only the {@code id} attributes is required. This attribute
+   * defines the dependency (as a String). The {@code optional} attribute is optional and defines if the dependency is
+   * optional.
    *
-   * @param spec The specification for the dependency.
+   * @param attributes The attributes.
    * @return The dependency object.
    * @see Dependency#Dependency(String, boolean)
    */
-  public Dependency dependency(String spec) {
-    Dependency dependency = new Dependency(spec, false);
-    group.dependencies.add(dependency);
-    return dependency;
-  }
+  public Dependency dependency(Map<String, Object> attributes) {
+    if (!GroovyTools.hasAttributes(attributes, "id")) {
+      throw new ParseException("Invalid publication definition. It must have the id attribute like this:\n\n" +
+          "  dependency(id: \"org.example:foo:0.1.0\", optional: false)");
+    }
 
-  /**
-   * Defines a dependency. This takes the specification for the dependency and the optional flag.
-   *
-   * @param spec The specification for the dependency.
-   * @param optional The optional flag.
-   * @return The dependency object.
-   * @see Dependency#Dependency(String, boolean)
-   */
-  public Dependency dependency(String spec, boolean optional) {
-    Dependency dependency = new Dependency(spec, optional);
+    String id = GroovyTools.toString(attributes, "id");
+    Boolean optional = (Boolean) attributes.get("optional");
+    Dependency dependency = new Dependency(id, optional != null ? optional : false);
     group.dependencies.add(dependency);
     return dependency;
   }

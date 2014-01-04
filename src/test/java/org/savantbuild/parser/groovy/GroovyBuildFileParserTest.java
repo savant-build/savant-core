@@ -16,18 +16,26 @@
 package org.savantbuild.parser.groovy;
 
 import org.savantbuild.BaseTest;
+import org.savantbuild.dep.domain.Artifact;
+import org.savantbuild.dep.domain.ArtifactID;
+import org.savantbuild.dep.domain.ArtifactMetaData;
 import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.DependencyGroup;
+import org.savantbuild.dep.domain.License;
+import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.domain.Version;
-import org.savantbuild.util.Graph;
-import org.savantbuild.util.HashGraph;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
+import org.savantbuild.util.Graph;
+import org.savantbuild.util.HashGraph;
 import org.testng.annotations.Test;
+
+import java.nio.file.Path;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
@@ -44,7 +52,8 @@ public class GroovyBuildFileParserTest extends BaseTest {
   @Test
   public void parse() {
     GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
-    Project project = parser.parse(projectDir.resolve("src/java/test/org/savantbuild/parser/groovy/simple.savant"));
+    Path buildFile = projectDir.resolve("src/test/java/org/savantbuild/parser/groovy/simple.savant");
+    Project project = parser.parse(buildFile);
     assertEquals(project.group, "group");
     assertEquals(project.name, "name");
     assertEquals(project.version, new Version("1.1"));
@@ -83,5 +92,16 @@ public class GroovyBuildFileParserTest extends BaseTest {
         new DependencyGroup("compile", true, new Dependency("org.example:compile:1.0", false)),
         new DependencyGroup("test-compile", false, new Dependency("org.example:test:1.0", false), new Dependency("org.example:test2:2.0", true)));
     assertEquals(project.dependencies, expectedDependencies);
+
+    // Verify the publications
+    List<Publication> expectedPublications = asList(
+        new Publication(new Artifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), License.Commercial),
+            new ArtifactMetaData(expectedDependencies, License.Commercial),
+            buildFile.getParent().resolve("build/jars/name-1.1.0.jar"), buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar")),
+        new Publication(new Artifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), License.Commercial),
+            new ArtifactMetaData(expectedDependencies, License.Commercial),
+            buildFile.getParent().resolve("build/jars/name-test-1.1.0.jar"), buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar"))
+    );
+    assertEquals(project.publications, expectedPublications);
   }
 }

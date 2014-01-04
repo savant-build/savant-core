@@ -16,11 +16,14 @@
 package org.savantbuild.parser.groovy;
 
 import org.savantbuild.dep.domain.Dependencies;
+import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.domain.Project;
 import org.savantbuild.output.Output;
+
+import java.util.List;
 
 import groovy.lang.Closure;
 
@@ -32,6 +35,7 @@ import groovy.lang.Closure;
  */
 public class ProjectDelegate {
   public final Output output;
+
   public final Project project;
 
   public ProjectDelegate(Output output, Project project) {
@@ -54,15 +58,36 @@ public class ProjectDelegate {
    *   }
    * </pre>
    *
-   * @param closure The closure that is called to setup the workflow configuration. This closure uses the delegate class
-   *                {@link WorkflowDelegate}.
-   * @return The workflow.
+   * @param closure The closure that is called to setup the Dependencies configuration. This closure uses the delegate
+   *                class {@link DependenciesDelegate}.
+   * @return The Dependencies.
    */
   public Dependencies dependencies(Closure closure) {
     project.dependencies = new Dependencies();
     closure.setDelegate(new DependenciesDelegate(project.dependencies));
     closure.run();
     return project.dependencies;
+  }
+
+  /**
+   * Configures the project publications. This method is called with a closure that contains the publication
+   * definitions. It should look like:
+   * <p>
+   * <pre>
+   *   publications {
+   *     publication(name: "foo", file: "build/jars/foo-${project.version}.jar", source: "build/jars/foo-${project.version}-src.jar")
+   *     publication(name: "foo-test", file: "build/jars/foo-test-${project.version}.jar", source: "build/jars/foo-test${project.version}-src.jar")
+   *   }
+   * </pre>
+   *
+   * @param closure The closure that is called to setup the publications. This closure uses the delegate class {@link
+   *                PublicationDelegate}.
+   * @return The list of Publications.
+   */
+  public List<Publication> publications(Closure closure) {
+    closure.setDelegate(new PublicationDelegate(project, project.publications));
+    closure.run();
+    return project.publications;
   }
 
   /**

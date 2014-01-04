@@ -15,18 +15,23 @@
  */
 package org.savantbuild.domain;
 
+import org.savantbuild.dep.DefaultDependencyService;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.domain.License;
+import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.graph.ArtifactGraph;
-import org.savantbuild.util.Graph;
 import org.savantbuild.dep.workflow.Workflow;
+import org.savantbuild.output.Output;
+import org.savantbuild.util.Graph;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,9 +42,13 @@ import java.util.Map;
 public class Project {
   public static final Object GRAPH_EDGE = new Object();
 
-  public final Map<String, Target> targets = new HashMap<>();
+  public final DefaultDependencyService dependencyService;
 
   public final Path directory;
+
+  public final Output output;
+
+  public final Map<String, Target> targets = new HashMap<>();
 
   public ArtifactGraph artifactGraph;
 
@@ -51,16 +60,29 @@ public class Project {
 
   public String name;
 
+  public Path pluginConfigurationDirectory = Paths.get(System.getProperty("user.home") + "/.savant/plugins");
+
+  public List<Publication> publications = new ArrayList<>();
+
   public Graph<Target, Object> targetGraph;
 
   public Version version;
 
   public Workflow workflow;
 
-  public Path pluginConfigurationDirectory = Paths.get(System.getProperty("user.home") + "/.savant/plugins");
-
-  public Project(Path directory) {
+  public Project(Path directory, Output output) {
     this.directory = directory;
+    this.output = output;
+    this.dependencyService = new DefaultDependencyService(output);
+  }
+
+  /**
+   * Integrates the project (using the defined publications and workflow).
+   */
+  public void integrate() {
+    for (Publication publication : publications) {
+      dependencyService.publish(publication, workflow.publishWorkflow);
+    }
   }
 
   /**

@@ -63,7 +63,7 @@ public class GroovyBuildFileParser implements BuildFileParser {
       GroovyClassLoader groovyClassLoader = new GroovyClassLoader(ClassLoader.getSystemClassLoader(), compilerConfig);
       Class<?> buildClass = groovyClassLoader.parseClass(buildFile.toFile());
       ProjectBuildFile script = (ProjectBuildFile) buildClass.newInstance();
-      Project project = new Project(buildFile.getParent());
+      Project project = new Project(buildFile.getParent(), output);
       script.project = project;
       script.output = output;
       script.run();

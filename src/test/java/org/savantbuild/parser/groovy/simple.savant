@@ -20,22 +20,17 @@ project(group: "group", name: "name", version: "1.1", license: "Commercial") {
       dependency(id: "org.example:test2:2.0", optional: true)
     }
   }
-}
 
-java = plugin("org.savantbuild.plugin:groovy:0.1")
+  publications {
+    publication(name: "publication1", type: "jar", file: "build/jars/${project.name}-${project.version}.jar", source: "build/jars/${project.name}-${project.version}-src.jar")
+    publication(name: "publication2", type: "jar", file: "build/jars/${project.name}-test-${project.version}.jar", source: "build/jars/${project.name}-test-${project.version}-src.jar")
+  }
+}
 
 target(name: "compile", description: "This target compiles everything") {
   project.name = "changed"
 }
 
-target(name: "jar", description: "This runs the tests", dependsOn: ["compile"]) {
-
-}
-
-target(name: "test", description: "This runs the tests", dependsOn: ["jar"]) {
-
-}
-
-target(name: "int", description: "Performs an integration release of the project", dependsOn: ["test"]) {
+target(name: "test", description: "This runs the tests", dependsOn: ["compile"]) {
 
 }
