@@ -18,6 +18,7 @@ package org.savantbuild.plugin.groovy;
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.domain.Project;
 import org.savantbuild.output.Output;
+import org.savantbuild.plugin.Plugin;
 import org.savantbuild.runtime.BuildFailureException;
 
 import java.io.FileInputStream;
@@ -34,12 +35,12 @@ import groovy.lang.GroovyObjectSupport;
  *
  * @author Brian Pontarelli
  */
-public class Plugin extends GroovyObjectSupport {
+public class BaseGroovyPlugin extends GroovyObjectSupport implements Plugin {
   public final Output output;
 
   public final Project project;
 
-  protected Plugin(Project project, Output output) {
+  protected BaseGroovyPlugin(Project project, Output output) {
     this.project = project;
     this.output = output;
   }
