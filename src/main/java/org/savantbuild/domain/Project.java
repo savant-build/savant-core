@@ -77,15 +77,6 @@ public class Project {
   }
 
   /**
-   * Integrates the project (using the defined publications and workflow).
-   */
-  public void integrate() {
-    for (Publication publication : publications) {
-      dependencyService.publish(publication, workflow.publishWorkflow);
-    }
-  }
-
-  /**
    * Converts this project into an Artifact. This artifact uses the project's name for the item name and it has a type
    * of {@code jar}.
    *
