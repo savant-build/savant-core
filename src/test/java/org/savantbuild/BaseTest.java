@@ -55,7 +55,7 @@ public abstract class BaseTest {
   public static void setup() {
     projectDir = Paths.get("");
     if (!Files.isRegularFile(projectDir.resolve("LICENSE"))) {
-      projectDir = projectDir.resolve("savant-core");
+      projectDir = projectDir.resolve("../savant-core");
     }
 
     cache = projectDir.resolve("build/test/cache");
