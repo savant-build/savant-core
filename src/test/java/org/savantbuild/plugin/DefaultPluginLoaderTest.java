@@ -15,7 +15,7 @@
  */
 package org.savantbuild.plugin;
 
-import org.savantbuild.BaseTest;
+import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
@@ -40,7 +40,7 @@ import static org.testng.Assert.fail;
  *
  * @author Brian Pontarelli
  */
-public class DefaultPluginLoaderTest extends BaseTest {
+public class DefaultPluginLoaderTest extends BaseUnitTest {
   @BeforeClass
   public void generateMD5Files() throws Exception {
     MD5.writeMD5(MD5.fromPath(projectDir.resolve("src/test/plugin-repository/org/savantbuild/test/bad-class/0.1.0/bad-class-0.1.0.jar")),

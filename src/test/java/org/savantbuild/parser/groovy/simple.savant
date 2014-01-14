@@ -22,8 +22,12 @@ project(group: "group", name: "name", version: "1.1", license: "Commercial") {
   }
 
   publications {
-    publication(name: "publication1", type: "jar", file: "build/jars/${project.name}-${project.version}.jar", source: "build/jars/${project.name}-${project.version}-src.jar")
-    publication(name: "publication2", type: "jar", file: "build/jars/${project.name}-test-${project.version}.jar", source: "build/jars/${project.name}-test-${project.version}-src.jar")
+    main{
+      publication(name: "publication1", type: "jar", file: "build/jars/${project.name}-${project.version}.jar", source: "build/jars/${project.name}-${project.version}-src.jar")
+    }
+    test {
+      publication(name: "publication2", type: "jar", file: "build/jars/${project.name}-test-${project.version}.jar", source: "build/jars/${project.name}-test-${project.version}-src.jar")
+    }
   }
 }
 

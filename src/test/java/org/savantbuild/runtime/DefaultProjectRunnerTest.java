@@ -15,7 +15,7 @@
  */
 package org.savantbuild.runtime;
 
-import org.savantbuild.BaseTest;
+import org.savantbuild.BaseUnitTest;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
@@ -34,7 +34,7 @@ import static org.testng.Assert.fail;
  *
  * @author Brian Pontarelli
  */
-public class DefaultProjectRunnerTest extends BaseTest {
+public class DefaultProjectRunnerTest extends BaseUnitTest {
   public TargetGraphBuilder targetGraphBuilder = new DefaultTargetGraphBuilder();
 
   @Test

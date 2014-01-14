@@ -15,30 +15,33 @@
  */
 package org.savantbuild.runtime;
 
-import org.savantbuild.BaseTest;
+import java.nio.file.Files;
+
+import org.savantbuild.BaseUnitTest;
+import org.savantbuild.io.FileTools;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
 import org.savantbuild.parser.groovy.GroovyBuildFileParser;
 import org.testng.annotations.Test;
 
-import java.nio.file.Files;
-
-import static java.util.Arrays.asList;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Tests the build runner.
  *
  * @author Brian Pontarelli
  */
-public class DefaultBuildRunnerTest extends BaseTest {
+public class DefaultBuildRunnerTest extends BaseUnitTest {
   @Test
-  public void javaProject() {
-    BuildRunner runner = new DefaultBuildRunner(new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner());
-    runner.run(projectDir.resolve("test-project/build.savant"), asList("clean"));
-    assertFalse(Files.isDirectory(projectDir.resolve("test-project/build")));
+  public void javaProject() throws Exception {
+    FileTools.prune(projectDir.resolve("test-project/build"));
+    Files.createDirectories(projectDir.resolve("test-project/build"));
 
-    runner.run(projectDir.resolve("test-project/build.savant"), asList("compile"));
-    assertTrue(Files.isRegularFile(projectDir.resolve("test-project/build/classes/main/MyClass.class")));
+    BuildRunner runner = new DefaultBuildRunner(new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner());
+    runner.run(projectDir.resolve("test-project/build.savant"), new RuntimeConfiguration(false, "write"));
+    assertEquals(new String(Files.readAllBytes(projectDir.resolve("test-project/build/test-file.txt")), "UTF-8"), "File contents\n");
+
+    runner.run(projectDir.resolve("test-project/build.savant"), new RuntimeConfiguration(true, "delete"));
+    assertFalse(Files.isDirectory(projectDir.resolve("test-project/build")));
   }
 }

@@ -15,17 +15,37 @@
  */
 package org.savantbuild.runtime;
 
-import org.savantbuild.BaseTest;
+import org.savantbuild.BaseUnitTest;
 import org.testng.annotations.Test;
+
+import static java.util.Arrays.asList;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Tests the default runtime configuration parser.
  *
  * @author Brian Pontarelli
  */
-public class DefaultRuntimeConfigurationParserTest extends BaseTest {
+public class DefaultRuntimeConfigurationParserTest extends BaseUnitTest {
   @Test
   public void parse() throws Exception {
+    DefaultRuntimeConfigurationParser parser = new DefaultRuntimeConfigurationParser();
+    RuntimeConfiguration config = parser.parse("foo", "bar");
+    assertTrue(config.colorizeOutput);
+    assertEquals(config.targets, asList("foo", "bar"));
 
+    config = parser.parse("foo", "bar", "--noColor");
+    assertFalse(config.colorizeOutput);
+    assertEquals(config.targets, asList("foo", "bar"));
+
+    config = parser.parse("--noColor", "foo", "bar");
+    assertFalse(config.colorizeOutput);
+    assertEquals(config.targets, asList("foo", "bar"));
+
+    config = parser.parse("foo", "--noColor", "bar");
+    assertFalse(config.colorizeOutput);
+    assertEquals(config.targets, asList("foo", "bar"));
   }
 }

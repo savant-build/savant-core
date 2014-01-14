@@ -45,7 +45,7 @@ public class PublicationsDelegate extends GroovyObjectSupport {
 
   @Override
   public Object invokeMethod(String name, Object args) {
-    if (!(args instanceof Closure)) {
+    if (!(args instanceof Object[]) || !(((Object[]) args)[0] instanceof Closure)) {
       throw new ParseException("Invalid publication group definition. It must have the name like this:\n\n" +
           "  publications {\n" +
           "    main {\n" +
@@ -54,7 +54,7 @@ public class PublicationsDelegate extends GroovyObjectSupport {
           "  }");
     }
 
-    Closure closure = (Closure) args;
+    Closure closure = (Closure) ((Object[]) args)[0];
     closure.setDelegate(new PublicationGroupDelegate(project, publications, name));
     closure.run();
     return publications.publicationGroups.get(name);

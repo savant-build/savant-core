@@ -15,7 +15,7 @@
  */
 package org.savantbuild.domain;
 
-import org.savantbuild.BaseTest;
+import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
@@ -28,7 +28,7 @@ import static org.testng.Assert.assertEquals;
  *
  * @author Brian Pontarelli
  */
-public class ProjectTest extends BaseTest {
+public class ProjectTest extends BaseUnitTest {
   @Test
   public void toArtifact() {
     Project project = new Project(projectDir, output);

@@ -31,8 +31,6 @@ import org.savantbuild.plugin.PluginLoadException;
 import org.savantbuild.security.MD5Exception;
 import org.savantbuild.util.CyclicException;
 
-import com.google.inject.Inject;
-
 /**
  * Default build runner. This is essentially the main entry point for the build system. It takes a build file and a list
  * of targets and runs the build.
@@ -48,8 +46,7 @@ public class DefaultBuildRunner implements BuildRunner {
 
   private final ProjectRunner projectRunner;
 
-  @Inject
-  DefaultBuildRunner(BuildFileParser buildFileParser, ProjectRunner projectRunner) {
+  public DefaultBuildRunner(BuildFileParser buildFileParser, ProjectRunner projectRunner) {
     this.buildFileParser = buildFileParser;
     this.projectRunner = projectRunner;
   }

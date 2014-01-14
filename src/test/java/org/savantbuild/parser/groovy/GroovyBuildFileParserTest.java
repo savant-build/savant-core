@@ -17,7 +17,7 @@ package org.savantbuild.parser.groovy;
 
 import java.nio.file.Path;
 
-import org.savantbuild.BaseTest;
+import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.ArtifactMetaData;
@@ -48,7 +48,7 @@ import static org.testng.Assert.assertTrue;
  *
  * @author Brian Pontarelli
  */
-public class GroovyBuildFileParserTest extends BaseTest {
+public class GroovyBuildFileParserTest extends BaseUnitTest {
   @Test
   public void parse() {
     GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());

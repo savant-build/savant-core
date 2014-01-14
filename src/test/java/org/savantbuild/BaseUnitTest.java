@@ -15,7 +15,13 @@
  */
 package org.savantbuild;
 
-import com.sun.net.httpserver.HttpServer;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
+
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
@@ -26,13 +32,7 @@ import org.savantbuild.output.SystemOutOutput;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
-
+import com.sun.net.httpserver.HttpServer;
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.fail;
 
@@ -41,8 +41,8 @@ import static org.testng.AssertJUnit.fail;
  *
  * @author Brian Pontarelli
  */
-@Test(groups = {"unit", "integration", "acceptance", "functional"})
-public abstract class BaseTest {
+@Test(groups = "unit")
+public abstract class BaseUnitTest {
   public static final Output output = new SystemOutOutput(false);
 
   public static Path projectDir;

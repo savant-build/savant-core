@@ -15,6 +15,8 @@
  */
 package org.savantbuild.runtime;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,5 +33,13 @@ public class RuntimeConfiguration {
   /**
    * The list of targets to execute (in order).
    */
-  public List<String> targets;
+  public List<String> targets = new ArrayList<>();
+
+  public RuntimeConfiguration() {
+  }
+
+  public RuntimeConfiguration(boolean colorizeOutput, String... targets) {
+    this.colorizeOutput = colorizeOutput;
+    Collections.addAll(this.targets, targets);
+  }
 }
