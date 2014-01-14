@@ -15,21 +15,20 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.util.Map;
+
 import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.domain.Dependency;
-import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.domain.Project;
+import org.savantbuild.domain.Publications;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
 import org.savantbuild.plugin.DefaultPluginLoader;
 import org.savantbuild.plugin.Plugin;
 import org.savantbuild.plugin.PluginLoader;
-
-import java.util.List;
-import java.util.Map;
 
 import groovy.lang.Closure;
 
@@ -110,11 +109,11 @@ public class ProjectDelegate {
    * </pre>
    *
    * @param closure The closure that is called to setup the publications. This closure uses the delegate class {@link
-   *                PublicationDelegate}.
+   *                PublicationsDelegate}.
    * @return The list of Publications.
    */
-  public List<Publication> publications(Closure closure) {
-    closure.setDelegate(new PublicationDelegate(project, project.publications));
+  public Publications publications(Closure closure) {
+    closure.setDelegate(new PublicationsDelegate(project, project.publications));
     closure.run();
     return project.publications;
   }

@@ -15,17 +15,17 @@
  */
 package org.savantbuild.plugin.groovy;
 
-import org.savantbuild.dep.domain.ArtifactID;
-import org.savantbuild.domain.Project;
-import org.savantbuild.output.Output;
-import org.savantbuild.plugin.Plugin;
-import org.savantbuild.runtime.BuildFailureException;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
+
+import org.savantbuild.dep.domain.ArtifactID;
+import org.savantbuild.domain.Project;
+import org.savantbuild.output.Output;
+import org.savantbuild.plugin.Plugin;
+import org.savantbuild.runtime.BuildFailureException;
 
 import groovy.lang.GroovyObjectSupport;
 
@@ -74,7 +74,7 @@ public class BaseGroovyPlugin extends GroovyObjectSupport implements Plugin {
   protected Properties loadConfiguration(ArtifactID id, String errorMessage) {
     Path configFile = project.pluginConfigurationDirectory.resolve(id.group + "." + id.name + ".properties");
     if (!Files.isRegularFile(configFile)) {
-      fail(errorMessage, configFile);
+      fail(errorMessage);
     }
 
     try (FileInputStream fis = new FileInputStream(configFile.toFile())) {

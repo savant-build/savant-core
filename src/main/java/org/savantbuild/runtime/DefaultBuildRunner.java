@@ -15,21 +15,32 @@
  */
 package org.savantbuild.runtime;
 
+import java.nio.file.Path;
+
 import org.savantbuild.dep.LicenseException;
+import org.savantbuild.dep.PublishException;
 import org.savantbuild.dep.domain.CompatibilityException;
 import org.savantbuild.dep.domain.VersionException;
-import org.savantbuild.util.CyclicException;
-import org.savantbuild.security.MD5Exception;
 import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
 import org.savantbuild.dep.workflow.ArtifactMissingException;
 import org.savantbuild.dep.workflow.process.ProcessFailureException;
 import org.savantbuild.domain.Project;
 import org.savantbuild.parser.BuildFileParser;
 import org.savantbuild.parser.ParseException;
+import org.savantbuild.plugin.PluginLoadException;
+import org.savantbuild.security.MD5Exception;
+import org.savantbuild.util.CyclicException;
 
-import java.nio.file.Path;
+import com.google.inject.Inject;
 
 /**
+ * Default build runner. This is essentially the main entry point for the build system. It takes a build file and a list
+ * of targets and runs the build.
+ * <p>
+ * This implementation uses the main {@link BuildFileParser} to parse the build file into domain objects.
+ * <p>
+ * Once the build file is parsed, this uses the default {@link ProjectRunner} to run build on the project.
+ *
  * @author Brian Pontarelli
  */
 public class DefaultBuildRunner implements BuildRunner {
@@ -37,17 +48,21 @@ public class DefaultBuildRunner implements BuildRunner {
 
   private final ProjectRunner projectRunner;
 
-  public DefaultBuildRunner(BuildFileParser buildFileParser, ProjectRunner projectRunner) {
+  @Inject
+  DefaultBuildRunner(BuildFileParser buildFileParser, ProjectRunner projectRunner) {
     this.buildFileParser = buildFileParser;
     this.projectRunner = projectRunner;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   @Override
-  public void run(Path buildFile, Iterable<String> targets)
-  throws ArtifactMetaDataMissingException, ArtifactMissingException, BuildRunException, BuildFailureException,
-  CompatibilityException, CyclicException, LicenseException, MD5Exception, ParseException, ProcessFailureException,
-  VersionException {
+  public void run(Path buildFile, RuntimeConfiguration runtimeConfiguration)
+      throws ArtifactMetaDataMissingException, ArtifactMissingException,
+      BuildRunException, BuildFailureException, CompatibilityException, CyclicException, LicenseException, MD5Exception,
+      ParseException, PluginLoadException, ProcessFailureException, PublishException, VersionException {
     Project project = buildFileParser.parse(buildFile);
-    projectRunner.run(project, targets);
+    projectRunner.run(project, runtimeConfiguration.targets);
   }
 }

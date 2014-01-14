@@ -15,6 +15,8 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.nio.file.Path;
+
 import org.savantbuild.BaseTest;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
@@ -28,14 +30,12 @@ import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.domain.Project;
+import org.savantbuild.domain.Publications;
 import org.savantbuild.domain.Target;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
 import org.savantbuild.util.Graph;
 import org.savantbuild.util.HashGraph;
 import org.testng.annotations.Test;
-
-import java.nio.file.Path;
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
@@ -94,10 +94,13 @@ public class GroovyBuildFileParserTest extends BaseTest {
     assertEquals(project.dependencies, expectedDependencies);
 
     // Verify the publications
-    List<Publication> expectedPublications = asList(
+    Publications expectedPublications = new Publications();
+    expectedPublications.add("main",
         new Publication(new Artifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), License.Commercial),
             new ArtifactMetaData(expectedDependencies, License.Commercial),
-            buildFile.getParent().resolve("build/jars/name-1.1.0.jar"), buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar")),
+            buildFile.getParent().resolve("build/jars/name-1.1.0.jar"), buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar"))
+    );
+    expectedPublications.add("test",
         new Publication(new Artifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), License.Commercial),
             new ArtifactMetaData(expectedDependencies, License.Commercial),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0.jar"), buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar"))
