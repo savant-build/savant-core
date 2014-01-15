@@ -34,6 +34,8 @@ public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationPa
     for (String argument : arguments) {
       if (argument.equals("--noColor")) {
         configuration.colorizeOutput = false;
+      } else if (argument.equals("--debug")) {
+        configuration.debug = true;
       } else {
         configuration.targets.add(argument);
       }

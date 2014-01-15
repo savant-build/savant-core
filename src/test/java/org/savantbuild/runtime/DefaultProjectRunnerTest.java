@@ -53,7 +53,7 @@ public class DefaultProjectRunnerTest extends BaseUnitTest {
     project.targets.put("int", new Target("int", "Integrates the project", intRunner, "test"));
     project.targetGraph = targetGraphBuilder.build(project);
 
-    ProjectRunner runner = new DefaultProjectRunner();
+    ProjectRunner runner = new DefaultProjectRunner(output);
     runner.run(project, asList("int"));
 
     verify(compileRunner);
@@ -72,7 +72,7 @@ public class DefaultProjectRunnerTest extends BaseUnitTest {
     project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
     project.targetGraph = targetGraphBuilder.build(project);
 
-    ProjectRunner runner = new DefaultProjectRunner();
+    ProjectRunner runner = new DefaultProjectRunner(output);
     try {
       runner.run(project, asList("clear")); // Simulates a user typo
       fail("Should have failed");
@@ -100,7 +100,7 @@ public class DefaultProjectRunnerTest extends BaseUnitTest {
     project.targets.put("int", new Target("int", "Integrates the project", intRunner, "test"));
     project.targetGraph = targetGraphBuilder.build(project);
 
-    ProjectRunner runner = new DefaultProjectRunner();
+    ProjectRunner runner = new DefaultProjectRunner(output);
     runner.run(project, asList("clean"));
 
     verify(compileRunner);

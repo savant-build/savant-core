@@ -15,6 +15,10 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.util.Map;
+import java.util.Properties;
+
+import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.domain.VersionException;
@@ -22,9 +26,9 @@ import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
-
-import java.util.Map;
-import java.util.Properties;
+import org.savantbuild.plugin.DefaultPluginLoader;
+import org.savantbuild.plugin.Plugin;
+import org.savantbuild.plugin.PluginLoader;
 
 import groovy.lang.Closure;
 import groovy.lang.Script;
@@ -43,6 +47,29 @@ public abstract class ProjectBuildFile extends Script {
   public Output output;
 
   public Project project;
+
+  /**
+   * Loads a plugin and returns a new instance of the Plugin class. This method is called with the information used to
+   * load the plugin like this:
+   * <p>
+   * <pre>
+   *   java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.0")
+   * </pre>
+   *
+   * @param attributes The Attributes used to load the plugin.
+   * @return The Plugin instance.
+   */
+  public Plugin loadPlugin(Map<String, Object> attributes) {
+    if (!GroovyTools.hasAttributes(attributes, "id")) {
+      throw new ParseException("Invalid loadPlugin call. You must supply the id of the plugin to load like this:\n\n" +
+          "  groovy = loadPlugin(id: \"org.savantbuild.plugin:groovy:0.1.0\")");
+    }
+
+    String id = GroovyTools.toString(attributes, "id");
+    PluginLoader loader = new DefaultPluginLoader(project, output);
+    Dependency pluginDependency = new Dependency(id, false);
+    return loader.load(pluginDependency);
+  }
 
   /**
    * Sets up the project information in the build file. This method is called with a Map of values and a closure like

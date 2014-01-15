@@ -15,17 +15,17 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.savantbuild.domain.Project;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.BuildFileParser;
 import org.savantbuild.parser.ParseException;
 import org.savantbuild.parser.TargetGraphBuilder;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import groovy.lang.GroovyClassLoader;
 
@@ -63,7 +63,7 @@ public class GroovyBuildFileParser implements BuildFileParser {
       GroovyClassLoader groovyClassLoader = new GroovyClassLoader(ClassLoader.getSystemClassLoader(), compilerConfig);
       Class<?> buildClass = groovyClassLoader.parseClass(buildFile.toFile());
       ProjectBuildFile script = (ProjectBuildFile) buildClass.newInstance();
-      Project project = new Project(buildFile.getParent(), output);
+      Project project = new Project(buildFile.toAbsolutePath().getParent(), output);
       script.project = project;
       script.output = output;
       script.run();

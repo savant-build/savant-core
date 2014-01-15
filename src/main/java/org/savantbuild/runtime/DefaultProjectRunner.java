@@ -15,11 +15,12 @@
  */
 package org.savantbuild.runtime;
 
-import org.savantbuild.domain.Project;
-import org.savantbuild.domain.Target;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import org.savantbuild.domain.Project;
+import org.savantbuild.domain.Target;
+import org.savantbuild.output.Output;
 
 /**
  * Default project object runner. Using the {@link Project} object, this executes build targets of the project.
@@ -27,6 +28,12 @@ import java.util.Set;
  * @author Brian Pontarelli
  */
 public class DefaultProjectRunner implements ProjectRunner {
+  private final Output output;
+
+  public DefaultProjectRunner(Output output) {
+    this.output = output;
+  }
+
   /**
    * Runs the targets by finding each target and then performing a graph traversal of that targets dependencies. This
    * ensures that a target is not called twice.
@@ -43,8 +50,7 @@ public class DefaultProjectRunner implements ProjectRunner {
         throw new BuildRunException("Invalid target [" + targetName + "]");
       }
 
-      target.invocation.run();
-      calledTargets.add(targetName);
+      runTarget(target, calledTargets);
 
       // Traverse the target dependency graph if the target has dependencies (is in the graph)
       if (project.targetGraph.contains(target)) {
@@ -53,11 +59,18 @@ public class DefaultProjectRunner implements ProjectRunner {
             return false;
           }
 
+          runTarget(destination, calledTargets);
           destination.invocation.run();
           calledTargets.add(destination.name);
           return true;
         });
       }
     });
+  }
+
+  private void runTarget(Target target, Set<String> calledTargets) {
+    output.info(":[%s]:", target.name);
+    target.invocation.run();
+    calledTargets.add(target.name);
   }
 }

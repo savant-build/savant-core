@@ -35,6 +35,11 @@ public class RuntimeConfiguration {
    */
   public List<String> targets = new ArrayList<>();
 
+  /**
+   * Determines if debug output is enabled.
+   */
+  public boolean debug;
+
   public RuntimeConfiguration() {
   }
 

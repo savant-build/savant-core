@@ -39,6 +39,9 @@ public class Main {
     RuntimeConfigurationParser runtimeConfigurationParser = new DefaultRuntimeConfigurationParser();
     RuntimeConfiguration runtimeConfiguration = runtimeConfigurationParser.parse(args);
     Output output = new SystemOutOutput(runtimeConfiguration.colorizeOutput);
+    if (runtimeConfiguration.debug) {
+      output.enableDebug();
+    }
 
     Path buildFile = Paths.get("build.savant");
     if (!Files.isRegularFile(buildFile) || !Files.isReadable(buildFile)) {
@@ -46,7 +49,7 @@ public class Main {
       System.exit(1);
     }
 
-    BuildRunner buildRunner = new DefaultBuildRunner(new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner());
+    BuildRunner buildRunner = new DefaultBuildRunner(new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
     buildRunner.run(buildFile, runtimeConfiguration);
   }
 }

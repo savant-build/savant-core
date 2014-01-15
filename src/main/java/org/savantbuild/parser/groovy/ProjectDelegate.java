@@ -75,29 +75,6 @@ public class ProjectDelegate {
   }
 
   /**
-   * Loads a plugin and returns a new instance of the Plugin class. This method is called with the information used to
-   * load the plugin like this:
-   * <p>
-   * <pre>
-   *   java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.0")
-   * </pre>
-   *
-   * @param attributes The Attributes used to load the plugin.
-   * @return The Plugin instance.
-   */
-  public Plugin loadPlugin(Map<String, Object> attributes) {
-    if (!GroovyTools.hasAttributes(attributes, "id")) {
-      throw new ParseException("Invalid loadPlugin call. You must supply the id of the plugin to load like this:\n\n" +
-          "  groovy = loadPlugin(id: \"org.savantbuild.plugin:groovy:0.1.0\")");
-    }
-
-    String id = GroovyTools.toString(attributes, "id");
-    PluginLoader loader = new DefaultPluginLoader(project, output);
-    Dependency pluginDependency = new Dependency(id, false);
-    return loader.load(pluginDependency);
-  }
-
-  /**
    * Configures the project publications. This method is called with a closure that contains the publication
    * definitions. It should look like:
    * <p>
