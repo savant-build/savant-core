@@ -50,21 +50,18 @@ public class DefaultProjectRunner implements ProjectRunner {
         throw new BuildRunException("Invalid target [" + targetName + "]");
       }
 
-      runTarget(target, calledTargets);
-
       // Traverse the target dependency graph if the target has dependencies (is in the graph)
       if (project.targetGraph.contains(target)) {
-        project.targetGraph.traverse(target, (origin, destination, edge, depth) -> {
+        project.targetGraph.traverseUp(target, (origin, destination, edge, depth) -> {
           if (calledTargets.contains(destination.name)) {
-            return false;
+            return;
           }
 
           runTarget(destination, calledTargets);
-          destination.invocation.run();
-          calledTargets.add(destination.name);
-          return true;
         });
       }
+
+      runTarget(target, calledTargets);
     });
   }
 
@@ -72,5 +69,6 @@ public class DefaultProjectRunner implements ProjectRunner {
     output.info(":[%s]:", target.name);
     target.invocation.run();
     calledTargets.add(target.name);
+    output.info("");
   }
 }

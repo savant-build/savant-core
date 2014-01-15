@@ -15,6 +15,9 @@
  */
 package org.savantbuild.runtime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.savantbuild.BaseUnitTest;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
@@ -24,8 +27,10 @@ import org.testng.annotations.Test;
 
 import static java.util.Arrays.asList;
 import static org.easymock.EasyMock.createStrictMock;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -37,12 +42,16 @@ import static org.testng.Assert.fail;
 public class DefaultProjectRunnerTest extends BaseUnitTest {
   public TargetGraphBuilder targetGraphBuilder = new DefaultTargetGraphBuilder();
 
+  private List<String> calledTargets = new ArrayList<>();
+
   @Test
   public void runDependencies() {
-    Runnable compileRunner = makeRunnerMock();
-    Runnable copyResourcesRunner = makeRunnerMock();
-    Runnable testRunner = makeRunnerMock();
-    Runnable intRunner = makeRunnerMock();
+    calledTargets.clear();
+
+    Runnable compileRunner = makeRunnerMock("compile");
+    Runnable copyResourcesRunner = makeRunnerMock("copyResources");
+    Runnable testRunner = makeRunnerMock("test");
+    Runnable intRunner = makeRunnerMock("int");
     Runnable cleanRunner = makeUncalledRunnerMock();
 
     Project project = new Project(null, output);
@@ -55,6 +64,8 @@ public class DefaultProjectRunnerTest extends BaseUnitTest {
 
     ProjectRunner runner = new DefaultProjectRunner(output);
     runner.run(project, asList("int"));
+
+    assertEquals(calledTargets, asList("compile", "copyResources", "test", "int"));
 
     verify(compileRunner);
     verify(copyResourcesRunner);
@@ -86,11 +97,13 @@ public class DefaultProjectRunnerTest extends BaseUnitTest {
 
   @Test
   public void runNoDependencies() {
+    calledTargets.clear();
+
     Runnable compileRunner = makeUncalledRunnerMock();
     Runnable copyResourcesRunner = makeUncalledRunnerMock();
     Runnable testRunner = makeUncalledRunnerMock();
     Runnable intRunner = makeUncalledRunnerMock();
-    Runnable cleanRunner = makeRunnerMock();
+    Runnable cleanRunner = makeRunnerMock("clean");
 
     Project project = new Project(null, output);
     project.targets.put("clean", new Target("clean", "Cleans the project", cleanRunner));
@@ -103,6 +116,8 @@ public class DefaultProjectRunnerTest extends BaseUnitTest {
     ProjectRunner runner = new DefaultProjectRunner(output);
     runner.run(project, asList("clean"));
 
+    assertEquals(calledTargets, asList("clean"));
+
     verify(compileRunner);
     verify(copyResourcesRunner);
     verify(testRunner);
@@ -110,9 +125,10 @@ public class DefaultProjectRunnerTest extends BaseUnitTest {
     verify(cleanRunner);
   }
 
-  private Runnable makeRunnerMock() {
+  private Runnable makeRunnerMock(String targetName) {
     Runnable runner = createStrictMock(Runnable.class);
     runner.run();
+    expectLastCall().andAnswer(() -> this.calledTargets.add(targetName));
     replay(runner);
     return runner;
   }
