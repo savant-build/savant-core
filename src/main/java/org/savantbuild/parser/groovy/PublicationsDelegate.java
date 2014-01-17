@@ -85,7 +85,7 @@ public class PublicationsDelegate extends GroovyObjectSupport {
      */
     public Publication publication(Map<String, Object> attributes) {
 
-      if (!GroovyTools.hasAttributes(attributes, "name", "type", "file")) {
+      if (!GroovyTools.hasAttributes(attributes, "name", "type", "file", "source")) {
         throw new ParseException("Invalid publication definition. It must have the name, type, file and source attributes " +
             "like this:\n\n" +
             "  publication(name: \"foo\", type: \"jar\", file: \"build/jars/foo-${project.version}.jar\", source: \"build/jars/foo-${project.version}-src.jar\")");
