@@ -44,7 +44,7 @@ import org.savantbuild.output.Output;
 public class DefaultPluginLoader implements PluginLoader {
   public static final ResolveConfiguration RESOLVE_CONFIGURATION = new ResolveConfiguration()
       .with("compile", new TypeResolveConfiguration(true, true))
-      .with("run", new TypeResolveConfiguration(true, true));
+      .with("runtime", new TypeResolveConfiguration(true, true));
 
   private final Output output;
 
@@ -64,7 +64,7 @@ public class DefaultPluginLoader implements PluginLoader {
 
 //    Artifact root = project.toArtifact();
     Artifact root = new Artifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", License.Apachev2);
-    Dependencies dependencies = new Dependencies(new DependencyGroup("run", false, pluginDependency));
+    Dependencies dependencies = new Dependencies(new DependencyGroup("runtime", false, pluginDependency));
     DependencyGraph dependencyGraph = project.dependencyService.buildGraph(root, dependencies, project.workflow);
     ArtifactGraph artifactGraph = project.dependencyService.reduce(dependencyGraph);
     ResolvedArtifactGraph resolvedArtifactGraph = project.dependencyService.resolve(artifactGraph, project.workflow, RESOLVE_CONFIGURATION);
