@@ -15,6 +15,9 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.util.List;
+import java.util.Map;
+
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
@@ -23,9 +26,6 @@ import org.savantbuild.dep.workflow.process.Process;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
-
-import java.util.List;
-import java.util.Map;
 
 import groovy.lang.Closure;
 
@@ -37,6 +37,7 @@ import groovy.lang.Closure;
  */
 public class WorkflowDelegate {
   public final Output output;
+
   public final Workflow workflow;
 
   public WorkflowDelegate(Output output, Workflow workflow) {
@@ -65,6 +66,25 @@ public class WorkflowDelegate {
   }
 
   /**
+   * Configures the standard project workflow as follows:
+   * <p>
+   * <pre>
+   *   fetch {
+   *     cache()
+   *     url(url: "http://savant.inversoft.org/repository")
+   *   }
+   *   publish {
+   *     cache()
+   *   }
+   * </pre>
+   */
+  public void standard() {
+    workflow.fetchWorkflow.processes.add(new CacheProcess(output, null));
+    workflow.fetchWorkflow.processes.add(new URLProcess(output, "http://savant.inversoft.org", null, null));
+    workflow.publishWorkflow.processes.add(new CacheProcess(output, null));
+  }
+
+  /**
    * Process delegate class that is used to configure {@link Process} instances for the {@link FetchWorkflow} and {@link
    * PublishWorkflow} of the {@link Workflow}.
    *
@@ -72,11 +92,21 @@ public class WorkflowDelegate {
    */
   public static class ProcessDelegate {
     public final Output output;
+
     public final List<Process> processes;
 
     public ProcessDelegate(Output output, List<Process> processes) {
       this.output = output;
       this.processes = processes;
+    }
+
+    /**
+     * Adds a {@link CacheProcess} to the workflow that uses the given attributes.
+     *
+     * @param attributes The attributes.
+     */
+    public void cache(Map<String, Object> attributes) {
+      processes.add(new CacheProcess(output, GroovyTools.toString(attributes, "dir")));
     }
 
     /**
@@ -92,15 +122,6 @@ public class WorkflowDelegate {
 
       processes.add(new URLProcess(output, GroovyTools.toString(attributes, "url"), GroovyTools.toString(attributes, "username"),
           GroovyTools.toString(attributes, "password")));
-    }
-
-    /**
-     * Adds a {@link CacheProcess} to the workflow that uses the given attributes.
-     *
-     * @param attributes The attributes.
-     */
-    public void cache(Map<String, Object> attributes) {
-      processes.add(new CacheProcess(output, GroovyTools.toString(attributes, "dir")));
     }
   }
 }

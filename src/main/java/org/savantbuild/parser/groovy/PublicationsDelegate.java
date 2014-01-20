@@ -15,6 +15,7 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 import org.savantbuild.dep.domain.Artifact;
@@ -58,6 +59,23 @@ public class PublicationsDelegate extends GroovyObjectSupport {
     closure.setDelegate(new PublicationGroupDelegate(project, publications, name));
     closure.run();
     return publications.publicationGroups.get(name);
+  }
+
+  /**
+   * Configures the standard project publications. This includes the main and test JAR files along with their source JAR
+   * files that are located in the <code>build/jars</code> directory.
+   */
+  public void standard() {
+    ArtifactMetaData metaData = new ArtifactMetaData(project.dependencies, project.license);
+    Artifact mainArtifact = new Artifact(new ArtifactID(project.group, project.name, project.name, "jar"), project.version, project.license);
+    Path mainJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactFile());
+    Path mainSourceJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactSourceFile());
+    publications.add("main", new Publication(mainArtifact, metaData, mainJar, mainSourceJar));
+
+    Artifact testArtifact = new Artifact(new ArtifactID(project.group, project.name, project.name + "-test", "jar"), project.version, project.license);
+    Path testJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactTestFile());
+    Path testSourceJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactTestSourceFile());
+    publications.add("test", new Publication(testArtifact, metaData, testJar, testSourceJar));
   }
 
   /**

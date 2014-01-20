@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License.
+ */
+project(group: "org.savantbuild", name: "savant-core", version: "0.1.0", license: "Apachev2") {
+  workflow {
+    standard()
+  }
+
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.savantbuild:savant-dependency-management:0.1.0-{integration}")
+      dependency(id: "org.savantbuild:savant-utils:0.1.0-{integration}")
+    }
+    group(type: "test-compile") {
+      dependency(id: "org.testng:testng:6.8.7")
+    }
+  }
+
+  publications {
+    standard()
+  }
+}
+
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:0.1.0-{integration}")
+
+java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.0-{integration}")
+java.settings.javaVersion = "1.8"
+
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:0.1.0-{integration}")
+javaTestNG.settings.javaVersion = "1.8"
+
+
+target(name: "clean", description: "Cleans the project") {
+  java.clean()
+}
+
+target(name: "compile", description: "Compiles the project") {
+  java.compileMain()
+  java.compileTest()
+}
+
+target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
+  java.jar()
+}
+
+target(name: "test", description: "Runs the project's tests", dependsOn: ["jar"]) {
+  javaTestNG.test()
+}
+
+target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {
+  dependency.integrate()
+}
