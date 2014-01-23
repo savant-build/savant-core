@@ -49,7 +49,12 @@ public class Main {
       System.exit(1);
     }
 
-    BuildRunner buildRunner = new DefaultBuildRunner(new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
-    buildRunner.run(buildFile, runtimeConfiguration);
+    try {
+      BuildRunner buildRunner = new DefaultBuildRunner(new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
+      buildRunner.run(buildFile, runtimeConfiguration);
+    } catch (Exception e) {
+      output.error("Build failed due to exception [%s]. Enable debug to see the stack trace.", e.getMessage());
+      System.exit(1);
+    }
   }
 }

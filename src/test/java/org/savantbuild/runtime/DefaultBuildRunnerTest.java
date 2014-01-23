@@ -39,7 +39,7 @@ public class DefaultBuildRunnerTest extends BaseUnitTest {
 
     BuildRunner runner = new DefaultBuildRunner(new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
     runner.run(projectDir.resolve("test-project/build.savant"), new RuntimeConfiguration(false, "write"));
-    assertEquals(new String(Files.readAllBytes(projectDir.resolve("test-project/build/test-file.txt")), "UTF-8"), "File contents\n");
+    assertEquals(new String(Files.readAllBytes(projectDir.resolve("test-project/build/test-file.txt")), "UTF-8"), "File contents");
 
     runner.run(projectDir.resolve("test-project/build.savant"), new RuntimeConfiguration(true, "delete"));
     assertFalse(Files.isDirectory(projectDir.resolve("test-project/build")));

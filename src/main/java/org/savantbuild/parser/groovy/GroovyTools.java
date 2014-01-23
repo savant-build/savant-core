@@ -15,11 +15,13 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import groovy.lang.GString;
 import static java.util.Arrays.asList;
 
 /**
@@ -29,23 +31,104 @@ import static java.util.Arrays.asList;
  */
 public class GroovyTools {
   /**
-   * Safely converts an attribute to a String.
+   * Ensures that the attributes are valid. This checks if the attributes are null and there are no required attributes.
+   * If this is the case, it returns true. Otherwise, the attributes must be a Map and must contain the required
+   * attributes and have the correct attribute types.
    *
-   * @param attributes The attributes.
-   * @param key        The key of the attribute to convert.
-   * @return Null if the object is null, otherwise the result of calling toString.
+   * @param attributes         The attributes object.
+   * @param requiredAttributes A list of required attributes.
+   * @param types              The attribute types.
+   * @return True if the attributes are valid, false otherwise.
    */
-  public static String toString(Map<String, Object> attributes, String key) {
+  @SuppressWarnings("unchecked")
+  public static boolean attributesValid(Object attributes, Collection<String> requiredAttributes, Map<String, Class<?>> types) {
+    if (attributes == null && requiredAttributes.isEmpty()) {
+      return true;
+    }
+
+    if (attributes == null || !(attributes instanceof Map)) {
+      return false;
+    }
+
+    Map<String, Object> map = (Map<String, Object>) attributes;
+    return hasAttributes(map, requiredAttributes) && hasAttributeTypes(map, types);
+  }
+
+  /**
+   * Puts all of the values from the defaults map into the main map if they are absent. This is a good way to setup
+   * default values.
+   *
+   * @param map The main map.
+   * @param defaults The defaults map.
+   */
+  public static void putDefaults(Map<String, Object> map, Map<String, Object> defaults) {
+    defaults.forEach(map::putIfAbsent);
+  }
+
+  /**
+   * Checks if the given attributes Map has the correct types. This handles the GString case since that is a Groovy
+   * special class that is converted to String dynamically.
+   *
+   * @param attributes The attributes map.
+   * @param types      The types.
+   * @return True if the map contains the correct types, false otherwise.
+   */
+  @SuppressWarnings("unchecked")
+  public static boolean hasAttributeTypes(Map<String, Object> attributes, Map<String, Class<?>> types) {
     if (attributes == null) {
-      return null;
+      return false;
     }
 
-    Object object = attributes.get(key);
-    if (object == null) {
-      return null;
+    for (String key : types.keySet()) {
+      Object value = attributes.get(key);
+      if (value == null) {
+        continue;
+      }
+
+      Class type = types.get(key);
+      if (type == String.class && !(value instanceof String || value instanceof GString)) {
+        return false;
+      } else if (type != String.class && !type.isAssignableFrom(value.getClass())) {
+        return false;
+      }
     }
 
-    return object.toString();
+    return true;
+  }
+
+  /**
+   * Checks if the given attributes Map has all of the given attribute names. The values for the attribute names must be
+   * non-null and non-empty.
+   *
+   * @param attributes     The attributes map.
+   * @param attributeNames The attribute names.
+   * @return True if the map contains all of the attribute names, false otherwise.
+   */
+  public static boolean hasAttributes(Map<String, Object> attributes, Iterable<String> attributeNames) {
+    if (attributes == null) {
+      return false;
+    }
+
+    for (String attributeName : attributeNames) {
+      Object value = attributes.get(attributeName);
+      if (value == null || (value instanceof CharSequence && value.toString().trim().length() == 0)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Checks if the given attributes Map has all of the given attribute names. The values for the attribute names must be
+   * non-null and non-empty.
+   *
+   * @param attributes     The attributes map.
+   * @param attributeNames The attribute names.
+   * @return True if the map contains all of the attribute names, false otherwise.
+   */
+  public static boolean hasAttributes(Map<String, Object> attributes, String... attributeNames) {
+    return hasAttributes(attributes, asList(attributeNames));
   }
 
   /**
@@ -70,21 +153,22 @@ public class GroovyTools {
   }
 
   /**
-   * Checks if the given attributes Map has all of the given keys. The values for the keys must be non-null and
-   * non-empty.
+   * Safely converts an attribute to a String.
    *
-   * @param attributes The attributes map.
-   * @param keys The keys.
-   * @return True if the map contains all of the keys, false otherwise.
+   * @param attributes The attributes.
+   * @param key        The key of the attribute to convert.
+   * @return Null if the object is null, otherwise the result of calling toString.
    */
-  public static boolean hasAttributes(Map<String, Object> attributes, String... keys) {
-    for (String key : keys) {
-      Object value = attributes.get(key);
-      if (value == null || (value instanceof CharSequence && value.toString().trim().length() == 0)) {
-        return false;
-      }
+  public static String toString(Map<String, Object> attributes, String key) {
+    if (attributes == null) {
+      return null;
     }
 
-    return true;
+    Object object = attributes.get(key);
+    if (object == null) {
+      return null;
+    }
+
+    return object.toString();
   }
 }

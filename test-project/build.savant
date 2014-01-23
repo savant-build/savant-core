@@ -9,5 +9,5 @@ target(name: "delete", description: "Used to test the build runner") {
 }
 
 target(name: "write", description: "Used to test the build runner") {
-  Files.write(project.directory.resolve("build/test-file.txt"), ["File contents"])
+  Files.write(project.directory.resolve("build/test-file.txt"), "File contents".getBytes())
 }

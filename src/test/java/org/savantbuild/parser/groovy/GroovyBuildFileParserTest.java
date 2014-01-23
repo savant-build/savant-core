@@ -98,12 +98,14 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     expectedPublications.add("main",
         new Publication(new Artifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), License.Commercial),
             new ArtifactMetaData(expectedDependencies, License.Commercial),
-            buildFile.getParent().resolve("build/jars/name-1.1.0.jar"), buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar"))
+            buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
+            buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );
     expectedPublications.add("test",
         new Publication(new Artifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), License.Commercial),
             new ArtifactMetaData(expectedDependencies, License.Commercial),
-            buildFile.getParent().resolve("build/jars/name-test-1.1.0.jar"), buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar"))
+            buildFile.getParent().resolve("build/jars/name-test-1.1.0.jar").toAbsolutePath(),
+            buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar").toAbsolutePath())
     );
     assertEquals(project.publications, expectedPublications);
   }

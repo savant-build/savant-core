@@ -17,8 +17,6 @@ package org.savantbuild.parser.groovy;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.savantbuild.domain.Project;
@@ -53,12 +51,8 @@ public class GroovyBuildFileParser implements BuildFileParser {
   @Override
   public Project parse(Path buildFile) {
     try {
-      Map<String, Boolean> optimizationOptions = new HashMap<>();
-      optimizationOptions.put("indy", true);
-
       CompilerConfiguration compilerConfig = new CompilerConfiguration();
       compilerConfig.setScriptBaseClass(ProjectBuildFile.class.getName());
-      compilerConfig.setOptimizationOptions(optimizationOptions);
 
       GroovyClassLoader groovyClassLoader = new GroovyClassLoader(ClassLoader.getSystemClassLoader(), compilerConfig);
       Class<?> buildClass = groovyClassLoader.parseClass(buildFile.toFile());

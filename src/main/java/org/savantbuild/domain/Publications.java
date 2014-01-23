@@ -67,6 +67,13 @@ public class Publications {
     return publicationGroups.equals(that.publicationGroups);
   }
 
+  @Override
+  public String toString() {
+    return "Publications{" +
+        "publicationGroups=" + publicationGroups +
+        '}';
+  }
+
   /**
    * Null safe getter for a single group. This returns the list of publications or an empty list if the publication
    * group is empty.
