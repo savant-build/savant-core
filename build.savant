@@ -26,7 +26,7 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.1.0", license
       dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}")
       dependency(id: "org.savantbuild:savant-utils:${savantVersion}")
     }
-    group(type: "test-compile") {
+    group(type: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
       dependency(id: "org.testng:testng:6.8.7")
     }
@@ -38,6 +38,8 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.1.0", license
 }
 
 dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
+
+file = loadPlugin(id: "org.savantbuild.plugin:file:${savantVersion}")
 
 idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
 idea.settings.moduleMap = [
@@ -74,19 +76,17 @@ target(name: "int", description: "Releases a local integration build of the proj
 }
 
 target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: ["jar"]) {
-  file.copy {
-    to(dir: "build/distributions/exploded/bin")
+  file.copy(to: "build/distributions/exploded/bin") {
     fileSet(dir: "src/main/scripts")
   }
 
-  dependency.copyDependencies {
-    to("build/distributions/exploded/lib")
-    group("compile", true, ["provided", "compile", "runtime"]) // transitive with transitive groups
-    group("runtime", true, ["provided", "compile", "runtime"]) // transitive with transitive groups
+  dependency.copy(to: "build/distributions/exploded/lib") {
+    dependencies(group: "compile", transitive: true, transitiveGroups: ["provided", "compile", "runtime"])
+    dependencies(group: "runtime", transitive: true, transitiveGroups: ["provided", "compile", "runtime"])
   }
 
-  file.tar("build/distributions/${project.name}-${project.version}.tar.gz") {
-    tarFileSet("build/distributions/exploded", "savant-${project.version}")
+  file.tar(file: "build/distributions/${project.name}-${project.version}.tar.gz") {
+    tarFileSet(dir: "build/distributions/exploded", prefix: "savant-${project.version}")
   }
 }
 
