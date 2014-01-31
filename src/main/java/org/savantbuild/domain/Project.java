@@ -24,11 +24,14 @@ import org.savantbuild.dep.DefaultDependencyService;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.Dependencies;
+import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.graph.ArtifactGraph;
+import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.output.Output;
+import org.savantbuild.plugin.Plugin;
 import org.savantbuild.util.Graph;
 
 /**
@@ -59,7 +62,11 @@ public class Project {
 
   public Path pluginConfigurationDirectory = Paths.get(System.getProperty("user.home") + "/.savant/plugins");
 
+  public Map<Dependency, Plugin> plugins = new HashMap<>();
+
   public Publications publications = new Publications();
+
+  public PublishWorkflow publishWorkflow;
 
   public Graph<Target, Object> targetGraph;
 

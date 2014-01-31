@@ -15,20 +15,14 @@
  */
 package org.savantbuild.parser.groovy;
 
-import java.util.Map;
-
 import org.savantbuild.dep.domain.Dependencies;
-import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Publications;
 import org.savantbuild.output.Output;
-import org.savantbuild.parser.ParseException;
-import org.savantbuild.plugin.DefaultPluginLoader;
-import org.savantbuild.plugin.Plugin;
-import org.savantbuild.plugin.PluginLoader;
+import org.savantbuild.parser.groovy.WorkflowDelegate.ProcessDelegate;
 
 import groovy.lang.Closure;
 
@@ -80,8 +74,10 @@ public class ProjectDelegate {
    * <p>
    * <pre>
    *   publications {
-   *     publication(name: "foo", file: "build/jars/foo-${project.version}.jar", source: "build/jars/foo-${project.version}-src.jar")
-   *     publication(name: "foo-test", file: "build/jars/foo-test-${project.version}.jar", source: "build/jars/foo-test${project.version}-src.jar")
+   *     publication(name: "foo", file: "build/jars/foo-${project.version}.jar", source:
+   * "build/jars/foo-${project.version}-src.jar")
+   *     publication(name: "foo-test", file: "build/jars/foo-test-${project.version}.jar", source:
+   * "build/jars/foo-test${project.version}-src.jar")
    *   }
    * </pre>
    *
@@ -93,6 +89,27 @@ public class ProjectDelegate {
     closure.setDelegate(new PublicationsDelegate(project, project.publications));
     closure.run();
     return project.publications;
+  }
+
+  /**
+   * Configures the project publish workflow. This method is called with a closure that contains the public workflow
+   * definition. It should look like:
+   * <p>
+   * <pre>
+   *   publishWorkflow {
+   *     subversion(repository: "http://svn.example.com/")
+   *   }
+   * </pre>
+   *
+   * @param closure The closure that is called to setup the publish workflow configuration. This closure uses the
+   *                delegate class {@link ProcessDelegate}.
+   * @return The workflow.
+   */
+  public Workflow publishWorkflow(Closure closure) {
+    project.publishWorkflow = new PublishWorkflow();
+    closure.setDelegate(new ProcessDelegate(output, project.publishWorkflow.processes));
+    closure.run();
+    return project.workflow;
   }
 
   /**

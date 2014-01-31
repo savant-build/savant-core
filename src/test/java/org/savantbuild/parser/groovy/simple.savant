@@ -11,6 +11,10 @@ project(group: "group", name: "name", version: "1.1", license: "Commercial") {
     }
   }
 
+  publishWorkflow {
+    subversion(repository: "http://svn.example.com")
+  }
+
   dependencies {
     group(type: "compile") {
       dependency(id: "org.example:compile:1.0")

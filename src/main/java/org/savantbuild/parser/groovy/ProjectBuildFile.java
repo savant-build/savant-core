@@ -68,7 +68,9 @@ public abstract class ProjectBuildFile extends Script {
     String id = GroovyTools.toString(attributes, "id");
     PluginLoader loader = new DefaultPluginLoader(project, output);
     Dependency pluginDependency = new Dependency(id, false);
-    return loader.load(pluginDependency);
+    Plugin plugin = loader.load(pluginDependency);
+    project.plugins.put(pluginDependency, plugin);
+    return plugin;
   }
 
   /**

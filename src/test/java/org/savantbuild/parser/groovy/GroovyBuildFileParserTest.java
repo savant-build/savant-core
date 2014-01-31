@@ -28,6 +28,7 @@ import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.workflow.process.CacheProcess;
+import org.savantbuild.dep.workflow.process.SVNProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Publications;
@@ -86,6 +87,11 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertTrue(project.workflow.fetchWorkflow.processes.get(1) instanceof URLProcess);
     assertEquals(project.workflow.publishWorkflow.processes.size(), 1);
     assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(0)).dir, System.getProperty("user.home") + "/.savant/cache");
+
+    // Verify the PublishWorkflow
+    assertEquals(project.publishWorkflow.processes.size(), 1);
+    assertTrue(project.publishWorkflow.processes.get(0) instanceof SVNProcess);
+    assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).repository, "http://svn.example.com");
 
     // Verify the dependencies
     Dependencies expectedDependencies = new Dependencies(

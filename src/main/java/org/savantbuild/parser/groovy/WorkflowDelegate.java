@@ -23,6 +23,7 @@ import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.Process;
+import org.savantbuild.dep.workflow.process.SVNProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
@@ -107,6 +108,21 @@ public class WorkflowDelegate {
      */
     public void cache(Map<String, Object> attributes) {
       processes.add(new CacheProcess(output, GroovyTools.toString(attributes, "dir")));
+    }
+
+    /**
+     * Adds a {@link SVNProcess} to the workflow that uses the given attributes.
+     *
+     * @param attributes The SVN attributes.
+     */
+    public void subversion(Map<String, Object> attributes) {
+      if (!GroovyTools.hasAttributes(attributes, "repository")) {
+        throw new ParseException("Invalid subversion workflow definition. It should look like:\n\n" +
+            "  subversion(repository: \"http://svn.example.com\")");
+      }
+
+      processes.add(new SVNProcess(output, GroovyTools.toString(attributes, "repository"), GroovyTools.toString(attributes, "username"),
+          GroovyTools.toString(attributes, "password")));
     }
 
     /**
