@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Savant-core by inversoft</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Savant-core</h1>
+        <h2>Savant build system</h2>
+        <a href="https://github.com/inversoft/savant-core" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="savant-build-system" class="anchor" href="#savant-build-system"><span class="octicon octicon-link"></span></a>Savant Build System</h1>
+
+<p>Savant is a complete build and dependency management system built entirely from Scratch. It doesn't use Maven, Ivy or Ant under the hoods and provides a entirely new way of thinking about your builds.</p>
+
+<h1>
+<a name="a-little-something-different" class="anchor" href="#a-little-something-different"><span class="octicon octicon-link"></span></a>A Little Something Different</h1>
+
+<p>Unlike Ant, Savant has plugins. Unlike Maven and Gradle, Savant plugins don't provide build targets. Instead, Savant plugins provide functionality that you can use in your targets. This solves one of the main pain points of other build systems.</p>
+
+<p>To explain this better, let's look at an extremely simple build file:</p>
+
+<pre><code>import 'testng-plugin'
+</code></pre>
+
+<p>In most build systems, this would add the target <strong>test</strong> to your project. You could then execute this target from the command-line like this:</p>
+
+<pre><code>$ build test
+</code></pre>
+
+<p>Let's now say that your project needs to first create a database and load it up with some data before you run your tests. How do you do this?</p>
+
+<p>Well, in some build tools you can do something like this:</p>
+
+<pre><code>import 'testng-plugin'
+
+test.doBefore &lt;&lt; {
+  setupDatabase()
+}
+</code></pre>
+
+<p>So far so good right? Well, what happens when you want to first setup the database, then run one test set, then reset the database, then run another test set? Things become much more difficult because you don't have access to the internals of the plugin and can't easily inject code in the middle of its processing.</p>
+
+<p>Another example where traditional plugin systems break down is target dependencies. The issue here is that the <strong>testng</strong> plugin can't run until the <strong>java</strong> plugin has run. Specifically, the <strong>java</strong> plugin's compile target needs to be called first. That means that the <strong>testng</strong> plugin needs to depend either directly on the <strong>java</strong> plugin or depend on there being a target named <strong>compile</strong>.</p>
+
+<p>Savant is completely different. It is a hybrid approach that incorporates concepts from Ant tasks, but also provides the power of Groovy and a complete dependency management system (even plugins are dependencies).</p>
+
+<h1>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h1>
+
+<p>First, you need to follow these steps:</p>
+
+<ul>
+<li>Download the Savant bundle from <a href="http://savant.inversoft.org/savant-0.1.0.tar.gz">http://savant.inversoft.org/savant-0.1.0.tar.gz</a>
+</li>
+<li>Extract this bundle somewhere on disk</li>
+<li>Put the <strong>bin</strong> directory from the bundle in the your PATH</li>
+<li>Download and install JDK 8 (Savant requires JDK 8 to run but you can compile with any JDK include JDK 1, 1.1, 1.2, 1.3, 4, 5, 6, 7 or 8)</li>
+<li>Make sure the JDK 8 java executable is also in your PATH</li>
+</ul><h1>
+<a name="executing-savant" class="anchor" href="#executing-savant"><span class="octicon octicon-link"></span></a>Executing Savant</h1>
+
+<p>Now you should be able to invoke Savant like this:</p>
+
+<pre><code>$ sb
+</code></pre>
+
+<p>If you aren't in a project directory that contains a <strong>build.savant</strong> build file, you will get an error like this:</p>
+
+<pre><code>Build file [build.savant] is missing or not readable.
+</code></pre>
+
+<h1>
+<a name="basic-savant-build-file" class="anchor" href="#basic-savant-build-file"><span class="octicon octicon-link"></span></a>Basic Savant Build File</h1>
+
+<p>Let's start out by looking at a simple Savant build file that defines a project. Edit the file build.savant in your IDE or favorite text editor. Put this in your build file.</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+}
+</code></pre>
+
+<p>You define your project details using the project method. This method takes a block, that allows you to define additional details about your project like dependencies. The key here is that the project requires these attributes:</p>
+
+<ul>
+<li>group - The group identifier for your organization (usually a reverse domain name)</li>
+<li>name - The name of the project</li>
+<li>version - A semantic version <a href="http://semver.org">http://semver.org</a>
+</li>
+<li>license - The license of your project</li>
+</ul><p>One of the most important details is that Savant requires that everything uses Semantic Versions. This is vitally important when Savant calculates dependencies of your project. You should read the Semantic Version specification by visiting <a href="http://semver.org">http://semver.org</a>.</p>
+
+<p>You also need to specify a license for your project. All projects must provide a license. This helps Savant determine if your project is in compliance with organizational requirements about software licensing.</p>
+
+<h1>
+<a name="dependencies" class="anchor" href="#dependencies"><span class="octicon octicon-link"></span></a>Dependencies</h1>
+
+<p>Next, let's add some dependencies to the project</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.apache.commons:commons-collections:3.1.0")
+    }
+  }
+}
+</code></pre>
+
+<p>This defines a single compile-time dependency on the Commons Collections library version 3.1.0. This isn't enough information for Savant to download this dependency. You need to tell Savant where to download from. This is done using a workflow definition:</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+  workflow {
+    fetch {
+      cache()
+      url(url: "http://savant.inversoft.org")
+    }
+    publish {
+      cache()
+    }
+  }
+
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.apache.commons:commons-collections:3.1.0")
+    }
+  }
+}
+</code></pre>
+
+<p>This tells Savant to first check the local cache for dependencies. If they aren't found there, download them from <a href="http://savant.inversoft.org">http://savant.inversoft.org</a> and cache them locally (that's what the publish section is for).</p>
+
+<p>You can simplify this build file like this:</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+  workflow {
+    standard()
+  }
+
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.apache.commons:commons-collections:3.1.0")
+    }
+  }
+}
+</code></pre>
+
+<p>The local cache for Savant is stored at ~/.savant/cache.</p>
+
+<p>We now have given Savant enough information to download the dependency and cache it locally.</p>
+
+<h1>
+<a name="targets" class="anchor" href="#targets"><span class="octicon octicon-link"></span></a>Targets</h1>
+
+<p>Our Savant build file still doesn't do anything, let's add some targets.</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+  workflow {
+    standard()
+  }
+
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.apache.commons:commons-collections:3.1.0")
+    }
+  }
+}
+
+target(name: "clean", description: "Cleans out the build directory") {
+  ...
+}
+
+target(name: "compile", description: "Compiles the project") {
+  ...
+}
+
+target(name: "test", description: "Executes the projects tests", dependsOn: ["compile"]) {
+  ...
+}
+</code></pre>
+
+<p>This is a fairly common build file that includes targets to clean the project, compile the project and run the tests. Notice that the <strong>test</strong> target depends on the <strong>compile</strong> target.</p>
+
+<h2>
+<a name="target-dependencies" class="anchor" href="#target-dependencies"><span class="octicon octicon-link"></span></a>Target Dependencies</h2>
+
+<p>Target dependencies are an ordered list. This means that Savant will ensure that dependent targets are executed in the order they are defined. For example:</p>
+
+<pre><code>target(name: "one") {
+  output.info("One")
+}
+
+target(name: "two") {
+  output.info("Two")
+}
+
+target(name: "three", dependsOn: ["one", "two"]) {
+  output.info("Three")
+}
+</code></pre>
+
+<p>If we run the build like this:</p>
+
+<pre><code>$ sb three
+</code></pre>
+
+<p>Savant guarantees that the output will always be:</p>
+
+<pre><code>One
+Two
+Three
+</code></pre>
+
+<h1>
+<a name="plugins" class="anchor" href="#plugins"><span class="octicon octicon-link"></span></a>Plugins</h1>
+
+<p>At this point, you have a functional build file. However, it doesn't do very much. You could start writing your build using Groovy code directly inside the targets. This would require quite a bit of work though. Instead of writing this code yourself, you can leverage plugins to fill out your build.</p>
+
+<p>Let's start with the basics of compiling Java source files. To accomplish this task, we will include the Java plugin and assign it to a variable. This will look like this:</p>
+
+<pre><code>java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.0")
+</code></pre>
+
+<p>This code has to be put after the project and workflow definition because Savant uses the workflow to download and instantiate the plugin. The key to Savant's plugin mechanism is that Plugins are simply Groovy objects. They aren't abstracted in any way. That means after this line of code executes, the variable <strong>java</strong> will be in instance of the class org.savantbuild.plugin.java.JavaPlugin. Any public methods or fields on that instance can be invoked to perform parts of your build.</p>
+
+<p>For the Java plugin, you need to define the version of the JDK to compile with (in case you have multiple JDKs installed or need to compile with a JDK besides JDK 8 which Savant requires to run).</p>
+
+<pre><code>java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.0")
+java.settings.version = "1.7"
+</code></pre>
+
+<p>Finally, you need to create a special configuration file for the Java plugin that tells Savant the location of the JDK. Create the file ~/.savant/plugins/org.savantbuild.plugin.java.properties and put the full path to the JDK base directory in it like this:</p>
+
+<pre><code>1.7=/Library/Java/JavaVirtualMachines/jdk1.7.0_10.jdk/Contents/Home
+</code></pre>
+
+<p>Now that you have loaded and configured the Java plugin, you can update your targets to use it. Plugins are simple Java objects and the public methods define their features. The public fields are often used to configure the plugin. Here's the build file again with the Java plugin calls added:</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+  workflow {
+    standard()
+  }
+
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.apache.commons:commons-collections:3.1.0")
+    }
+  }
+}
+
+java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.0")
+java.settings.version = "1.7"
+
+target(name: "clean", description: "Cleans out the build directory") {
+  java.clean()
+}
+
+target(name: "compile", description: "Compiles the project") {
+  java.compileMain()
+  java.compileTest()
+}
+
+target(name: "test", description: "Executes the projects tests", dependsOn: ["compile"]) {
+  ...
+}
+</code></pre>
+
+<p>Most plugins provide detailed instructions on how to configure them at runtime. If you run Savant without the proper configuration, you should get a nice error message that tells you exactly how to configure the plugin to work properly.</p>
+
+<h1>
+<a name="java-plugin" class="anchor" href="#java-plugin"><span class="octicon octicon-link"></span></a>Java Plugin</h1>
+
+<p>The Java plugin provides these main features:</p>
+
+<ul>
+<li>Compile Java source files</li>
+<li>Create JARs</li>
+<li>Clean the build directory</li>
+</ul><p>The Java plugin is also configurable via the <strong>org.savantbuild.plugin.java.JavaSettings</strong> class. This class contains a number of public fields that control how the Java plugin works. For example, if you want to change command-line parameters passed to <strong>javac</strong>, you can control them like this:</p>
+
+<pre><code>java.settings.compilerArguments = "-nowarn"
+</code></pre>
+
+<p>The layout of a Java project that the Java plugin can work with is configurable, but the standard layout is as follows:</p>
+
+<ul>
+<li>
+<strong>src/main/java</strong> - The location of the main Java source files</li>
+<li>
+<strong>src/main/resources</strong> - The location of the main resource files</li>
+<li>
+<strong>src/test/java</strong> - The location of the test Java source files</li>
+<li>
+<strong>src/test/resources</strong> - The location of the test resource files</li>
+<li>
+<strong>build/classes/main</strong> - The output directory where the Java files in <strong>src/main/java</strong> are compiled to and the resources from <strong>src/main/resources</strong> are copied to</li>
+<li>
+<strong>build/classes/test</strong> - The output directory where the Java files in <strong>src/test/java</strong> are compiled to and the resources from <strong>src/test/resources</strong> are copied to</li>
+<li>
+<strong>build/jars</strong> - The output directory where the JAR files are created in</li>
+</ul><p>The layout of the Java project is controlled by the <strong>org.savantbuild.plugin.java.JavaLayout</strong> class that is a field on the <strong>org.savantbuild.plugin.java.JavaPlugin</strong> class. If you wanted to change the location of your main Java source files, you could do that like this:</p>
+
+<pre><code>java.layout.mainSourceDirectory = Paths.get("src/main/java-files")
+</code></pre>
+
+<p><strong>NOTE:</strong> Most of the fields in the <strong>JavaLayout</strong> class are java.nio.file.Path instances.</p>
+
+<h2>
+<a name="clean" class="anchor" href="#clean"><span class="octicon octicon-link"></span></a>Clean</h2>
+
+<p>The <strong>clean</strong> method deletes everything inside the <strong>build</strong> directory and the <strong>build</strong> directory itself.</p>
+
+<h2>
+<a name="compile" class="anchor" href="#compile"><span class="octicon octicon-link"></span></a>Compile</h2>
+
+<p>The Java plugin provides two compile methods:</p>
+
+<ul>
+<li>compileMain - This compiles the main Java source files</li>
+<li>compileTest - This compiles the test Java source files</li>
+</ul><h2>
+<a name="jar" class="anchor" href="#jar"><span class="octicon octicon-link"></span></a>JAR</h2>
+
+<p>The Java plugin's <strong>jar</strong> method creates 4 JAR files:</p>
+
+<ol>
+<li>A JAR file that contains the compiled Java classes from the <strong>build/classes/main</strong> directory and the resources from the <strong>src/main/resources</strong> directory</li>
+<li>A JAR file that contains the Java source files from the <strong>src/main/java</strong> directory and the resources from the <strong>src/main/resources</strong> directory</li>
+<li>A JAR file that contains the compiled Java test classes from the <strong>build/classes/test</strong> directory and the resources from the <strong>src/test/resources</strong> directory</li>
+<li>A JAR file that contains the Java test source files from the <strong>src/test/java</strong> directory and the resources from the <strong>src/test/resources</strong> directory</li>
+</ol><h1>
+<a name="publications" class="anchor" href="#publications"><span class="octicon octicon-link"></span></a>Publications</h1>
+
+<p>All project's produce some type of final result. This might be a JAR, WAR, ZIP, or various files. Savant manages these publications in the build file and you can define any number of publications.</p>
+
+<p>Publications are put into groups. Groups can have arbitrary names. However, some plugins make use of certain groups. For example, the TestNG plugin uses the <strong>test</strong> publications when running the tests.</p>
+
+<p>You can define a publication groups and publications like this:</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+  workflow {
+    standard()
+  }
+
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.apache.commons:commons-collections:3.1.0")
+    }
+  }
+
+  publications {
+    main {
+      publication(name: "my-project", type: "jar", file: "build/jars/my-project-${project.version}.jar", sourceFile: "build/jars/my-project-${project.version}-src.jar")
+    }
+    test {
+      publication(name: "my-project-test", type: "jar", file: "build/jars/my-project-test-${project.version}.jar", sourceFile: "build/jars/my-project-test-${project.version}-src.jar")
+    }
+    someOtherType {
+      ...
+    }
+  }
+}
+</code></pre>
+
+<p>Rather than require each project build file to define these same publications, Savant provides a helper method that will add these two publications (main and test). You can invoke this shortcut like this:</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+  workflow {
+    standard()
+  }
+
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.apache.commons:commons-collections:3.1.0")
+    }
+  }
+
+  publications {
+    standard()
+  }
+}
+</code></pre>
+
+<h1>
+<a name="final-example" class="anchor" href="#final-example"><span class="octicon octicon-link"></span></a>Final Example</h1>
+
+<p>Here's a final example that includes most of the common plugins and targets for a Java project:</p>
+
+<pre><code>project(group: "org.example", name: "my-project", version: "1.0", license: "Apachev2") {
+  workflow {
+    standard()
+  }
+
+  dependencies {
+    group(type: "compile") {
+      dependency(id: "org.apache.commons:commons-collections:3.1.0")
+    }
+  }
+}
+
+// Load plugins
+java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.0")
+testng = loadPlugin(id: "org.savantbuild.plugin:java-testng:0.1.0")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:0.1.0")
+release = loadPlugin(id: "org.savantbuild.plugin:release-git:0.1.0")
+
+// Config
+java.settings.version = "1.7"
+testng.settings.javaVersion = "1.7"
+
+target(name: "clean", description: "Cleans out the build directory") {
+  java.clean()
+}
+
+target(name: "compile", description: "Compiles the project") {
+  java.compileMain()
+  java.compileTest()
+}
+
+target(name: "jar", description: "Creates all of the standard JAR files for a Java project", dependsOn: ["compile"]) {
+  java.jar()
+}
+
+target(name: "test", description: "Executes the projects tests using TestNG", dependsOn: ["jar"]) {
+  testng.test()
+}
+
+target(name: "int", description: "Publishes an integration build of the project to the local cache", dependsOn: ["test"]) {
+  dependency.integrate()
+}
+
+target(name: "release", description: "Performs a full release of the project", dependsOn: ["test"]) {
+  release.release()
+}
+</code></pre>
+
+<h1>
+<a name="integration-builds" class="anchor" href="#integration-builds"><span class="octicon octicon-link"></span></a>Integration Builds</h1>
+
+<p>Savant uses a slightly different approach than other build systems. When you run an <strong>install</strong> build in other build systems, it uses the version you defined on the project, even if that version is something like <strong>1.0.8</strong>. The problem with this approach is that you'll end up with a JAR file named my-project-1.0.8.jar even though it isn't actually the final release of version <strong>1.0.8</strong>. In other build systems, people often change the version to something like <strong>1.0.8-SNAPSHOT</strong> to indicate that the version is not a final release.</p>
+
+<p>Savant doesn't work this way. Whatever version you have in your project build file Savant will use. However, it adds the indicator <strong>-{integration}</strong> to the end of the version to indicate that it is an integration build. It uses this version (<strong>1.0.8-{integration}</strong>) until you perform a full release of the project. At this point, Savant drops the <strong>-{integration}</strong> indicator and uses the version you defined.</p>
+
+<p>When you have multiple projects that depend on each other, it is useful to configure them to use <strong>-{integration}</strong> versions of each other like this:</p>
+
+<pre><code>dependencies {
+  group(type: "compile") {
+    dependency(id: "org.example:my-other-project:1.0.8-{integration}")
+  }
+}
+</code></pre>
+
+<p>Savant also enforces the rule that you cannot perform a full release of a project that has dependencies on integration builds of other projects.</p>
+
+<p>As you might have noticed, the <strong>Dependency</strong> plugin provides the ability to publish integration builds of your project using the <strong>integrate</strong> method.</p>
+
+<h1>
+<a name="full-releases" class="anchor" href="#full-releases"><span class="octicon octicon-link"></span></a>Full Releases</h1>
+
+<p>In addition, the <strong>Release Git</strong> plugin provides the ability to perform a full release of a project that is stored in a Git repository. This plugin provides the method <strong>release</strong> that performs these steps:</p>
+
+<ol>
+<li>Check for dependencies on integration builds of other projects, libraries, etc.</li>
+<li>Check for plugins that are integration builds</li>
+<li>Ensure the project is a Git project</li>
+<li>Perform a <strong>git pull</strong>
+</li>
+<li>Ensure the project has no local changes</li>
+<li>Ensure the project changes have been pushed to the remote</li>
+<li>Ensure there isn't a tag in the Git repository for the version being released</li>
+<li>Creates a tag whose name is the version being released (i.e. 1.0.8)</li>
+<li>Publishes the project's artifacts (publications) using the publishWorkflow of the project</li>
+</ol>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/inversoft/savant-core/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/inversoft/savant-core/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/inversoft/savant-core"></a> is maintained by <a href="https://github.com/inversoft">inversoft</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
