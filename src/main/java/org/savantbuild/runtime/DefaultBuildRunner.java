@@ -25,6 +25,7 @@ import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
 import org.savantbuild.dep.workflow.ArtifactMissingException;
 import org.savantbuild.dep.workflow.process.ProcessFailureException;
 import org.savantbuild.domain.Project;
+import org.savantbuild.output.Output;
 import org.savantbuild.parser.BuildFileParser;
 import org.savantbuild.parser.ParseException;
 import org.savantbuild.plugin.PluginLoadException;
@@ -44,9 +45,12 @@ import org.savantbuild.util.CyclicException;
 public class DefaultBuildRunner implements BuildRunner {
   private final BuildFileParser buildFileParser;
 
+  private final Output output;
+
   private final ProjectRunner projectRunner;
 
-  public DefaultBuildRunner(BuildFileParser buildFileParser, ProjectRunner projectRunner) {
+  public DefaultBuildRunner(Output output, BuildFileParser buildFileParser, ProjectRunner projectRunner) {
+    this.output = output;
     this.buildFileParser = buildFileParser;
     this.projectRunner = projectRunner;
   }
@@ -60,6 +64,41 @@ public class DefaultBuildRunner implements BuildRunner {
       BuildRunException, BuildFailureException, CompatibilityException, CyclicException, LicenseException, MD5Exception,
       ParseException, PluginLoadException, ProcessFailureException, PublishException, VersionException {
     Project project = buildFileParser.parse(buildFile);
+
+    if (runtimeConfiguration.help) {
+      printHelp(project);
+      return;
+    } else if (runtimeConfiguration.listTargets) {
+      printTargets(project);
+      return;
+    }
+
     projectRunner.run(project, runtimeConfiguration.targets);
+  }
+
+  private void printHelp(Project project) {
+    output.info("Usage: sb [switches] [targets]");
+    output.info("");
+    output.info("Switches:");
+    output.info("");
+    output.info("   --noColor      Disables the colorized output of Savant");
+    output.info("   --debug        Enables debug output");
+    output.info("   --help         Displays the help message");
+    output.info("   --listTargets  Lists the build targets");
+    output.info("");
+    output.info("NOTE: If any other argument starts with {@code --} then it is considered a switch. Switches can optionally have values using the equals sign like this:");
+    output.info("");
+    output.info("   --switch");
+    output.info("   --switch=value");
+    output.info("");
+    printTargets(project);
+  }
+
+  private void printTargets(Project project) {
+    output.info("Targets in the project build file:");
+    output.info("");
+    project.targets.forEach((name, target) -> {
+      output.info("  %s: %s", name, target.description != null ? target.description : "No description");
+    });
   }
 }

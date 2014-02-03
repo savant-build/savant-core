@@ -15,6 +15,8 @@
  */
 package org.savantbuild.runtime;
 
+import org.savantbuild.runtime.RuntimeConfiguration.Switch;
+
 /**
  * Default implementation that uses a simple brute force approach for now.
  *
@@ -22,8 +24,25 @@ package org.savantbuild.runtime;
  */
 public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationParser {
   /**
-   * Parses the command-line arguments. Currently, this only supports a single switch <code>--noColor</code>, which
-   * disables colorized output.
+   * Parses the command-line arguments. There are currently 4 fixed arguments:
+   * <p>
+   * <pre>
+   *   --noColor = disables the colorized output of Savant
+   *   --debug = enables debug output
+   *   --help = Displays the help message
+   *   --listTargets = Lists the build targets
+   * </pre>
+   * <p>
+   * If any other argument starts with {@code --} then it is considered a switch. Switches can optionally have values
+   * using the equals sign like this:
+   * <p>
+   * <pre>
+   *   --switch=value
+   * </pre>
+   * <p>
+   * All other arguments are considered targets to execute.
+   * <p>
+   * This parser does care about ordering of the arguments at all.
    *
    * @param arguments The CLI arguments.
    * @return The RuntimeConfiguration and never null.
@@ -36,6 +55,17 @@ public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationPa
         configuration.colorizeOutput = false;
       } else if (argument.equals("--debug")) {
         configuration.debug = true;
+      } else if (argument.equals("--help")) {
+        configuration.help = true;
+      } else if (argument.equals("--listTargets")) {
+        configuration.listTargets = true;
+      } else if (argument.startsWith("--")) {
+        int equals = argument.indexOf('=');
+        if (equals == -1) {
+          configuration.arguments.add(new Switch(argument));
+        } else {
+          configuration.arguments.add(new Switch(argument.substring(0, equals), argument.substring(equals + 1)));
+        }
       } else {
         configuration.targets.add(argument);
       }
