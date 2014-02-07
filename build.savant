@@ -37,30 +37,28 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.1.0", license
   }
 }
 
+// Plugins
 dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
-
 file = loadPlugin(id: "org.savantbuild.plugin:file:${savantVersion}")
-
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
-idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:${savantVersion}": "savant-dependency-management",
-    "org.savantbuild:savant-utils:${savantVersion}": "savant-utils"
-]
-
 java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
-java.settings.javaVersion = "1.8"
-
 javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
-javaTestNG.settings.javaVersion = "1.8"
+idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
+release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
 
+// Plugin settings
+java.settings.javaVersion = "1.8"
+javaTestNG.settings.javaVersion = "1.8"
+idea.settings.moduleMap = [
+    "org.savantbuild:savant-dependency-management:${savantVersion}":"savant-dependency-management",
+    "org.savantbuild:savant-utils:${savantVersion}":"savant-utils"
+]
 
 target(name: "clean", description: "Cleans the project") {
   java.clean()
 }
 
 target(name: "compile", description: "Compiles the project") {
-  java.compileMain()
-  java.compileTest()
+  java.compile()
 }
 
 target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
@@ -90,6 +88,10 @@ target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: [
   }
 }
 
-target(name: "release", description: "Releases the project", dependsOn: ["test", "bundle"]) {
+target(name: "release", description: "Releases a full version of the project", dependsOn: ["test", "bundle"]) {
   release.release()
+}
+
+target(name: "idea", description: "Updates the IntelliJ IDEA module file") {
+  idea.iml()
 }

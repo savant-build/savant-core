@@ -43,8 +43,8 @@ import org.savantbuild.output.Output;
  */
 public class DefaultPluginLoader implements PluginLoader {
   public static final ResolveConfiguration RESOLVE_CONFIGURATION = new ResolveConfiguration()
-      .with("compile", new TypeResolveConfiguration(true, true))
-      .with("runtime", new TypeResolveConfiguration(true, true));
+      .with("compile", new TypeResolveConfiguration(true, "compile", "runtime"))
+      .with("runtime", new TypeResolveConfiguration(true, "compile", "runtime"));
 
   private final Output output;
 
