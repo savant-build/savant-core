@@ -20,6 +20,10 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.1.0", license
     standard()
   }
 
+  publishWorkflow {
+    subversion(repository: "http://svn.inversoft.org")
+  }
+
   dependencies {
     group(type: "compile") {
       dependency(id: "org.codehaus.groovy:groovy:groovy-all:2.2.1:jar")
@@ -76,6 +80,10 @@ target(name: "int", description: "Releases a local integration build of the proj
 target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: ["jar"]) {
   file.copy(to: "build/distributions/exploded/bin") {
     fileSet(dir: "src/main/scripts")
+  }
+
+  file.copy(to: "build/distributions/exploded/lib") {
+    fileSet(dir: "build/jars", includePatterns: [/savant-core-${project.version}\.jar/])
   }
 
   dependency.copy(to: "build/distributions/exploded/lib") {

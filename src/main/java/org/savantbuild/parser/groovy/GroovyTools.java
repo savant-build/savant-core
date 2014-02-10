@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import groovy.lang.GString;
@@ -52,6 +53,24 @@ public class GroovyTools {
 
     Map<String, Object> map = (Map<String, Object>) attributes;
     return hasAttributes(map, requiredAttributes) && hasAttributeTypes(map, types);
+  }
+
+  /**
+   * Converts all of the list elements to the specified type by calling the function for any list elements that are not
+   * the correct type.
+   *
+   * @param list The list.
+   * @param type The type.
+   * @param function The function that is used to convert to the correct type.
+   * @param <T> The type.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T> void convertListItems(List list, Class<T> type, Function<Object, T> function) {
+    for (int i = 0; i < list.size(); i++) {
+      if (!type.isInstance(list.get(i))) {
+        list.set(i, function.apply(list.get(i)));
+      }
+    }
   }
 
   /**

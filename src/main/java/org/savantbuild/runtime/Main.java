@@ -52,8 +52,9 @@ public class Main {
     try {
       BuildRunner buildRunner = new DefaultBuildRunner(output, new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
       buildRunner.run(buildFile, runtimeConfiguration);
-    } catch (Exception e) {
-      output.error("Build failed due to exception [%s]. Enable debug to see the stack trace.", e.getMessage());
+    } catch (Throwable t) {
+      output.error("Build failed due to exception [%s]. Enable debug to see the stack trace.", t.toString());
+      output.debug(t);
       System.exit(1);
     }
   }
