@@ -52,7 +52,7 @@ public class BaseGroovyPlugin extends GroovyObjectSupport implements Plugin {
    */
   protected void fail(String message, Object... values) {
     output.error(message, values);
-    throw new BuildFailureException();
+    throw new BuildFailureException(message);
   }
 
   /**
