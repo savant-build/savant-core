@@ -21,7 +21,7 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.1.0", license
   }
 
   publishWorkflow {
-    subversion(repository: "http://svn.inversoft.org")
+    subversion(repository: "http://svn.inversoft.org/savant")
   }
 
   dependencies {
