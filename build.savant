@@ -91,7 +91,7 @@ target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: [
     dependencies(group: "runtime", transitive: true, transitiveGroups: ["provided", "compile", "runtime"])
   }
 
-  file.tar(file: "build/distributions/${project.name}-${project.version}.tar.gz", compress: true) {
+  file.tar(file: "build/distributions/savant-${project.version}.tar.gz", compress: true) {
     tarFileSet(prefix: "savant-${project.version}", dir: "build/distributions/exploded")
   }
 }
