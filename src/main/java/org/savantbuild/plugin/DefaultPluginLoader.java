@@ -35,6 +35,7 @@ import org.savantbuild.dep.graph.ResolvedArtifactGraph;
 import org.savantbuild.domain.Project;
 import org.savantbuild.lang.Classpath;
 import org.savantbuild.output.Output;
+import org.savantbuild.runtime.BuildFailureException;
 
 /**
  * Default plugin loader that uses the Savant dependency service and a URLClassLoader to load the plugin.
@@ -62,7 +63,19 @@ public class DefaultPluginLoader implements PluginLoader {
   public Plugin load(Dependency pluginDependency) {
     output.debug("Loading plugin [%s]", pluginDependency);
 
-//    Artifact root = project.toArtifact();
+    if (project.workflow == null || project.workflow.fetchWorkflow == null || project.workflow.fetchWorkflow.processes.size() == 0 ||
+        project.workflow.publishWorkflow == null || project.workflow.publishWorkflow.processes.size() == 0) {
+      output.error("Your project uses plugins but doesn't have a workflow defined to fetch them. Define a workflow in your project definition section like this:\n\n" +
+          "  project(...) {\n" +
+          "    workflow {\n" +
+          "      standard()\n" +
+          "    }\n" +
+          "  }");
+      throw new BuildFailureException();
+    }
+
+    // This doesn't use the project as the root because the project might be in the graph and that would cause failures.
+    // This is how Savant is self building
     Artifact root = new Artifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", License.Apachev2);
     Dependencies dependencies = new Dependencies(new DependencyGroup("runtime", false, pluginDependency));
     DependencyGraph dependencyGraph = project.dependencyService.buildGraph(root, dependencies, project.workflow);

@@ -44,7 +44,7 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.1.0", license
 // Plugins
 dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
 file = loadPlugin(id: "org.savantbuild.plugin:file:${savantVersion}")
-java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
+java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.1-{integration}")
 javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
 idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
@@ -71,6 +71,10 @@ target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
 
 target(name: "test", description: "Runs the project's tests", dependsOn: ["jar"]) {
   javaTestNG.test()
+}
+
+target(name: "doc", description: "Generate the project's JavaDoc", dependsOn: ["jar"]) {
+  java.document()
 }
 
 target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {

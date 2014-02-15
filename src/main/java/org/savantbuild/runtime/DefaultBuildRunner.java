@@ -86,7 +86,7 @@ public class DefaultBuildRunner implements BuildRunner {
     output.info("   --help         Displays the help message");
     output.info("   --listTargets  Lists the build targets");
     output.info("");
-    output.info("NOTE: If any other argument starts with {@code --} then it is considered a switch. Switches can optionally have values using the equals sign like this:");
+    output.info("NOTE: If any other argument starts with '--' then it is considered a switch. Switches can optionally have values using the equals sign like this:");
     output.info("");
     output.info("   --switch");
     output.info("   --switch=value");
