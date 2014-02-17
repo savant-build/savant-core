@@ -24,6 +24,7 @@ import org.savantbuild.output.Output;
 import org.savantbuild.parser.BuildFileParser;
 import org.savantbuild.parser.ParseException;
 import org.savantbuild.parser.TargetGraphBuilder;
+import org.savantbuild.runtime.RuntimeConfiguration;
 
 import groovy.lang.GroovyClassLoader;
 
@@ -33,9 +34,9 @@ import groovy.lang.GroovyClassLoader;
  * @author Brian Pontarelli
  */
 public class GroovyBuildFileParser implements BuildFileParser {
-  private final TargetGraphBuilder targetGraphBuilder;
-
   private final Output output;
+
+  private final TargetGraphBuilder targetGraphBuilder;
 
   public GroovyBuildFileParser(Output output, TargetGraphBuilder targetGraphBuilder) {
     this.output = output;
@@ -45,11 +46,12 @@ public class GroovyBuildFileParser implements BuildFileParser {
   /**
    * Executes the script using a GroovyClassLoader and the ProjectBuildFileMetaClass.
    *
-   * @param buildFile The file.
+   * @param buildFile            The file.
+   * @param runtimeConfiguration The runtime configuration that is passed to the build script.
    * @return The Project.
    */
   @Override
-  public Project parse(Path buildFile) {
+  public Project parse(Path buildFile, RuntimeConfiguration runtimeConfiguration) {
     try {
       CompilerConfiguration compilerConfig = new CompilerConfiguration();
       compilerConfig.setScriptBaseClass(ProjectBuildFile.class.getName());
@@ -60,6 +62,7 @@ public class GroovyBuildFileParser implements BuildFileParser {
       Project project = new Project(buildFile.toAbsolutePath().getParent(), output);
       script.project = project;
       script.output = output;
+      script.switches = runtimeConfiguration.switches;
       script.run();
 
       project.targetGraph = targetGraphBuilder.build(project);

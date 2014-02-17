@@ -15,8 +15,6 @@
  */
 package org.savantbuild.runtime;
 
-import org.savantbuild.runtime.RuntimeConfiguration.Switch;
-
 /**
  * Default implementation that uses a simple brute force approach for now.
  *
@@ -62,9 +60,9 @@ public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationPa
       } else if (argument.startsWith("--")) {
         int equals = argument.indexOf('=');
         if (equals == -1) {
-          configuration.arguments.add(new Switch(argument));
+          configuration.switches.add(argument);
         } else {
-          configuration.arguments.add(new Switch(argument.substring(0, equals), argument.substring(equals + 1)));
+          configuration.switches.add(argument.substring(0, equals), argument.substring(equals + 1));
         }
       } else {
         configuration.targets.add(argument);

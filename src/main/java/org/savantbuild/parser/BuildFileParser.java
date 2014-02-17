@@ -15,9 +15,10 @@
  */
 package org.savantbuild.parser;
 
-import org.savantbuild.domain.Project;
-
 import java.nio.file.Path;
+
+import org.savantbuild.domain.Project;
+import org.savantbuild.runtime.RuntimeConfiguration;
 
 /**
  * Parses the build file into the domain objects.
@@ -29,7 +30,8 @@ public interface BuildFileParser {
    * Parses the given file and generates the Project object.
    *
    * @param file The file.
+   * @param runtimeConfiguration The runtime configuration that is passed to the build script.
    * @return The Project.
    */
-  Project parse(Path file);
+  Project parse(Path file, RuntimeConfiguration runtimeConfiguration);
 }

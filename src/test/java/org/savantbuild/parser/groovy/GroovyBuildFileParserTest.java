@@ -34,6 +34,7 @@ import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Publications;
 import org.savantbuild.domain.Target;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
+import org.savantbuild.runtime.RuntimeConfiguration;
 import org.savantbuild.util.Graph;
 import org.savantbuild.util.HashGraph;
 import org.testng.annotations.Test;
@@ -54,7 +55,7 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
   public void parse() {
     GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
     Path buildFile = projectDir.resolve("src/test/java/org/savantbuild/parser/groovy/simple.savant");
-    Project project = parser.parse(buildFile);
+    Project project = parser.parse(buildFile, new RuntimeConfiguration());
     assertEquals(project.group, "group");
     assertEquals(project.name, "name");
     assertEquals(project.version, new Version("1.1"));
@@ -114,5 +115,18 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
             buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar").toAbsolutePath())
     );
     assertEquals(project.publications, expectedPublications);
+  }
+
+  @Test
+  public void parseWithSwitches() {
+    GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
+    Path buildFile = projectDir.resolve("src/test/java/org/savantbuild/parser/groovy/simple.savant");
+    RuntimeConfiguration runtimeConfiguration = new RuntimeConfiguration();
+    runtimeConfiguration.switches.add("skip");
+    Project project = parser.parse(buildFile, runtimeConfiguration);
+
+    // Verify the target executes correctly
+    project.targets.get("compile").invocation.run();
+    assertEquals(project.name, "name");
   }
 }

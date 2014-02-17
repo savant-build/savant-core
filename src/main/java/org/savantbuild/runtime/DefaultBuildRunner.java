@@ -63,7 +63,7 @@ public class DefaultBuildRunner implements BuildRunner {
       throws ArtifactMetaDataMissingException, ArtifactMissingException,
       BuildRunException, BuildFailureException, CompatibilityException, CyclicException, LicenseException, MD5Exception,
       ParseException, PluginLoadException, ProcessFailureException, PublishException, VersionException {
-    Project project = buildFileParser.parse(buildFile);
+    Project project = buildFileParser.parse(buildFile, runtimeConfiguration);
 
     if (runtimeConfiguration.help) {
       printHelp(project);

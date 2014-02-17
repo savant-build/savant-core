@@ -26,11 +26,6 @@ import java.util.List;
  */
 public class RuntimeConfiguration {
   /**
-   * The list of command-line switches.
-   */
-  public List<Switch> arguments = new ArrayList<>();
-
-  /**
    * Determines if the output should be colorized.
    */
   public boolean colorizeOutput = true;
@@ -51,6 +46,11 @@ public class RuntimeConfiguration {
   public boolean listTargets;
 
   /**
+   * The command-lin switches.
+   */
+  public Switches switches = new Switches();
+
+  /**
    * The list of targets to execute (in order).
    */
   public List<String> targets = new ArrayList<>();
@@ -61,23 +61,5 @@ public class RuntimeConfiguration {
   public RuntimeConfiguration(boolean colorizeOutput, String... targets) {
     this.colorizeOutput = colorizeOutput;
     Collections.addAll(this.targets, targets);
-  }
-
-  /**
-   * A class that models command-line switches that might have values or not.
-   */
-  public static class Switch {
-    public String name;
-
-    public String value;
-
-    public Switch(String name) {
-      this.name = name;
-    }
-
-    public Switch(String name, String value) {
-      this.name = name;
-      this.value = value;
-    }
   }
 }

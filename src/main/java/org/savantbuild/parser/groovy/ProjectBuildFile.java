@@ -30,6 +30,7 @@ import org.savantbuild.plugin.DefaultPluginLoader;
 import org.savantbuild.plugin.Plugin;
 import org.savantbuild.plugin.PluginLoader;
 import org.savantbuild.runtime.BuildFailureException;
+import org.savantbuild.runtime.Switches;
 
 import groovy.lang.Closure;
 import groovy.lang.Script;
@@ -48,6 +49,8 @@ public abstract class ProjectBuildFile extends Script {
   public Output output;
 
   public Project project;
+
+  public Switches switches;
 
   /**
    * Fails the build with the given message by throwing a {@link BuildFailureException}.
