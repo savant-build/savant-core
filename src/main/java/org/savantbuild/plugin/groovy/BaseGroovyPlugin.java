@@ -26,6 +26,7 @@ import org.savantbuild.domain.Project;
 import org.savantbuild.output.Output;
 import org.savantbuild.plugin.Plugin;
 import org.savantbuild.runtime.BuildFailureException;
+import org.savantbuild.runtime.RuntimeConfiguration;
 
 import groovy.lang.GroovyObjectSupport;
 
@@ -40,9 +41,12 @@ public class BaseGroovyPlugin extends GroovyObjectSupport implements Plugin {
 
   public final Project project;
 
-  protected BaseGroovyPlugin(Project project, Output output) {
+  public final RuntimeConfiguration runtimeConfiguration;
+
+  protected BaseGroovyPlugin(Project project, RuntimeConfiguration runtimeConfiguration, Output output) {
     this.project = project;
     this.output = output;
+    this.runtimeConfiguration = runtimeConfiguration;
   }
 
   /**
@@ -51,8 +55,7 @@ public class BaseGroovyPlugin extends GroovyObjectSupport implements Plugin {
    * @param message The failure message.
    */
   protected void fail(String message, Object... values) {
-    output.error(message, values);
-    throw new BuildFailureException(message);
+    throw new BuildFailureException(String.format(message, values));
   }
 
   /**

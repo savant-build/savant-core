@@ -15,6 +15,8 @@
  */
 package org.savantbuild.runtime;
 
+import java.util.HashSet;
+
 import org.savantbuild.BaseUnitTest;
 import org.testng.annotations.Test;
 
@@ -47,5 +49,11 @@ public class DefaultRuntimeConfigurationParserTest extends BaseUnitTest {
     config = parser.parse("foo", "--noColor", "bar");
     assertFalse(config.colorizeOutput);
     assertEquals(config.targets, asList("foo", "bar"));
+
+    config = parser.parse("foo", "--noColor", "bar", "--test=SomeTest", "--booleanSwitch");
+    assertFalse(config.colorizeOutput);
+    assertEquals(config.targets, asList("foo", "bar"));
+    assertEquals(config.switches.booleanSwitches, new HashSet<>(asList("booleanSwitch")));
+    assertEquals(config.switches.valueSwitches.get("test"), asList("SomeTest"));
   }
 }

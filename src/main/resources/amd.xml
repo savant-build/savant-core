@@ -16,8 +16,9 @@
 <artifact-meta-data license="Apachev2">
   <dependencies>
     <dependency-group type="compile">
-      <dependency group="org.savantbuild" project="savant-dependency-management" name="savant-dependency-management" version="0.1.0-{integration}" type="jar"/>
-      <dependency group="org.savantbuild" project="savant-utils" name="savant-utils" version="0.1.0-{integration}" type="jar"/>
+      <dependency group="org.codehaus.groovy" project="groovy" name="groovy-all" version="2.2.1" type="jar"/>
+      <dependency group="org.savantbuild" project="savant-dependency-management" name="savant-dependency-management" version="0.2.0-{integration}" type="jar"/>
+      <dependency group="org.savantbuild" project="savant-utils" name="savant-utils" version="0.2.0-{integration}" type="jar"/>
     </dependency-group>
   </dependencies>
 </artifact-meta-data>

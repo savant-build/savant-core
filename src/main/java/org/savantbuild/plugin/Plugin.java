@@ -17,15 +17,16 @@ package org.savantbuild.plugin;
 
 import org.savantbuild.domain.Project;
 import org.savantbuild.output.Output;
+import org.savantbuild.runtime.RuntimeConfiguration;
 
 /**
  * Defines a Plugin for the Savant build system. This is a marker interface that allows Plugins to be written in any
- * language. The only requirements of Plugins is that they must have a single constructor that takes a {@link Project}
- * and a {@link Output} (in that order). For example:
+ * language. The only requirements of Plugins is that they must have a single constructor that takes a {@link Project},
+ * {@link RuntimeConfiguration} and a {@link Output} (in that order). For example:
  * <p>
  * <pre>
  *   class GroovyPlugin {
- *     GroovyPlugin(Project project, Output output) {
+ *     GroovyPlugin(Project project, RuntimeConfiguration runtimeConfiguration, Output output) {
  *       ...
  *     }
  *   }

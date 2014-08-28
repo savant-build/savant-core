@@ -19,10 +19,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.savantbuild.dep.LicenseException;
+import org.savantbuild.dep.PublishException;
+import org.savantbuild.dep.domain.CompatibilityException;
+import org.savantbuild.dep.domain.VersionException;
+import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
+import org.savantbuild.dep.workflow.ArtifactMissingException;
+import org.savantbuild.dep.workflow.process.ProcessFailureException;
 import org.savantbuild.output.Output;
 import org.savantbuild.output.SystemOutOutput;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
+import org.savantbuild.parser.ParseException;
 import org.savantbuild.parser.groovy.GroovyBuildFileParser;
+import org.savantbuild.plugin.PluginLoadException;
+import org.savantbuild.security.MD5Exception;
+import org.savantbuild.util.CyclicException;
 
 /**
  * Main entry point for Savant CLI runtime.
@@ -52,6 +63,16 @@ public class Main {
     try {
       BuildRunner buildRunner = new DefaultBuildRunner(output, new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
       buildRunner.run(buildFile, runtimeConfiguration);
+    } catch (ArtifactMetaDataMissingException | ArtifactMissingException | BuildRunException | BuildFailureException |
+        CompatibilityException | LicenseException | MD5Exception | ParseException | PluginLoadException |
+        ProcessFailureException | PublishException | VersionException e) {
+      output.error(e.getMessage());
+      output.debug(e);
+      System.exit(1);
+    } catch (CyclicException e) {
+      output.error("Your dependencies appear to have cycle. The root message is [" + e.getMessage() + "]");
+      output.debug(e);
+      System.exit(1);
     } catch (Throwable t) {
       output.error("Build failed due to an exception or error. Enable debug to see the stack trace.");
       output.debug(t);

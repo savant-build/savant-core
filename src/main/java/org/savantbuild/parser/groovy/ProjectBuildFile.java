@@ -30,6 +30,7 @@ import org.savantbuild.plugin.DefaultPluginLoader;
 import org.savantbuild.plugin.Plugin;
 import org.savantbuild.plugin.PluginLoader;
 import org.savantbuild.runtime.BuildFailureException;
+import org.savantbuild.runtime.RuntimeConfiguration;
 import org.savantbuild.runtime.Switches;
 
 import groovy.lang.Closure;
@@ -49,6 +50,8 @@ public abstract class ProjectBuildFile extends Script {
   public Output output;
 
   public Project project;
+
+  public RuntimeConfiguration runtimeConfiguration;
 
   public Switches switches;
 
@@ -80,7 +83,7 @@ public abstract class ProjectBuildFile extends Script {
     }
 
     String id = GroovyTools.toString(attributes, "id");
-    PluginLoader loader = new DefaultPluginLoader(project, output);
+    PluginLoader loader = new DefaultPluginLoader(project, runtimeConfiguration, output);
     Dependency pluginDependency = new Dependency(id, false);
     Plugin plugin = loader.load(pluginDependency);
     project.plugins.put(pluginDependency, plugin);
@@ -110,7 +113,7 @@ public abstract class ProjectBuildFile extends Script {
    */
   protected Project project(Map<String, Object> attributes, Closure closure) {
     if (!GroovyTools.hasAttributes(attributes, "group", "name", "version", "license")) {
-      throw new ParseException("Invalid project definition. It should look like:\n\n" +
+      throw new ParseException("Invalid project definition. One of the required attributes is missing (i.e. license). It should look like:\n\n" +
           "  project(group: \"org.example\", name: \"my-project\", version: \"1.1\", license: \"Commercial\")");
     }
 

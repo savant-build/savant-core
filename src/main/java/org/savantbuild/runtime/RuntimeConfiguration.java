@@ -46,7 +46,7 @@ public class RuntimeConfiguration {
   public boolean listTargets;
 
   /**
-   * The command-lin switches.
+   * The command-line switches.
    */
   public Switches switches = new Switches();
 
@@ -54,6 +54,11 @@ public class RuntimeConfiguration {
    * The list of targets to execute (in order).
    */
   public List<String> targets = new ArrayList<>();
+
+  /**
+   * Determines if the version should be displayed
+   */
+  public boolean printVersion;
 
   public RuntimeConfiguration() {
   }

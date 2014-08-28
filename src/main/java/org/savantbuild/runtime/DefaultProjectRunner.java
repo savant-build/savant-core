@@ -18,9 +18,18 @@ package org.savantbuild.runtime;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.savantbuild.dep.LicenseException;
+import org.savantbuild.dep.PublishException;
+import org.savantbuild.dep.domain.CompatibilityException;
+import org.savantbuild.dep.domain.VersionException;
+import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
+import org.savantbuild.dep.workflow.ArtifactMissingException;
+import org.savantbuild.dep.workflow.process.ProcessFailureException;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
 import org.savantbuild.output.Output;
+import org.savantbuild.security.MD5Exception;
+import org.savantbuild.util.CyclicException;
 
 /**
  * Default project object runner. Using the {@link Project} object, this executes build targets of the project.
@@ -40,9 +49,25 @@ public class DefaultProjectRunner implements ProjectRunner {
    *
    * @param project The project.
    * @param targets The targets to run.
+   * @throws ArtifactMetaDataMissingException If any dependencies of the project are missing an AMD file in the
+   *                                          repository or local cache.
+   * @throws ArtifactMissingException         If any dependencies of the project are missing in the repository or local
+   *                                          cache.
+   * @throws BuildRunException                If the build can not be run (internally not due to a failure of the build
+   *                                          itself).
+   * @throws BuildFailureException            If the build fails while running.
+   * @throws CompatibilityException           If the project has incompatible versions of a dependency.
+   * @throws CyclicException                  If the project has cyclic dependencies.
+   * @throws LicenseException                 If the project has a dependency with an invalid license.
+   * @throws MD5Exception                     If a dependency is corrupt.
+   * @throws PublishException                 If there was an error publishing an artifact.
+   * @throws ProcessFailureException          If the downloading of a dependency fails.
+   * @throws VersionException                 If any of the versions are not semantic.
    */
   @Override
-  public void run(Project project, Iterable<String> targets) {
+  public void run(Project project, Iterable<String> targets) throws ArtifactMetaDataMissingException, ArtifactMissingException,
+      BuildRunException, BuildFailureException, CompatibilityException, CyclicException, LicenseException, MD5Exception,
+      ProcessFailureException, PublishException, VersionException {
     Set<String> calledTargets = new HashSet<>();
     targets.forEach((targetName) -> {
       Target target = project.targets.get(targetName);

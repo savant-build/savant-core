@@ -63,6 +63,11 @@ public class DefaultBuildRunner implements BuildRunner {
       throws ArtifactMetaDataMissingException, ArtifactMissingException,
       BuildRunException, BuildFailureException, CompatibilityException, CyclicException, LicenseException, MD5Exception,
       ParseException, PluginLoadException, ProcessFailureException, PublishException, VersionException {
+    if (runtimeConfiguration.printVersion) {
+      printVersion();
+      return;
+    }
+
     Project project = buildFileParser.parse(buildFile, runtimeConfiguration);
 
     if (runtimeConfiguration.help) {
@@ -100,5 +105,11 @@ public class DefaultBuildRunner implements BuildRunner {
     project.targets.forEach((name, target) -> {
       output.info("  %s: %s", name, target.description != null ? target.description : "No description");
     });
+  }
+
+  private void printVersion() {
+    String version = Main.class.getPackage().getImplementationVersion();
+    output.info("Savant Build System Version [" + version + "]");
+    output.info("");
   }
 }

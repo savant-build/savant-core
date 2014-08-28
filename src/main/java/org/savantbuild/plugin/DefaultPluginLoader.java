@@ -36,6 +36,7 @@ import org.savantbuild.domain.Project;
 import org.savantbuild.lang.Classpath;
 import org.savantbuild.output.Output;
 import org.savantbuild.runtime.BuildFailureException;
+import org.savantbuild.runtime.RuntimeConfiguration;
 
 /**
  * Default plugin loader that uses the Savant dependency service and a URLClassLoader to load the plugin.
@@ -51,9 +52,12 @@ public class DefaultPluginLoader implements PluginLoader {
 
   private final Project project;
 
-  public DefaultPluginLoader(Project project, Output output) {
+  private final RuntimeConfiguration runtimeConfiguration;
+
+  public DefaultPluginLoader(Project project, RuntimeConfiguration runtimeConfiguration, Output output) {
     this.output = output;
     this.project = project;
+    this.runtimeConfiguration = runtimeConfiguration;
   }
 
   /**
@@ -101,14 +105,23 @@ public class DefaultPluginLoader implements PluginLoader {
 
       URLClassLoader pluginClassLoader = classpath.toURLClassLoader();
       Class<?> pluginClass = pluginClassLoader.loadClass(pluginClassName);
-      return (Plugin) pluginClass.getConstructor(Project.class, Output.class).newInstance(project, output);
+      return (Plugin) pluginClass.getConstructor(Project.class, RuntimeConfiguration.class, Output.class).newInstance(project, runtimeConfiguration, output);
     } catch (IOException e) {
       throw new PluginLoadException("Unable to load plugin [" + pluginDependency + "] because the plugin JAR could not be read", e);
     } catch (ClassNotFoundException e) {
       throw new PluginLoadException("Unable to load plugin [" + pluginDependency + "] because the plugin class [" + pluginClassName + "] was not in the plugin JAR", e);
     } catch (ClassCastException e) {
       throw new PluginLoadException("Unable to load plugin [" + pluginDependency + "] because the plugin class [" + pluginClassName + "] does not extend org.savantbuild.plugin.groovy.Plugin", e);
-    } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+    } catch (NoSuchMethodException | InstantiationException e) {
+      throw new PluginLoadException("Unable to load plugin [" + pluginDependency + "] because the plugin class [" + pluginClassName + "] could not be instantiated. " +
+          "It must have a public constructor like this:\n\npublic MyPlugin(Project project, RuntimeConfiguration runtimeConfiguration, Output output) {\n  ...\n}\n", e);
+    } catch (IllegalAccessException e) {
+      throw new PluginLoadException("Unable to load plugin [" + pluginDependency + "] because the plugin class [" + pluginClassName + "] could not be instantiated", e);
+    } catch (InvocationTargetException e) {
+      if (e.getTargetException() instanceof RuntimeException) {
+        throw (RuntimeException) e.getTargetException();
+      }
+
       throw new PluginLoadException("Unable to load plugin [" + pluginDependency + "] because the plugin class [" + pluginClassName + "] could not be instantiated", e);
     }
   }

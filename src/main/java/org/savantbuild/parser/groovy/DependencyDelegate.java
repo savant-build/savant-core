@@ -15,18 +15,18 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.util.Map;
+
 import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.parser.ParseException;
-
-import java.util.Map;
 
 /**
  * Groovy delegate that defines the dependencies.
  *
  * @author Brian Pontarelli
  */
-public class DependencyDelegate {
+public class DependencyDelegate extends BaseDelegate {
   private final DependencyGroup group;
 
   public DependencyDelegate(DependencyGroup group) {
@@ -42,9 +42,10 @@ public class DependencyDelegate {
    * @return The dependency object.
    * @see Dependency#Dependency(String, boolean)
    */
-  public Dependency dependency(Map<String, Object> attributes) {
+  public Dependency dependency(Object parameter) {
+    Map<String, Object> attributes = toAttributes(parameter);
     if (!GroovyTools.hasAttributes(attributes, "id")) {
-      throw new ParseException("Invalid publication definition. It must have the id attribute like this:\n\n" +
+      throw new ParseException("Invalid dependency definition. It must have the id attribute like this:\n\n" +
           "  dependency(id: \"org.example:foo:0.1.0\", optional: false)");
     }
 

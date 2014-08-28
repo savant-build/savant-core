@@ -13,7 +13,9 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-project(group: "org.savantbuild", name: "savant-core", version: "0.1.1", license: "Apachev2") {
+savantVersion = "0.2.0-{integration}"
+
+project(group: "org.savantbuild", name: "savant-core", version: "0.2.0", license: "Apachev2") {
   workflow {
     standard()
   }
@@ -25,8 +27,8 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.1.1", license
   dependencies {
     group(type: "compile") {
       dependency(id: "org.codehaus.groovy:groovy:groovy-all:2.2.1:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:0.1.1")
-      dependency(id: "org.savantbuild:savant-utils:0.1.1")
+      dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}")
+      dependency(id: "org.savantbuild:savant-utils:${savantVersion}")
     }
     group(type: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
@@ -40,19 +42,19 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.1.1", license
 }
 
 // Plugins
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:0.1.1")
-file = loadPlugin(id: "org.savantbuild.plugin:file:0.1.0")
-java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.1")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:0.1.1")
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:0.1.1")
-release = loadPlugin(id: "org.savantbuild.plugin:release-git:0.1.1")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:${savantVersion}")
+file = loadPlugin(id: "org.savantbuild.plugin:file:${savantVersion}")
+java = loadPlugin(id: "org.savantbuild.plugin:java:${savantVersion}")
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:${savantVersion}")
+idea = loadPlugin(id: "org.savantbuild.plugin:idea:${savantVersion}")
+release = loadPlugin(id: "org.savantbuild.plugin:release-git:${savantVersion}")
 
 // Plugin settings
 java.settings.javaVersion = "1.8"
 javaTestNG.settings.javaVersion = "1.8"
 idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:0.1.1":"savant-dependency-management",
-    "org.savantbuild:savant-utils:0.1.1":"savant-utils"
+    "org.savantbuild:savant-dependency-management:${savantVersion}":"savant-dependency-management",
+    "org.savantbuild:savant-utils:${savantVersion}":"savant-utils"
 ]
 
 target(name: "clean", description: "Cleans the project") {

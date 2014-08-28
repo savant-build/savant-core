@@ -42,17 +42,15 @@ public class GroovyTools {
    * @return True if the attributes are valid, false otherwise.
    */
   @SuppressWarnings("unchecked")
-  public static boolean attributesValid(Object attributes, Collection<String> requiredAttributes, Map<String, Class<?>> types) {
+  public static boolean attributesValid(Map<String, Object> attributes, Collection<String> possibleAttributes,
+                                        Collection<String> requiredAttributes, Map<String, Class<?>> types) {
     if (attributes == null && requiredAttributes.isEmpty()) {
       return true;
-    }
-
-    if (attributes == null || !(attributes instanceof Map)) {
+    } else if (attributes == null) {
       return false;
     }
 
-    Map<String, Object> map = (Map<String, Object>) attributes;
-    return hasAttributes(map, requiredAttributes) && hasAttributeTypes(map, types);
+    return possibleAttributes.containsAll(attributes.keySet()) && hasAttributes(attributes, requiredAttributes) && hasAttributeTypes(attributes, types);
   }
 
   /**

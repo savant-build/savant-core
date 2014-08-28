@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Specification-Vendor: Savant Build
+Specification-Version: 0.2.0-{integration}
+Implementation-Vendor: Inversoft
+Implementation-Version: 0.2.0-{integration}
+

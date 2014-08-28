@@ -26,6 +26,7 @@ import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.domain.Project;
 import org.savantbuild.output.Output;
 import org.savantbuild.output.SystemOutOutput;
+import org.savantbuild.runtime.RuntimeConfiguration;
 import org.savantbuild.security.MD5;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -78,7 +79,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   public void loadBadClass() throws Exception {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
-    DefaultPluginLoader loader = new DefaultPluginLoader(project, output);
+    DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
       loader.load(new Dependency("org.savantbuild.test:bad-class:0.1.0", false));
@@ -93,7 +94,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   public void loadBadConstructor() throws Exception {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
-    DefaultPluginLoader loader = new DefaultPluginLoader(project, output);
+    DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
       loader.load(new Dependency("org.savantbuild.test:bad-constructor:0.1.0", false));
@@ -108,7 +109,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   public void loadBadManifest() throws Exception {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
-    DefaultPluginLoader loader = new DefaultPluginLoader(project, output);
+    DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
       loader.load(new Dependency("org.savantbuild.test:bad-manifest:0.1.0", false));
@@ -123,7 +124,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   public void loadGood() throws Exception {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
-    DefaultPluginLoader loader = new DefaultPluginLoader(project, output);
+    DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     GoodPlugin plugin = (GoodPlugin) loader.load(new Dependency("org.savantbuild.test:good:0.1.0", false));
     assertSame(plugin.project, project);
@@ -134,7 +135,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   public void loadMissingClass() throws Exception {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
-    DefaultPluginLoader loader = new DefaultPluginLoader(project, output);
+    DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
       loader.load(new Dependency("org.savantbuild.test:missing-class:0.1.0", false));
@@ -149,7 +150,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   public void loadMissingManifest() throws Exception {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
-    DefaultPluginLoader loader = new DefaultPluginLoader(project, output);
+    DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
       loader.load(new Dependency("org.savantbuild.test:missing-manifest:0.1.0", false));

@@ -25,8 +25,9 @@ public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationPa
    * Parses the command-line arguments. There are currently 4 fixed arguments:
    * <p>
    * <pre>
-   *   --noColor = disables the colorized output of Savant
-   *   --debug = enables debug output
+   *   --noColor = Disables the colorized output of Savant
+   *   --debug = Enables debug output
+   *   --version = Displays the version
    *   --help = Displays the help message
    *   --listTargets = Lists the build targets
    * </pre>
@@ -57,12 +58,14 @@ public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationPa
         configuration.help = true;
       } else if (argument.equals("--listTargets")) {
         configuration.listTargets = true;
+      } else if (argument.equals("--version")) {
+        configuration.printVersion = true;
       } else if (argument.startsWith("--")) {
         int equals = argument.indexOf('=');
         if (equals == -1) {
-          configuration.switches.add(argument);
+          configuration.switches.add(argument.substring(2));
         } else {
-          configuration.switches.add(argument.substring(0, equals), argument.substring(equals + 1));
+          configuration.switches.add(argument.substring(2, equals), argument.substring(equals + 1));
         }
       } else {
         configuration.targets.add(argument);

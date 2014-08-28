@@ -17,6 +17,7 @@ package org.savantbuild.plugin;
 
 import org.savantbuild.domain.Project;
 import org.savantbuild.output.Output;
+import org.savantbuild.runtime.RuntimeConfiguration;
 
 /**
  * Sample plugin.
@@ -24,11 +25,15 @@ import org.savantbuild.output.Output;
  * @author Brian Pontarelli
  */
 public class GoodPlugin implements Plugin {
-  public final Project project;
   public final Output output;
 
-  public GoodPlugin(Project project, Output output) {
+  public final Project project;
+
+  public final RuntimeConfiguration runtimeConfiguration;
+
+  public GoodPlugin(Project project, RuntimeConfiguration runtimeConfiguration, Output output) {
     this.project = project;
     this.output = output;
+    this.runtimeConfiguration = runtimeConfiguration;
   }
 }
