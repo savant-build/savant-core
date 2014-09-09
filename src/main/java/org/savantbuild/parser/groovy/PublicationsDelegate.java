@@ -18,10 +18,10 @@ package org.savantbuild.parser.groovy;
 import java.nio.file.Path;
 import java.util.Map;
 
-import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.ArtifactMetaData;
 import org.savantbuild.dep.domain.Publication;
+import org.savantbuild.dep.domain.ReifiedArtifact;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Publications;
 import org.savantbuild.parser.ParseException;
@@ -67,12 +67,12 @@ public class PublicationsDelegate extends GroovyObjectSupport {
    */
   public void standard() {
     ArtifactMetaData metaData = new ArtifactMetaData(project.dependencies, project.license);
-    Artifact mainArtifact = new Artifact(new ArtifactID(project.group, project.name, project.name, "jar"), project.version, project.license);
+    ReifiedArtifact mainArtifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, project.name, "jar"), project.version, project.license);
     Path mainJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactFile());
     Path mainSourceJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactSourceFile());
     publications.add("main", new Publication(mainArtifact, metaData, mainJar, mainSourceJar));
 
-    Artifact testArtifact = new Artifact(new ArtifactID(project.group, project.name, project.name + "-test", "jar"), project.version, project.license);
+    ReifiedArtifact testArtifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, project.name + "-test", "jar"), project.version, project.license);
     Path testJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactTestFile());
     Path testSourceJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactTestSourceFile());
     publications.add("test", new Publication(testArtifact, metaData, testJar, testSourceJar));
@@ -84,9 +84,11 @@ public class PublicationsDelegate extends GroovyObjectSupport {
    * @author Brian Pontarelli
    */
   public static class PublicationGroupDelegate {
-    public final Project project;
-    public final Publications publications;
     public final String group;
+
+    public final Project project;
+
+    public final Publications publications;
 
     public PublicationGroupDelegate(Project project, Publications publications, String group) {
       this.project = project;
@@ -113,7 +115,7 @@ public class PublicationsDelegate extends GroovyObjectSupport {
       String type = GroovyTools.toString(attributes, "type");
       String file = GroovyTools.toString(attributes, "file");
       String source = GroovyTools.toString(attributes, "source");
-      Artifact artifact = new Artifact(new ArtifactID(project.group, project.name, name, type), project.version, project.license);
+      ReifiedArtifact artifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, name, type), project.version, project.license);
       ArtifactMetaData amd = new ArtifactMetaData(project.dependencies, project.license);
       Publication publication = new Publication(artifact, amd, project.directory.resolve(file), project.directory.resolve(source));
       this.publications.add(group, publication);

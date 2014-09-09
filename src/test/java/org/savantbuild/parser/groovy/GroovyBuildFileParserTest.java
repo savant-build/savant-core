@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.ArtifactMetaData;
 import org.savantbuild.dep.domain.Dependencies;
-import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Publication;
+import org.savantbuild.dep.domain.ReifiedArtifact;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.SVNProcess;
@@ -96,20 +96,20 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
 
     // Verify the dependencies
     Dependencies expectedDependencies = new Dependencies(
-        new DependencyGroup("compile", true, new Dependency("org.example:compile:1.0", false)),
-        new DependencyGroup("test-compile", false, new Dependency("org.example:test:1.0", false), new Dependency("org.example:test2:2.0", true)));
+        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0")),
+        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0"), new Artifact("org.example:test2:2.0")));
     assertEquals(project.dependencies, expectedDependencies);
 
     // Verify the publications
     Publications expectedPublications = new Publications();
     expectedPublications.add("main",
-        new Publication(new Artifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), License.Commercial),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), License.Commercial),
             new ArtifactMetaData(expectedDependencies, License.Commercial),
             buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );
     expectedPublications.add("test",
-        new Publication(new Artifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), License.Commercial),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), License.Commercial),
             new ArtifactMetaData(expectedDependencies, License.Commercial),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar").toAbsolutePath())

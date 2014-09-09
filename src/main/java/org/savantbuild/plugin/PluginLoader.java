@@ -15,7 +15,7 @@
  */
 package org.savantbuild.plugin;
 
-import org.savantbuild.dep.domain.Dependency;
+import org.savantbuild.dep.domain.Artifact;
 
 /**
  * Defines the method used to load Plugins
@@ -29,5 +29,5 @@ public interface PluginLoader {
    * @param pluginDependency The dependency definition of the plugin.
    * @return The Plugin instance.
    */
-  Plugin load(Dependency pluginDependency);
+  Plugin load(Artifact pluginDependency);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001-2010, Inversoft, All Rights Reserved
+ * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import org.savantbuild.dep.DefaultDependencyService;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.Dependencies;
-import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.License;
+import org.savantbuild.dep.domain.ReifiedArtifact;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.graph.ArtifactGraph;
 import org.savantbuild.dep.workflow.PublishWorkflow;
@@ -62,7 +62,7 @@ public class Project {
 
   public Path pluginConfigurationDirectory = Paths.get(System.getProperty("user.home") + "/.savant/plugins");
 
-  public Map<Dependency, Plugin> plugins = new HashMap<>();
+  public Map<Artifact, Plugin> plugins = new HashMap<>();
 
   public Publications publications = new Publications();
 
@@ -86,7 +86,7 @@ public class Project {
    *
    * @return The project artifact.
    */
-  public Artifact toArtifact() {
-    return new Artifact(new ArtifactID(group, name, name, "jar"), version, license);
+  public ReifiedArtifact toArtifact() {
+    return new ReifiedArtifact(new ArtifactID(group, name, name, "jar"), version, license);
   }
 }

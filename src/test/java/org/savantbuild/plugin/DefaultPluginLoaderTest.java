@@ -16,7 +16,7 @@
 package org.savantbuild.plugin;
 
 import org.savantbuild.BaseUnitTest;
-import org.savantbuild.dep.domain.Dependency;
+import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.workflow.FetchWorkflow;
@@ -82,7 +82,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
-      loader.load(new Dependency("org.savantbuild.test:bad-class:0.1.0", false));
+      loader.load(new Artifact("org.savantbuild.test:bad-class:0.1.0"));
       fail("Should have thrown an exception");
     } catch (PluginLoadException e) {
       assertTrue(e.getMessage().contains("does not extend"));
@@ -97,7 +97,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
-      loader.load(new Dependency("org.savantbuild.test:bad-constructor:0.1.0", false));
+      loader.load(new Artifact("org.savantbuild.test:bad-constructor:0.1.0"));
       fail("Should have thrown an exception");
     } catch (PluginLoadException e) {
       assertTrue(e.getMessage().contains("could not be instantiated"));
@@ -112,7 +112,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
-      loader.load(new Dependency("org.savantbuild.test:bad-manifest:0.1.0", false));
+      loader.load(new Artifact("org.savantbuild.test:bad-manifest:0.1.0"));
       fail("Should have thrown an exception");
     } catch (PluginLoadException e) {
       assertTrue(e.getMessage().contains("The JAR file does not contain a valid Manifest entry for Savant-Plugin-Class"));
@@ -126,7 +126,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     Project project = makeProject(output);
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
-    GoodPlugin plugin = (GoodPlugin) loader.load(new Dependency("org.savantbuild.test:good:0.1.0", false));
+    GoodPlugin plugin = (GoodPlugin) loader.load(new Artifact("org.savantbuild.test:good:0.1.0"));
     assertSame(plugin.project, project);
     assertSame(plugin.output, output);
   }
@@ -138,7 +138,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
-      loader.load(new Dependency("org.savantbuild.test:missing-class:0.1.0", false));
+      loader.load(new Artifact("org.savantbuild.test:missing-class:0.1.0"));
       fail("Should have thrown an exception");
     } catch (PluginLoadException e) {
       assertTrue(e.getMessage().contains("was not in the plugin JAR"));
@@ -153,7 +153,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
 
     try {
-      loader.load(new Dependency("org.savantbuild.test:missing-manifest:0.1.0", false));
+      loader.load(new Artifact("org.savantbuild.test:missing-manifest:0.1.0"));
       fail("Should have thrown an exception");
     } catch (PluginLoadException e) {
       assertTrue(e.getMessage().contains("The JAR file does not contain a valid Manifest entry for Savant-Plugin-Class"));

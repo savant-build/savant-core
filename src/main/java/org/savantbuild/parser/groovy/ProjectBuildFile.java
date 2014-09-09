@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package org.savantbuild.parser.groovy;
 import java.util.Map;
 import java.util.Properties;
 
-import org.savantbuild.dep.domain.Dependency;
+import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.domain.VersionException;
@@ -84,7 +84,7 @@ public abstract class ProjectBuildFile extends Script {
 
     String id = GroovyTools.toString(attributes, "id");
     PluginLoader loader = new DefaultPluginLoader(project, runtimeConfiguration, output);
-    Dependency pluginDependency = new Dependency(id, false);
+    Artifact pluginDependency = new Artifact(id);
     Plugin plugin = loader.load(pluginDependency);
     project.plugins.put(pluginDependency, plugin);
     return plugin;

@@ -16,8 +16,8 @@
 package org.savantbuild.domain;
 
 import org.savantbuild.BaseUnitTest;
-import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.License;
+import org.savantbuild.dep.domain.ReifiedArtifact;
 import org.savantbuild.dep.domain.Version;
 import org.testng.annotations.Test;
 
@@ -36,6 +36,6 @@ public class ProjectTest extends BaseUnitTest {
     project.name = "name";
     project.version = new Version("1.1.1");
     project.license = License.BSD;
-    assertEquals(project.toArtifact(), new Artifact("group:name:name:1.1.1:jar", License.BSD));
+    assertEquals(project.toArtifact(), new ReifiedArtifact("group:name:name:1.1.1:jar", License.BSD));
   }
 }

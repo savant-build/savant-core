@@ -22,13 +22,13 @@ import java.nio.file.Path;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.savantbuild.dep.DependencyService.ResolveConfiguration;
-import org.savantbuild.dep.DependencyService.ResolveConfiguration.TypeResolveConfiguration;
+import org.savantbuild.dep.DependencyService.TraversalRules;
+import org.savantbuild.dep.DependencyService.TraversalRules.GroupTraversalRule;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.Dependencies;
-import org.savantbuild.dep.domain.Dependency;
 import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.dep.domain.License;
+import org.savantbuild.dep.domain.ReifiedArtifact;
 import org.savantbuild.dep.graph.ArtifactGraph;
 import org.savantbuild.dep.graph.DependencyGraph;
 import org.savantbuild.dep.graph.ResolvedArtifactGraph;
@@ -44,9 +44,9 @@ import org.savantbuild.runtime.RuntimeConfiguration;
  * @author Brian Pontarelli
  */
 public class DefaultPluginLoader implements PluginLoader {
-  public static final ResolveConfiguration RESOLVE_CONFIGURATION = new ResolveConfiguration()
-      .with("compile", new TypeResolveConfiguration(true, "compile", "runtime"))
-      .with("runtime", new TypeResolveConfiguration(true, "compile", "runtime"));
+  public static final TraversalRules RESOLVE_CONFIGURATION = new TraversalRules()
+      .with("compile", new GroupTraversalRule(true, "compile", "runtime"))
+      .with("runtime", new GroupTraversalRule(true, "compile", "runtime"));
 
   private final Output output;
 
@@ -64,7 +64,7 @@ public class DefaultPluginLoader implements PluginLoader {
    * {@inheritDoc}
    */
   @Override
-  public Plugin load(Dependency pluginDependency) {
+  public Plugin load(Artifact pluginDependency) {
     output.debug("Loading plugin [%s]", pluginDependency);
 
     if (project.workflow == null || project.workflow.fetchWorkflow == null || project.workflow.fetchWorkflow.processes.size() == 0 ||
@@ -80,7 +80,7 @@ public class DefaultPluginLoader implements PluginLoader {
 
     // This doesn't use the project as the root because the project might be in the graph and that would cause failures.
     // This is how Savant is self building
-    Artifact root = new Artifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", License.Apachev2);
+    ReifiedArtifact root = new ReifiedArtifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", License.Apachev2);
     Dependencies dependencies = new Dependencies(new DependencyGroup("runtime", false, pluginDependency));
     DependencyGraph dependencyGraph = project.dependencyService.buildGraph(root, dependencies, project.workflow);
     ArtifactGraph artifactGraph = project.dependencyService.reduce(dependencyGraph);

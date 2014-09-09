@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package org.savantbuild.parser.groovy;
 
 import java.util.Map;
 
-import org.savantbuild.dep.domain.Dependency;
+import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.parser.ParseException;
 
@@ -26,7 +26,7 @@ import org.savantbuild.parser.ParseException;
  *
  * @author Brian Pontarelli
  */
-public class DependencyDelegate extends BaseDelegate {
+public class DependencyDelegate {
   private final DependencyGroup group;
 
   public DependencyDelegate(DependencyGroup group) {
@@ -40,18 +40,16 @@ public class DependencyDelegate extends BaseDelegate {
    *
    * @param attributes The attributes.
    * @return The dependency object.
-   * @see Dependency#Dependency(String, boolean)
+   * @see Artifact#Artifact(String)
    */
-  public Dependency dependency(Object parameter) {
-    Map<String, Object> attributes = toAttributes(parameter);
+  public Artifact dependency(Map<String, Object> attributes) {
     if (!GroovyTools.hasAttributes(attributes, "id")) {
       throw new ParseException("Invalid dependency definition. It must have the id attribute like this:\n\n" +
           "  dependency(id: \"org.example:foo:0.1.0\", optional: false)");
     }
 
     String id = GroovyTools.toString(attributes, "id");
-    Boolean optional = (Boolean) attributes.get("optional");
-    Dependency dependency = new Dependency(id, optional != null ? optional : false);
+    Artifact dependency = new Artifact(id);
     group.dependencies.add(dependency);
     return dependency;
   }
