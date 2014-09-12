@@ -96,8 +96,8 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
 
     // Verify the dependencies
     Dependencies expectedDependencies = new Dependencies(
-        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0")),
-        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0"), new Artifact("org.example:test2:2.0")));
+        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", false)),
+        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0", false), new Artifact("org.example:test2:2.0", false)));
     assertEquals(project.dependencies, expectedDependencies);
 
     // Verify the publications

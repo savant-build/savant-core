@@ -16,10 +16,10 @@ project(group: "group", name: "name", version: "1.1", license: "Commercial") {
   }
 
   dependencies {
-    group(type: "compile") {
+    group(name: "compile") {
       dependency(id: "org.example:compile:1.0")
     }
-    group(type: "test-compile", export: false) {
+    group(name: "test-compile", export: false) {
       dependency(id: "org.example:test:1.0")
       dependency(id: "org.example:test2:2.0", optional: true)
     }

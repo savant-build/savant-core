@@ -25,12 +25,12 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.2.0", license
   }
 
   dependencies {
-    group(type: "compile") {
+    group(name: "compile") {
       dependency(id: "org.codehaus.groovy:groovy:groovy-all:2.2.1:jar")
       dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}")
       dependency(id: "org.savantbuild:savant-utils:${savantVersion}")
     }
-    group(type: "test-compile", export: false) {
+    group(name: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
       dependency(id: "org.testng:testng:6.8.7")
     }

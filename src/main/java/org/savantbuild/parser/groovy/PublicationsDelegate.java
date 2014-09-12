@@ -104,9 +104,8 @@ public class PublicationsDelegate extends GroovyObjectSupport {
      * @return The Publication object.
      */
     public Publication publication(Map<String, Object> attributes) {
-
-      if (!GroovyTools.hasAttributes(attributes, "name", "type", "file", "source")) {
-        throw new ParseException("Invalid publication definition. It must have the name, type, file and source attributes " +
+      if (!GroovyTools.hasAttributes(attributes, "name", "type", "file")) {
+        throw new ParseException("Invalid publication definition. It must have the name, type, and file attributes " +
             "like this:\n\n" +
             "  publication(name: \"foo\", type: \"jar\", file: \"build/jars/foo-${project.version}.jar\", source: \"build/jars/foo-${project.version}-src.jar\")");
       }
@@ -115,9 +114,10 @@ public class PublicationsDelegate extends GroovyObjectSupport {
       String type = GroovyTools.toString(attributes, "type");
       String file = GroovyTools.toString(attributes, "file");
       String source = GroovyTools.toString(attributes, "source");
+      Path sourceFile = source != null ? project.directory.resolve(source) : null;
       ReifiedArtifact artifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, name, type), project.version, project.license);
       ArtifactMetaData amd = new ArtifactMetaData(project.dependencies, project.license);
-      Publication publication = new Publication(artifact, amd, project.directory.resolve(file), project.directory.resolve(source));
+      Publication publication = new Publication(artifact, amd, project.directory.resolve(file), sourceFile);
       this.publications.add(group, publication);
       return publication;
     }

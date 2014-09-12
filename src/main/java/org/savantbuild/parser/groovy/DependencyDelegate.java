@@ -40,7 +40,7 @@ public class DependencyDelegate {
    *
    * @param attributes The attributes.
    * @return The dependency object.
-   * @see Artifact#Artifact(String)
+   * @see Artifact#Artifact(String, boolean)
    */
   public Artifact dependency(Map<String, Object> attributes) {
     if (!GroovyTools.hasAttributes(attributes, "id")) {
@@ -49,7 +49,8 @@ public class DependencyDelegate {
     }
 
     String id = GroovyTools.toString(attributes, "id");
-    Artifact dependency = new Artifact(id);
+    boolean skipCompatibilityCheck = attributes.containsKey("skipCompatibilityCheck") ? (Boolean) attributes.get("skipCompatibilityCheck") : false;
+    Artifact dependency = new Artifact(id, skipCompatibilityCheck);
     group.dependencies.add(dependency);
     return dependency;
   }

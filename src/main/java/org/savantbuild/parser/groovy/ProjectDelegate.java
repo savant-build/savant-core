@@ -48,10 +48,10 @@ public class ProjectDelegate {
    * <p>
    * <pre>
    *   dependencies {
-   *     group(type: "compile") {
+   *     group(name: "compile") {
    *       dependency("org.example:compile:1.0")
    *     }
-   *     group(type: "test-compile") {
+   *     group(name: "test-compile") {
    *       dependency("org.example:test:1.0")
    *     }
    *   }

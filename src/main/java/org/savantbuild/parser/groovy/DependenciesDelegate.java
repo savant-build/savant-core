@@ -15,11 +15,11 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.util.Map;
+
 import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.parser.ParseException;
-
-import java.util.Map;
 
 import groovy.lang.Closure;
 
@@ -44,17 +44,17 @@ public class DependenciesDelegate {
    * @return The dependency group object.
    */
   public DependencyGroup group(Map<String, Object> attributes, Closure closure) {
-    if (!GroovyTools.hasAttributes(attributes, "type")) {
-      throw new ParseException("Invalid group definition. It must have a type attribute like this:\n\n" +
-          "  group(type: \"compile\") {\n" +
+    if (!GroovyTools.hasAttributes(attributes, "name")) {
+      throw new ParseException("Invalid group definition. It must have a [name] attribute like this:\n\n" +
+          "  group(name: \"compile\") {\n" +
           "    ...\n" +
           "  }");
     }
 
-    String type = GroovyTools.toString(attributes, "type");
+    String name = GroovyTools.toString(attributes, "name");
     boolean export = !attributes.containsKey("export") || Boolean.parseBoolean(attributes.get("export").toString());
-    DependencyGroup group = new DependencyGroup(type, export);
-    dependencies.groups.put(type, group);
+    DependencyGroup group = new DependencyGroup(name, export);
+    dependencies.groups.put(name, group);
 
     closure.setDelegate(new DependencyDelegate(group));
     closure.run();

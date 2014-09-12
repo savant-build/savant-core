@@ -17,6 +17,7 @@ package org.savantbuild.plugin;
 
 import org.savantbuild.domain.Project;
 import org.savantbuild.output.Output;
+import org.savantbuild.runtime.RuntimeConfiguration;
 
 /**
  * Bad plugin.
@@ -27,7 +28,7 @@ public class BadClassPlugin {
   public final Project project;
   public final Output output;
 
-  public BadClassPlugin(Project project, Output output) {
+  public BadClassPlugin(Project project, RuntimeConfiguration runtimeConfiguration, Output output) {
     this.project = project;
     this.output = output;
   }
