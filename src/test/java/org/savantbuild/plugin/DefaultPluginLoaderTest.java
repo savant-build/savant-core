@@ -166,7 +166,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     project.group = "org.savantbuild.test";
     project.name = "plugin-loader-test";
     project.version = new Version("0.1.0");
-    project.license = License.BSD;
+    project.licenses.put(License.BSD_2_Clause, null);
     project.workflow = new Workflow(
         new FetchWorkflow(output, new CacheProcess(output, projectDir.resolve("src/test/plugin-repository").toString())),
         new PublishWorkflow(new CacheProcess(output, projectDir.resolve("src/test/plugin-repository").toString()))

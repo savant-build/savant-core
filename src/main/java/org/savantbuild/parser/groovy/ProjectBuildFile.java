@@ -15,6 +15,10 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -32,6 +36,7 @@ import org.savantbuild.plugin.PluginLoader;
 import org.savantbuild.runtime.BuildFailureException;
 import org.savantbuild.runtime.RuntimeConfiguration;
 import org.savantbuild.runtime.Switches;
+import org.savantbuild.util.MapBuilder;
 
 import groovy.lang.Closure;
 import groovy.lang.Script;
@@ -95,7 +100,7 @@ public abstract class ProjectBuildFile extends Script {
    * this:
    * <p>
    * <pre>
-   *   project(group: "org.example", name: "my-project", version: "1.1") {
+   *   project(group: "org.example", name: "my-project", version: "1.1", licenses: ["Commercial"]) {
    *
    *   }
    * </pre>
@@ -106,25 +111,53 @@ public abstract class ProjectBuildFile extends Script {
    *   group: The name of the group that the project belongs to
    *   name: The name of the project
    *   version: The semantic version of the project.
+   *   licenses: The license(s) of the project.
    * </pre>
    *
    * @param attributes The attributes.
    * @return The project.
    */
   protected Project project(Map<String, Object> attributes, Closure closure) {
-    if (!GroovyTools.hasAttributes(attributes, "group", "name", "version", "license")) {
-      throw new ParseException("Invalid project definition. One of the required attributes is missing (i.e. license). It should look like:\n\n" +
-          "  project(group: \"org.example\", name: \"my-project\", version: \"1.1\", license: \"Commercial\")");
+    List<String> attrs = asList("group", "name", "version", "licenses");
+    Map<String, Class<?>> attrTypes = new MapBuilder<String, Class<?>>().put("group", String.class)
+                                                                        .put("name", String.class)
+                                                                        .put("version", String.class)
+                                                                        .put("licenses", List.class)
+                                                                        .done();
+    if (!GroovyTools.attributesValid(attributes, attrs, attrs, attrTypes)) {
+      throw new ParseException("Invalid project definition. One of the required attributes is missing (i.e. licenses). It should look like:\n\n" +
+          "  project(group: \"org.example\", name: \"my-project\", version: \"1.1\", licenses: [\"Commercial\"])");
     }
 
     project.group = GroovyTools.toString(attributes, "group");
     project.name = GroovyTools.toString(attributes, "name");
 
-    String licenseStr = GroovyTools.toString(attributes, "license");
-    try {
-      project.license = License.valueOf(licenseStr);
-    } catch (IllegalArgumentException e) {
-      throw new ParseException("Invalid license [" + licenseStr + "]. It must be one of these values " + asList(License.values()));
+    List<String> licenseNames = GroovyTools.toListOfStrings(attributes.get("licenses"));
+    if (licenseNames == null || licenseNames.isEmpty()) {
+      throw new ParseException("Invalid project definition. The [licenses] attribute is missing. It should look like:\n\n" +
+          "  project(group: \"org.example\", name: \"my-project\", version: \"1.1\", licenses: [\"Commercial\"])");
+    }
+
+    for (String licenseName : licenseNames) {
+      try {
+        License license = License.valueOf(licenseName);
+        String text = null;
+        Path licenseOverrideFile = project.directory.resolve("license-" + licenseName + ".txt");
+        if (Files.isRegularFile(licenseOverrideFile)) {
+          text = new String(Files.readAllBytes(licenseOverrideFile));
+        }
+
+        if (license.requiresText && text == null) {
+          throw new ParseException("Invalid license configuration. You specified the [" + license + "] but did not provide a [license-" + license +
+              ".txt] file in the root of your project. This license requires a custom license definition.");
+        }
+
+        project.licenses.put(license, text);
+      } catch (IllegalArgumentException e) {
+        throw new ParseException("Invalid license [" + licenseName + "]. It must be one of these values " + asList(License.values()));
+      } catch (IOException e) {
+        throw new ParseException("Unable to load the license override file [license-" + licenseName + ".txt].", e);
+      }
     }
 
     String versionStr = GroovyTools.toString(attributes, "version");

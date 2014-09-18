@@ -37,6 +37,7 @@ import org.savantbuild.lang.Classpath;
 import org.savantbuild.output.Output;
 import org.savantbuild.runtime.BuildFailureException;
 import org.savantbuild.runtime.RuntimeConfiguration;
+import org.savantbuild.util.MapBuilder;
 
 /**
  * Default plugin loader that uses the Savant dependency service and a URLClassLoader to load the plugin.
@@ -80,7 +81,7 @@ public class DefaultPluginLoader implements PluginLoader {
 
     // This doesn't use the project as the root because the project might be in the graph and that would cause failures.
     // This is how Savant is self building
-    ReifiedArtifact root = new ReifiedArtifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", License.Apachev2);
+    ReifiedArtifact root = new ReifiedArtifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", MapBuilder.simpleMap(License.ApacheV2_0, null));
     Dependencies dependencies = new Dependencies(new DependencyGroup("runtime", false, pluginDependency));
     DependencyGraph dependencyGraph = project.dependencyService.buildGraph(root, dependencies, project.workflow);
     ArtifactGraph artifactGraph = project.dependencyService.reduce(dependencyGraph);

@@ -66,13 +66,13 @@ public class PublicationsDelegate extends GroovyObjectSupport {
    * files that are located in the <code>build/jars</code> directory.
    */
   public void standard() {
-    ArtifactMetaData metaData = new ArtifactMetaData(project.dependencies, project.license);
-    ReifiedArtifact mainArtifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, project.name, "jar"), project.version, project.license);
+    ArtifactMetaData metaData = new ArtifactMetaData(project.dependencies, project.licenses);
+    ReifiedArtifact mainArtifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, project.name, "jar"), project.version, project.licenses);
     Path mainJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactFile());
     Path mainSourceJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactSourceFile());
     publications.add("main", new Publication(mainArtifact, metaData, mainJar, mainSourceJar));
 
-    ReifiedArtifact testArtifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, project.name + "-test", "jar"), project.version, project.license);
+    ReifiedArtifact testArtifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, project.name + "-test", "jar"), project.version, project.licenses);
     Path testJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactTestFile());
     Path testSourceJar = project.directory.resolve("build/jars/" + mainArtifact.getArtifactTestSourceFile());
     publications.add("test", new Publication(testArtifact, metaData, testJar, testSourceJar));
@@ -115,8 +115,8 @@ public class PublicationsDelegate extends GroovyObjectSupport {
       String file = GroovyTools.toString(attributes, "file");
       String source = GroovyTools.toString(attributes, "source");
       Path sourceFile = source != null ? project.directory.resolve(source) : null;
-      ReifiedArtifact artifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, name, type), project.version, project.license);
-      ArtifactMetaData amd = new ArtifactMetaData(project.dependencies, project.license);
+      ReifiedArtifact artifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, name, type), project.version, project.licenses);
+      ArtifactMetaData amd = new ArtifactMetaData(project.dependencies, project.licenses);
       Publication publication = new Publication(artifact, amd, project.directory.resolve(file), sourceFile);
       this.publications.add(group, publication);
       return publication;

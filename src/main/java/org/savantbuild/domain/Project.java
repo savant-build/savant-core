@@ -46,6 +46,8 @@ public class Project {
 
   public final Path directory;
 
+  public final Map<License, String> licenses = new HashMap<>();
+
   public final Output output;
 
   public final Map<String, Target> targets = new HashMap<>();
@@ -55,8 +57,6 @@ public class Project {
   public Dependencies dependencies;
 
   public String group;
-
-  public License license;
 
   public String name;
 
@@ -87,6 +87,6 @@ public class Project {
    * @return The project artifact.
    */
   public ReifiedArtifact toArtifact() {
-    return new ReifiedArtifact(new ArtifactID(group, name, name, "jar"), version, license);
+    return new ReifiedArtifact(new ArtifactID(group, name, name, "jar"), version, licenses);
   }
 }

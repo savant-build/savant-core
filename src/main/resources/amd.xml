@@ -13,7 +13,8 @@
   ~ either express or implied. See the License for the specific
   ~ language governing permissions and limitations under the License.
   -->
-<artifact-meta-data license="Apachev2">
+<artifact-meta-data>
+  <license type="ApacheV2_0"/>
   <dependencies>
     <dependency-group name="compile">
       <dependency group="org.codehaus.groovy" project="groovy" name="groovy-all" version="2.2.1" type="jar"/>

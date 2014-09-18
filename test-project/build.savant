@@ -1,6 +1,6 @@
 import java.nio.file.Files
 
-project(name: "test-project", group: "org.savantbuild.test", version: "0.1.0", license: "Apachev2") {
+project(name: "test-project", group: "org.savantbuild.test", version: "0.1.0", licenses: ["ApacheV2_0"]) {
 }
 
 target(name: "delete", description: "Used to test the build runner") {

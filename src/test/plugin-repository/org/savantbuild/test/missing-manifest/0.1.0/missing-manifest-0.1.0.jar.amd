@@ -13,6 +13,7 @@
   ~ either express or implied. See the License for the specific
   ~ language governing permissions and limitations under the License.
   -->
-<artifact-meta-data license="Apachev2">
+<artifact-meta-data>
+  <license type="ApacheV2_0"/>
   <dependencies/>
 </artifact-meta-data>
