@@ -15,4 +15,9 @@ if [[ $(uname -a | grep -i cygwin) != "" ]]; then
   home_dir=$(cygpath -wa ${home_dir})
 fi
 
-java -cp ${classpath} org.savantbuild.runtime.Main $@
+suspend=""
+if [[ $# > 1 && $1 == "--suspend" ]]; then
+  suspend="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000"
+fi
+
+java ${suspend} -cp ${classpath} org.savantbuild.runtime.Main $@

@@ -87,7 +87,7 @@ target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: [
   }
 
   file.copy(to: "build/distributions/exploded/lib") {
-    fileSet(dir: "build/jars", includePatterns: [/savant-core-${project.version}\.jar/])
+    fileSet(dir: "build/jars", includePatterns: [~/savant-core-${project.version}\.jar/])
   }
 
   dependency.copy(to: "build/distributions/exploded/lib") {

@@ -115,7 +115,7 @@ public class GroovyTools {
 
   /**
    * Checks if the given attributes Map has all of the given attribute names. The values for the attribute names must be
-   * non-null and non-empty.
+   * non-null.
    *
    * @param attributes     The attributes map.
    * @param attributeNames The attribute names.
@@ -128,7 +128,7 @@ public class GroovyTools {
 
     for (String attributeName : attributeNames) {
       Object value = attributes.get(attributeName);
-      if (value == null || (value instanceof CharSequence && value.toString().trim().length() == 0)) {
+      if (value == null) {
         return false;
       }
     }
