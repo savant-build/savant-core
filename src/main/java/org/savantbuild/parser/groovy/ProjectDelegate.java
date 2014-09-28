@@ -23,6 +23,7 @@ import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Publications;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.groovy.WorkflowDelegate.ProcessDelegate;
+import org.savantbuild.runtime.BuildFailureException;
 
 import groovy.lang.Closure;
 
@@ -62,6 +63,11 @@ public class ProjectDelegate {
    * @return The Dependencies.
    */
   public Dependencies dependencies(Closure closure) {
+    if (project.publications.allPublications().size() > 0) {
+      throw new BuildFailureException("It looks like your project has defined its dependencies after its publications. " +
+          "Because Savant parses the [project() {}] definition linearly, you need to define your publications AFTER your dependencies.");
+    }
+
     project.dependencies = new Dependencies();
     closure.setDelegate(new DependenciesDelegate(project.dependencies));
     closure.run();
