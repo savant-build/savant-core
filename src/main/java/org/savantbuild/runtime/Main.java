@@ -41,6 +41,8 @@ import org.savantbuild.util.CyclicException;
  * @author Brian Pontarelli
  */
 public class Main {
+  public static Path projectDir = Paths.get("");
+
   /**
    * THe main method.
    *
@@ -54,7 +56,7 @@ public class Main {
       output.enableDebug();
     }
 
-    Path buildFile = Paths.get("build.savant");
+    Path buildFile = projectDir.resolve("build.savant");
     if (!Files.isRegularFile(buildFile) || !Files.isReadable(buildFile)) {
       output.error("Build file [build.savant] is missing or not readable.");
       System.exit(1);
@@ -66,7 +68,8 @@ public class Main {
     } catch (ArtifactMetaDataMissingException | ArtifactMissingException | BuildRunException | BuildFailureException |
         CompatibilityException | LicenseException | MD5Exception | ParseException | PluginLoadException |
         ProcessFailureException | PublishException | VersionException e) {
-      output.error(e.getMessage());
+      int lineNumber = determineLineNumber(e);
+      output.error(e.getMessage() + (lineNumber != -1 ? " Error occurred on line [" + lineNumber + "]" : ""));
       output.debug(e);
       System.exit(1);
     } catch (CyclicException e) {
@@ -78,5 +81,16 @@ public class Main {
       output.debug(t);
       System.exit(1);
     }
+  }
+
+  private static int determineLineNumber(Exception e) {
+    for (int i = 0; i < e.getStackTrace().length; i++) {
+      StackTraceElement ste = e.getStackTrace()[i];
+      if (ste.getFileName().endsWith(".savant")) {
+        return ste.getLineNumber();
+      }
+    }
+
+    return -1;
   }
 }

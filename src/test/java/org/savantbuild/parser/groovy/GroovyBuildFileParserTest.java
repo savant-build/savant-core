@@ -34,6 +34,7 @@ import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Publications;
 import org.savantbuild.domain.Target;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
+import org.savantbuild.runtime.BuildFailureException;
 import org.savantbuild.runtime.RuntimeConfiguration;
 import org.savantbuild.util.Graph;
 import org.savantbuild.util.HashGraph;
@@ -116,6 +117,20 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
             buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar").toAbsolutePath())
     );
     assertEquals(project.publications, expectedPublications);
+  }
+
+  @Test
+  public void parseMissingPlugin() {
+    GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
+    Path buildFile = projectDir.resolve("src/test/java/org/savantbuild/parser/groovy/missing-plugin.savant");
+    Project project = parser.parse(buildFile, new RuntimeConfiguration());
+
+    try {
+      project.targets.get("compile").invocation.run();
+    } catch (BuildFailureException e) {
+      // Expected
+      assertTrue(e.getMessage().contains("property [missingDependency]"));
+    }
   }
 
   @Test

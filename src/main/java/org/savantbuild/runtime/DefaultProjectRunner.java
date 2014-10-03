@@ -72,7 +72,6 @@ public class DefaultProjectRunner implements ProjectRunner {
     targets.forEach((targetName) -> {
       Target target = project.targets.get(targetName);
       if (target == null) {
-        output.error("Invalid target [" + targetName + "]");
         throw new BuildRunException("Invalid target [" + targetName + "]");
       }
 

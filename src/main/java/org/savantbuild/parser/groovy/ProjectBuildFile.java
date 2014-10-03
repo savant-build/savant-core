@@ -39,6 +39,7 @@ import org.savantbuild.runtime.Switches;
 import org.savantbuild.util.MapBuilder;
 
 import groovy.lang.Closure;
+import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import static java.util.Arrays.asList;
 
@@ -52,6 +53,8 @@ public abstract class ProjectBuildFile extends Script {
 
   public final Properties SYS = System.getProperties();
 
+  public final GlobalConfiguration global = new GlobalConfiguration();
+
   public Output output;
 
   public Project project;
@@ -59,6 +62,15 @@ public abstract class ProjectBuildFile extends Script {
   public RuntimeConfiguration runtimeConfiguration;
 
   public Switches switches;
+
+  @Override
+  public Object getProperty(String property) {
+    try {
+      return super.getProperty(property);
+    } catch (MissingPropertyException e) {
+      throw new BuildFailureException("You build file is attempting to access the property [" + property + "]. You might have forgotten to import a plugin or define this property or it could be a typo.");
+    }
+  }
 
   /**
    * Fails the build with the given message by throwing a {@link BuildFailureException}.
