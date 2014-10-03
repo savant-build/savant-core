@@ -69,7 +69,7 @@ public class Main {
         CompatibilityException | LicenseException | MD5Exception | ParseException | PluginLoadException |
         ProcessFailureException | PublishException | VersionException e) {
       int lineNumber = determineLineNumber(e);
-      output.error(e.getMessage() + (lineNumber != -1 ? " Error occurred on line [" + lineNumber + "]" : ""));
+      output.error(e.getMessage() + (lineNumber > 0 ? " Error occurred on line [" + lineNumber + "]" : ""));
       output.debug(e);
       System.exit(1);
     } catch (CyclicException e) {
@@ -86,7 +86,7 @@ public class Main {
   private static int determineLineNumber(Exception e) {
     for (int i = 0; i < e.getStackTrace().length; i++) {
       StackTraceElement ste = e.getStackTrace()[i];
-      if (ste.getFileName().endsWith(".savant")) {
+      if (ste.getFileName() != null && ste.getFileName().endsWith(".savant")) {
         return ste.getLineNumber();
       }
     }
