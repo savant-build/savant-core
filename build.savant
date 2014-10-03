@@ -38,6 +38,9 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.2.1", license
 
   publications {
     standard()
+    main {
+      publication(name: "savant", type: "tar.gz", file: "build/distributions/savant-${project.version}.tar.gz")
+    }
   }
 }
 
@@ -77,10 +80,6 @@ target(name: "doc", description: "Generate the project's JavaDoc", dependsOn: ["
   java.document()
 }
 
-target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test"]) {
-  dependency.integrate()
-}
-
 target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: ["jar"]) {
   file.copy(to: "build/distributions/exploded/bin") {
     fileSet(dir: "src/main/scripts")
@@ -98,6 +97,10 @@ target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: [
   file.tar(file: "build/distributions/savant-${project.version}.tar.gz", compress: true) {
     tarFileSet(prefix: "savant-${project.version}", dir: "build/distributions/exploded")
   }
+}
+
+target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["bundle"]) {
+  dependency.integrate()
 }
 
 target(name: "release", description: "Releases a full version of the project", dependsOn: ["test", "bundle"]) {
