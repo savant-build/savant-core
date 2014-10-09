@@ -57,10 +57,10 @@ public class GroovyTools {
    * Converts all of the list elements to the specified type by calling the function for any list elements that are not
    * the correct type.
    *
-   * @param list The list.
-   * @param type The type.
+   * @param list     The list.
+   * @param type     The type.
    * @param function The function that is used to convert to the correct type.
-   * @param <T> The type.
+   * @param <T>      The type.
    */
   @SuppressWarnings("unchecked")
   public static <T> void convertListItems(List list, Class<T> type, Function<Object, T> function) {
@@ -69,17 +69,6 @@ public class GroovyTools {
         list.set(i, function.apply(list.get(i)));
       }
     }
-  }
-
-  /**
-   * Puts all of the values from the defaults map into the main map if they are absent. This is a good way to setup
-   * default values.
-   *
-   * @param map The main map.
-   * @param defaults The defaults map.
-   */
-  public static void putDefaults(Map<String, Object> map, Map<String, Object> defaults) {
-    defaults.forEach(map::putIfAbsent);
   }
 
   /**
@@ -146,6 +135,17 @@ public class GroovyTools {
    */
   public static boolean hasAttributes(Map<String, Object> attributes, String... attributeNames) {
     return hasAttributes(attributes, asList(attributeNames));
+  }
+
+  /**
+   * Puts all of the values from the defaults map into the main map if they are absent. This is a good way to setup
+   * default values.
+   *
+   * @param map      The main map.
+   * @param defaults The defaults map.
+   */
+  public static void putDefaults(Map<String, Object> map, Map<String, Object> defaults) {
+    defaults.forEach(map::putIfAbsent);
   }
 
   /**

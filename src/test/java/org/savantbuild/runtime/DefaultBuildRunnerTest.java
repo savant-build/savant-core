@@ -18,7 +18,7 @@ package org.savantbuild.runtime;
 import java.nio.file.Files;
 
 import org.savantbuild.BaseUnitTest;
-import org.savantbuild.io.FileTools;
+import org.savantbuild.dep.PathTools;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
 import org.savantbuild.parser.groovy.GroovyBuildFileParser;
 import org.testng.annotations.Test;
@@ -34,7 +34,7 @@ import static org.testng.Assert.assertFalse;
 public class DefaultBuildRunnerTest extends BaseUnitTest {
   @Test
   public void javaProject() throws Exception {
-    FileTools.prune(projectDir.resolve("test-project/build"));
+    PathTools.prune(projectDir.resolve("test-project/build"));
     Files.createDirectories(projectDir.resolve("test-project/build"));
 
     BuildRunner runner = new DefaultBuildRunner(output, new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
