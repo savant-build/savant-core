@@ -77,7 +77,7 @@ public class Main {
       output.debug(e);
       System.exit(1);
     } catch (Throwable t) {
-      output.error("Build failed due to an exception or error. Enable debug to see the stack trace.");
+      output.error("Build failed due to an exception or error." + (runtimeConfiguration.debug ? "" : " Enable debug using the %s switch to see the stack trace."), RuntimeConfiguration.DEBUG_SWITCH);
       output.debug(t);
       System.exit(1);
     }

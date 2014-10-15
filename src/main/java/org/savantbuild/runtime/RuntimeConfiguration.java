@@ -25,6 +25,12 @@ import java.util.List;
  * @author Brian Pontarelli
  */
 public class RuntimeConfiguration {
+
+  /**
+   * Define the debug switch.
+   */
+  public static final String DEBUG_SWITCH = "--debug";
+
   /**
    * Determines if the output should be colorized.
    */

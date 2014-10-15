@@ -15,6 +15,8 @@
  */
 package org.savantbuild.runtime;
 
+import static org.savantbuild.runtime.RuntimeConfiguration.DEBUG_SWITCH;
+
 /**
  * Default implementation that uses a simple brute force approach for now.
  *
@@ -52,7 +54,7 @@ public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationPa
     for (String argument : arguments) {
       if (argument.equals("--noColor")) {
         configuration.colorizeOutput = false;
-      } else if (argument.equals("--debug")) {
+      } else if (argument.equals(DEBUG_SWITCH)) {
         configuration.debug = true;
       } else if (argument.equals("--help")) {
         configuration.help = true;
