@@ -1,3 +1,5 @@
-## Savant Core
+## Savant Build Tool
 
-This is the main Savant library. The [wiki](https://github.com/inversoft/savant-core/wiki/Home) covers how to get started with Savant and links out to all the features and plugins.
+Welcome to the Savant Build Tool Github project. Savant is a build tool written in Java that uses a Groovy DSL for the build files. Savant is also compliant with the Semantic Versioning specification (http://semver.org) and aims to solve many of the common issues with build tools and dependency management systems.
+
+All of the steps required to get started with Savant are covered in the project's [documentation](https://github.com/inversoft/savant-core/wiki/Home).
