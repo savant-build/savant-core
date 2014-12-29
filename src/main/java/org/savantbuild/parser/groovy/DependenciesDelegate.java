@@ -22,6 +22,7 @@ import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.parser.ParseException;
 
 import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 
 /**
  * Groovy delegate that defines the dependencies.
@@ -43,7 +44,7 @@ public class DependenciesDelegate {
    * @param closure    The closure that defines the dependencies.
    * @return The dependency group object.
    */
-  public DependencyGroup group(Map<String, Object> attributes, Closure closure) {
+  public DependencyGroup group(Map<String, Object> attributes, @DelegatesTo(DependencyDelegate.class) Closure closure) {
     if (!GroovyTools.hasAttributes(attributes, "name")) {
       throw new ParseException("Invalid group definition. It must have a [name] attribute like this:\n\n" +
           "  group(name: \"compile\") {\n" +

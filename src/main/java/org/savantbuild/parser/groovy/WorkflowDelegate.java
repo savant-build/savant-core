@@ -29,6 +29,7 @@ import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
 
 import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 
 /**
  * Groovy delegate that captures the Workflow configuration from the project build file. The methods on this class
@@ -51,7 +52,7 @@ public class WorkflowDelegate {
    *
    * @param closure The closure. This closure uses the delegate class {@link ProcessDelegate}.
    */
-  public void fetch(Closure closure) {
+  public void fetch(@DelegatesTo(ProcessDelegate.class) Closure closure) {
     closure.setDelegate(new ProcessDelegate(output, workflow.fetchWorkflow.processes));
     closure.run();
   }
@@ -61,7 +62,7 @@ public class WorkflowDelegate {
    *
    * @param closure The closure. This closure uses the delegate class {@link ProcessDelegate}.
    */
-  public void publish(Closure closure) {
+  public void publish(@DelegatesTo(ProcessDelegate.class) Closure closure) {
     closure.setDelegate(new ProcessDelegate(output, workflow.publishWorkflow.processes));
     closure.run();
   }

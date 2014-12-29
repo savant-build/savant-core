@@ -39,6 +39,7 @@ import org.savantbuild.runtime.Switches;
 import org.savantbuild.util.MapBuilder;
 
 import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import static java.util.Arrays.asList;
@@ -129,7 +130,7 @@ public abstract class ProjectBuildFile extends Script {
    * @param attributes The attributes.
    * @return The project.
    */
-  protected Project project(Map<String, Object> attributes, Closure closure) {
+  protected Project project(Map<String, Object> attributes, @DelegatesTo(ProjectDelegate.class) Closure closure) {
     List<String> attrs = asList("group", "name", "version", "licenses");
     Map<String, Class<?>> attrTypes = new MapBuilder<String, Class<?>>().put("group", String.class)
                                                                         .put("name", String.class)

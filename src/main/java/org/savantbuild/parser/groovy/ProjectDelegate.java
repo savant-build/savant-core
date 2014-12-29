@@ -26,6 +26,7 @@ import org.savantbuild.parser.groovy.WorkflowDelegate.ProcessDelegate;
 import org.savantbuild.runtime.BuildFailureException;
 
 import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 
 /**
  * Groovy delegate that captures the Project configuration from the project build file. The methods on this class
@@ -62,7 +63,7 @@ public class ProjectDelegate {
    *                class {@link DependenciesDelegate}.
    * @return The Dependencies.
    */
-  public Dependencies dependencies(Closure closure) {
+  public Dependencies dependencies(@DelegatesTo(DependenciesDelegate.class) Closure closure) {
     if (project.publications.allPublications().size() > 0) {
       throw new BuildFailureException("It looks like your project has defined its dependencies after its publications. " +
           "Because Savant parses the [project() {}] definition linearly, you need to define your publications AFTER your dependencies.");
@@ -91,7 +92,7 @@ public class ProjectDelegate {
    *                PublicationsDelegate}.
    * @return The list of Publications.
    */
-  public Publications publications(Closure closure) {
+  public Publications publications(@DelegatesTo(PublicationsDelegate.class) Closure closure) {
     closure.setDelegate(new PublicationsDelegate(project, project.publications));
     closure.run();
     return project.publications;
@@ -111,7 +112,7 @@ public class ProjectDelegate {
    *                delegate class {@link ProcessDelegate}.
    * @return The workflow.
    */
-  public Workflow publishWorkflow(Closure closure) {
+  public Workflow publishWorkflow(@DelegatesTo(ProcessDelegate.class) Closure closure) {
     project.publishWorkflow = new PublishWorkflow();
     closure.setDelegate(new ProcessDelegate(output, project.publishWorkflow.processes));
     closure.run();
@@ -138,7 +139,7 @@ public class ProjectDelegate {
    *                {@link WorkflowDelegate}.
    * @return The workflow.
    */
-  public Workflow workflow(Closure closure) {
+  public Workflow workflow(@DelegatesTo(WorkflowDelegate.class) Closure closure) {
     project.workflow = new Workflow(new FetchWorkflow(output), new PublishWorkflow());
     closure.setDelegate(new WorkflowDelegate(output, project.workflow));
     closure.run();
