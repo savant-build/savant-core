@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.ArtifactMetaData;
+import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.domain.ReifiedArtifact;
 import org.savantbuild.domain.Project;
@@ -114,9 +115,10 @@ public class PublicationsDelegate extends GroovyObjectSupport {
       String type = GroovyTools.toString(attributes, "type");
       String file = GroovyTools.toString(attributes, "file");
       String source = GroovyTools.toString(attributes, "source");
+      boolean noDependencies = attributes.containsKey("noDependencies") && (boolean) attributes.get("noDependencies");
       Path sourceFile = source != null ? project.directory.resolve(source) : null;
       ReifiedArtifact artifact = new ReifiedArtifact(new ArtifactID(project.group, project.name, name, type), project.version, project.licenses);
-      ArtifactMetaData amd = new ArtifactMetaData(project.dependencies, project.licenses);
+      ArtifactMetaData amd = new ArtifactMetaData(noDependencies ? new Dependencies() : project.dependencies, project.licenses);
       Publication publication = new Publication(artifact, amd, project.directory.resolve(file), sourceFile);
       this.publications.add(group, publication);
       return publication;

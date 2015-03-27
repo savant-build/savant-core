@@ -87,7 +87,8 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertTrue(project.workflow.fetchWorkflow.processes.get(0) instanceof CacheProcess);
     assertEquals(((CacheProcess) project.workflow.fetchWorkflow.processes.get(0)).dir, System.getProperty("user.home") + "/.savant/cache");
     assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(1)).url, "http://repository.savantbuild.org");
-    assertTrue(project.workflow.fetchWorkflow.processes.get(1) instanceof URLProcess);
+    assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(1)).username, "username");
+    assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(1)).password, "password");
     assertEquals(project.workflow.publishWorkflow.processes.size(), 1);
     assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(0)).dir, System.getProperty("user.home") + "/.savant/cache");
 
@@ -95,6 +96,8 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertEquals(project.publishWorkflow.processes.size(), 1);
     assertTrue(project.publishWorkflow.processes.get(0) instanceof SVNProcess);
     assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).repository, "http://svn.example.com");
+    assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).username, "svn-username");
+    assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).password, "svn-password");
 
     // Verify the dependencies
     Dependencies expectedDependencies = new Dependencies(
@@ -107,6 +110,12 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     expectedPublications.add("main",
         new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
             new ArtifactMetaData(expectedDependencies, MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
+            buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
+            buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
+    );
+    expectedPublications.add("main",
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication3", "jar"), new Version("1.1"), MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
+            new ArtifactMetaData(new Dependencies(), MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
             buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );

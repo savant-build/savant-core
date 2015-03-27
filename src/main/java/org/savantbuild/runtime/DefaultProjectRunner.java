@@ -91,9 +91,9 @@ public class DefaultProjectRunner implements ProjectRunner {
   }
 
   private void runTarget(Target target, Set<String> calledTargets) {
-    output.info(":[%s]:", target.name);
+    output.infoln(":[%s]:", target.name);
     target.invocation.run();
     calledTargets.add(target.name);
-    output.info("");
+    output.infoln("");
   }
 }

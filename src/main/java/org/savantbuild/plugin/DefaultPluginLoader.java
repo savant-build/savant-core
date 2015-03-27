@@ -66,11 +66,11 @@ public class DefaultPluginLoader implements PluginLoader {
    */
   @Override
   public Plugin load(Artifact pluginDependency) {
-    output.debug("Loading plugin [%s]", pluginDependency);
+    output.debugln("Loading plugin [%s]", pluginDependency);
 
     if (project.workflow == null || project.workflow.fetchWorkflow == null || project.workflow.fetchWorkflow.processes.size() == 0 ||
         project.workflow.publishWorkflow == null || project.workflow.publishWorkflow.processes.size() == 0) {
-      output.error("Your project uses plugins but doesn't have a workflow defined to fetch them. Define a workflow in your project definition section like this:\n\n" +
+      output.errorln("Your project uses plugins but doesn't have a workflow defined to fetch them. Define a workflow in your project definition section like this:\n\n" +
           "  project(...) {\n" +
           "    workflow {\n" +
           "      standard()\n" +
@@ -102,7 +102,7 @@ public class DefaultPluginLoader implements PluginLoader {
       }
 
       Classpath classpath = resolvedArtifactGraph.toClasspath();
-      output.debug("Classpath for plugin [%s] is [%s]", pluginDependency, classpath);
+      output.debugln("Classpath for plugin [%s] is [%s]", pluginDependency, classpath);
 
       URLClassLoader pluginClassLoader = classpath.toURLClassLoader();
       Class<?> pluginClass = pluginClassLoader.loadClass(pluginClassName);

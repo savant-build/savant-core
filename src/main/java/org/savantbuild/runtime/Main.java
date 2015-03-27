@@ -18,11 +18,15 @@ package org.savantbuild.runtime;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 
+import org.savantbuild.dep.DependencyTreePrinter;
 import org.savantbuild.dep.LicenseException;
 import org.savantbuild.dep.PublishException;
 import org.savantbuild.dep.domain.CompatibilityException;
 import org.savantbuild.dep.domain.VersionException;
+import org.savantbuild.dep.graph.DependencyGraph;
+import org.savantbuild.dep.graph.DependencyGraph.Dependency;
 import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
 import org.savantbuild.dep.workflow.ArtifactMissingException;
 import org.savantbuild.dep.workflow.process.ProcessFailureException;
@@ -34,6 +38,8 @@ import org.savantbuild.parser.groovy.GroovyBuildFileParser;
 import org.savantbuild.plugin.PluginLoadException;
 import org.savantbuild.security.MD5Exception;
 import org.savantbuild.util.CyclicException;
+
+import static java.util.Arrays.asList;
 
 /**
  * Main entry point for Savant CLI runtime.
@@ -58,29 +64,77 @@ public class Main {
 
     Path buildFile = projectDir.resolve("build.savant");
     if (!Files.isRegularFile(buildFile) || !Files.isReadable(buildFile)) {
-      output.error("Build file [build.savant] is missing or not readable.");
-      System.exit(1);
+      if (runtimeConfiguration.printVersion) {
+        printVersion(output);
+        return;
+      } else if (runtimeConfiguration.help) {
+        printHelp(output);
+        return;
+      } else {
+        output.errorln("Build file [build.savant] is missing or not readable.");
+        System.exit(1);
+      }
     }
 
     try {
       BuildRunner buildRunner = new DefaultBuildRunner(output, new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
       buildRunner.run(buildFile, runtimeConfiguration);
-    } catch (ArtifactMetaDataMissingException | ArtifactMissingException | BuildRunException | BuildFailureException |
-        CompatibilityException | LicenseException | MD5Exception | ParseException | PluginLoadException |
-        ProcessFailureException | PublishException | VersionException e) {
+    } catch (CompatibilityException e) {
+      printCompatibilityError(e, output);
       int lineNumber = determineLineNumber(e);
-      output.error(e.getMessage() + (lineNumber > 0 ? " Error occurred on line [" + lineNumber + "]" : ""));
+      output.errorln(e.getMessage() + (lineNumber > 0 ? " Error occurred on line [" + lineNumber + "]" : ""));
+      output.debug(e);
+      System.exit(1);
+    } catch (ArtifactMetaDataMissingException | ArtifactMissingException | BuildRunException | BuildFailureException |
+        LicenseException | MD5Exception | ParseException | PluginLoadException | ProcessFailureException |
+        PublishException | VersionException e) {
+      int lineNumber = determineLineNumber(e);
+      output.errorln(e.getMessage() + (lineNumber > 0 ? " Error occurred on line [" + lineNumber + "]" : ""));
       output.debug(e);
       System.exit(1);
     } catch (CyclicException e) {
-      output.error("Your dependencies appear to have cycle. The root message is [" + e.getMessage() + "]");
+      output.errorln("Your dependencies appear to have cycle. The root message is [" + e.getMessage() + "]");
       output.debug(e);
       System.exit(1);
     } catch (Throwable t) {
-      output.error("Build failed due to an exception or error." + (runtimeConfiguration.debug ? "" : " Enable debug using the %s switch to see the stack trace."), RuntimeConfiguration.DEBUG_SWITCH);
+      output.errorln("Build failed due to an exception or error." + (runtimeConfiguration.debug ? "" : " Enable debug using the %s switch to see the stack trace."), RuntimeConfiguration.DEBUG_SWITCH);
       output.debug(t);
       System.exit(1);
     }
+  }
+
+  /**
+   * @param e      The compatibility exception.
+   * @param output The output.
+   */
+  public static void printCompatibilityError(CompatibilityException e, Output output) {
+    DependencyGraph graph = e.graph;
+    Dependency incompatible = e.dependency;
+    DependencyTreePrinter.print(output, graph, null, new HashSet<>(asList(incompatible)));
+  }
+
+  public static void printHelp(Output output) {
+    output.infoln("Usage: sb [switches] [targets]");
+    output.infoln("");
+    output.infoln("Switches:");
+    output.infoln("");
+    output.infoln("   --noColor      Disables the colorized output of Savant");
+    output.infoln("   --debug        Enables debug output");
+    output.infoln("   --help         Displays the help message");
+    output.infoln("   --listTargets  Lists the build targets");
+    output.infoln("   --version      Prints the version of Savant");
+    output.infoln("");
+    output.infoln("NOTE: If any other argument starts with '--' then it is considered a switch. Switches can optionally have values using the equals sign like this:");
+    output.infoln("");
+    output.infoln("   --switch");
+    output.infoln("   --switch=value");
+    output.infoln("");
+  }
+
+  public static void printVersion(Output output) {
+    String version = Main.class.getPackage().getImplementationVersion();
+    output.infoln("Savant Build System Version [" + version + "]");
+    output.infoln("");
   }
 
   private static int determineLineNumber(Exception e) {

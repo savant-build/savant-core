@@ -43,7 +43,7 @@ import static org.testng.AssertJUnit.fail;
  */
 @Test(groups = "unit")
 public abstract class BaseUnitTest {
-  public static final Output output = new SystemOutOutput(false);
+  public static Output output = new SystemOutOutput(false);
 
   public static Path projectDir;
 

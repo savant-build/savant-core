@@ -79,7 +79,7 @@ public abstract class ProjectBuildFile extends Script {
    * @param message The failure message.
    */
   protected void fail(String message, Object... values) {
-    output.error(message, values);
+    output.errorln(message, values);
     throw new BuildFailureException();
   }
 

@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-savantVersion = "0.3.0"
+savantVersion = "0.4.0-{integration}"
 
-project(group: "org.savantbuild", name: "savant-core", version: "0.3.0", licenses: ["ApacheV2_0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "0.4.0", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -99,7 +99,7 @@ target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: [
   }
 }
 
-target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["bundle"]) {
+target(name: "int", description: "Releases a local integration build of the project", dependsOn: ["test", "bundle"]) {
   dependency.integrate()
 }
 

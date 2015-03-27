@@ -64,7 +64,7 @@ public class DefaultBuildRunner implements BuildRunner {
       BuildRunException, BuildFailureException, CompatibilityException, CyclicException, LicenseException, MD5Exception,
       ParseException, PluginLoadException, ProcessFailureException, PublishException, VersionException {
     if (runtimeConfiguration.printVersion) {
-      printVersion();
+      Main.printVersion(output);
       return;
     }
 
@@ -82,34 +82,15 @@ public class DefaultBuildRunner implements BuildRunner {
   }
 
   private void printHelp(Project project) {
-    output.info("Usage: sb [switches] [targets]");
-    output.info("");
-    output.info("Switches:");
-    output.info("");
-    output.info("   --noColor      Disables the colorized output of Savant");
-    output.info("   --debug        Enables debug output");
-    output.info("   --help         Displays the help message");
-    output.info("   --listTargets  Lists the build targets");
-    output.info("");
-    output.info("NOTE: If any other argument starts with '--' then it is considered a switch. Switches can optionally have values using the equals sign like this:");
-    output.info("");
-    output.info("   --switch");
-    output.info("   --switch=value");
-    output.info("");
+    Main.printHelp(output);
     printTargets(project);
   }
 
   private void printTargets(Project project) {
-    output.info("Targets in the project build file:");
-    output.info("");
+    output.infoln("Targets in the project build file:");
+    output.infoln("");
     project.targets.forEach((name, target) -> {
-      output.info("  %s: %s", name, target.description != null ? target.description : "No description");
+      output.infoln("  %s: %s", name, target.description != null ? target.description : "No description");
     });
-  }
-
-  private void printVersion() {
-    String version = Main.class.getPackage().getImplementationVersion();
-    output.info("Savant Build System Version [" + version + "]");
-    output.info("");
   }
 }
