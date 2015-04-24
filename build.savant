@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-savantVersion = "0.4.3"
+savantVersion = "0.4.4-{integration}"
 
-project(group: "org.savantbuild", name: "savant-core", version: "0.4.3", licenses: ["ApacheV2_0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "0.4.4", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
@@ -45,12 +45,12 @@ project(group: "org.savantbuild", name: "savant-core", version: "0.4.3", license
 }
 
 // Plugins
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:0.4.1")
-file = loadPlugin(id: "org.savantbuild.plugin:file:0.4.1")
-java = loadPlugin(id: "org.savantbuild.plugin:java:0.4.1")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:0.4.1")
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:0.4.1")
-release = loadPlugin(id: "org.savantbuild.plugin:release-git:0.4.1")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:0.4.3")
+file = loadPlugin(id: "org.savantbuild.plugin:file:0.4.3")
+java = loadPlugin(id: "org.savantbuild.plugin:java:0.4.3")
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:0.4.3")
+idea = loadPlugin(id: "org.savantbuild.plugin:idea:0.4.3")
+release = loadPlugin(id: "org.savantbuild.plugin:release-git:0.4.3")
 
 // Plugin settings
 java.settings.javaVersion = "1.8"
