@@ -45,12 +45,12 @@ project(group: "org.savantbuild", name: "savant-core", version: "1.0.0", license
 }
 
 // Plugins
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:0.4.4")
-file = loadPlugin(id: "org.savantbuild.plugin:file:0.4.4")
-java = loadPlugin(id: "org.savantbuild.plugin:java:0.4.4")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:0.4.4")
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:0.4.4")
-release = loadPlugin(id: "org.savantbuild.plugin:release-git:0.4.4")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:1.0.0")
+file = loadPlugin(id: "org.savantbuild.plugin:file:1.0.0")
+java = loadPlugin(id: "org.savantbuild.plugin:java:1.0.0")
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:1.0.0")
+idea = loadPlugin(id: "org.savantbuild.plugin:idea:1.0.1")
+release = loadPlugin(id: "org.savantbuild.plugin:release-git:1.0.0")
 
 // Plugin settings
 java.settings.javaVersion = "1.8"
