@@ -68,8 +68,9 @@ public class WorkflowDelegate {
   }
 
   /**
-   * Configures the standard project workflow as follows:
    * <p>
+   * Configures the standard project workflow as follows:
+   * </p>
    * <pre>
    *   fetch {
    *     cache()

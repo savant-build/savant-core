@@ -24,8 +24,9 @@ import static org.savantbuild.runtime.RuntimeConfiguration.DEBUG_SWITCH;
  */
 public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationParser {
   /**
-   * Parses the command-line arguments. There are currently 4 fixed arguments:
    * <p>
+   * Parses the command-line arguments. There are currently 4 fixed arguments:
+   * </p>
    * <pre>
    *   --noColor = Disables the colorized output of Savant
    *   --debug = Enables debug output
@@ -36,14 +37,16 @@ public class DefaultRuntimeConfigurationParser implements RuntimeConfigurationPa
    * <p>
    * If any other argument starts with {@code --} then it is considered a switch. Switches can optionally have values
    * using the equals sign like this:
-   * <p>
+   * </p>
    * <pre>
    *   --switch=value
    * </pre>
    * <p>
    * All other arguments are considered targets to execute.
+   * </p>
    * <p>
    * This parser does care about ordering of the arguments at all.
+   * </p>
    *
    * @param arguments The CLI arguments.
    * @return The RuntimeConfiguration and never null.

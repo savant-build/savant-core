@@ -45,9 +45,10 @@ public class ProjectDelegate {
   }
 
   /**
+   * <p>
    * Configures the project dependencies. This method is called with a closure that contains the dependencies
    * definition. It should look like:
-   * <p>
+   * </p>
    * <pre>
    *   dependencies {
    *     group(name: "compile") {
@@ -76,9 +77,10 @@ public class ProjectDelegate {
   }
 
   /**
+   * <p>
    * Configures the project publications. This method is called with a closure that contains the publication
    * definitions. It should look like:
-   * <p>
+   * </p>
    * <pre>
    *   publications {
    *     publication(name: "foo", file: "build/jars/foo-${project.version}.jar", source:
@@ -99,9 +101,10 @@ public class ProjectDelegate {
   }
 
   /**
+   * <p>
    * Configures the project publish workflow. This method is called with a closure that contains the public workflow
    * definition. It should look like:
-   * <p>
+   * </p>
    * <pre>
    *   publishWorkflow {
    *     subversion(repository: "http://svn.example.com/")
@@ -120,9 +123,10 @@ public class ProjectDelegate {
   }
 
   /**
+   * <p>
    * Configures the project workflow. This method is called with a closure that contains the workflow definition. It
    * should look like:
-   * <p>
+   * </p>
    * <pre>
    *   workflow {
    *     fetch {

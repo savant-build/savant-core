@@ -37,6 +37,8 @@ public class GroovyTools {
    * attributes and have the correct attribute types.
    *
    * @param attributes         The attributes object.
+   * @param possibleAttributes The list of possible attributes. If an attributes is specified that doesn't exist in this
+   *                           Collection, false will be returned.
    * @param requiredAttributes A list of required attributes.
    * @param types              The attribute types.
    * @return True if the attributes are valid, false otherwise.

@@ -72,12 +72,12 @@ target(name: "jar", description: "JARs the project", dependsOn: ["compile"]) {
   java.jar()
 }
 
-target(name: "test", description: "Runs the project's tests", dependsOn: ["jar"]) {
-  javaTestNG.test()
+target(name: "doc", description: "Generate the project's JavaDoc", dependsOn: ["compile"]) {
+  java.document()
 }
 
-target(name: "doc", description: "Generate the project's JavaDoc", dependsOn: ["jar"]) {
-  java.document()
+target(name: "test", description: "Runs the project's tests", dependsOn: ["jar"]) {
+  javaTestNG.test()
 }
 
 target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: ["jar"]) {

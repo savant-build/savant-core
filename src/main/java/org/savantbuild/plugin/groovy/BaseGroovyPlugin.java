@@ -53,19 +53,23 @@ public class BaseGroovyPlugin extends GroovyObjectSupport implements Plugin {
    * Fails the build with the given message by throwing a {@link BuildFailureException}.
    *
    * @param message The failure message.
+   * @param values  Values used to format the message String.
    */
   protected void fail(String message, Object... values) {
     throw new BuildFailureException(String.format(message, values));
   }
 
   /**
+   * <p>
    * Loads the plugin configuration file. If the configuration file doesn't exist, this throws an exception.
+   * </p>
    * <p>
    * The configuration file location is standardized and based on the ArtifactID of the plugin and the user's home
    * directory.
+   * </p>
    * <p>
    * The location pattern is as follows:
-   * <p>
+   * </p>
    * <pre>
    *   &lt;user.home&gt;/plugins/&lt;id.group&gt;.&lt;id.name&gt;.properties
    * </pre>

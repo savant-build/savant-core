@@ -77,6 +77,7 @@ public abstract class ProjectBuildFile extends Script {
    * Fails the build with the given message by throwing a {@link BuildFailureException}.
    *
    * @param message The failure message.
+   * @param values  Values used to format the message.
    */
   protected void fail(String message, Object... values) {
     output.errorln(message, values);
@@ -84,9 +85,8 @@ public abstract class ProjectBuildFile extends Script {
   }
 
   /**
-   * Loads a plugin and returns a new instance of the Plugin class. This method is called with the information used to
-   * load the plugin like this:
-   * <p>
+   * <p> Loads a plugin and returns a new instance of the Plugin class. This method is called with the information used
+   * to load the plugin like this: </p>
    * <pre>
    *   java = loadPlugin(id: "org.savantbuild.plugin:java:0.1.0")
    * </pre>
@@ -109,17 +109,14 @@ public abstract class ProjectBuildFile extends Script {
   }
 
   /**
-   * Sets up the project information in the build file. This method is called with a Map of values and a closure like
-   * this:
-   * <p>
+   * <p> Sets up the project information in the build file. This method is called with a Map of values and a closure
+   * like this: </p>
    * <pre>
    *   project(group: "org.example", name: "my-project", version: "1.1", licenses: ["Commercial"]) {
    *
    *   }
    * </pre>
-   * <p>
-   * The require attributes are:
-   * <p>
+   * <p> The require attributes are: </p>
    * <pre>
    *   group: The name of the group that the project belongs to
    *   name: The name of the project
@@ -128,6 +125,7 @@ public abstract class ProjectBuildFile extends Script {
    * </pre>
    *
    * @param attributes The attributes.
+   * @param closure    The closure that is invoked for the project configuration handling.
    * @return The project.
    */
   protected Project project(Map<String, Object> attributes, @DelegatesTo(ProjectDelegate.class) Closure closure) {
@@ -187,16 +185,13 @@ public abstract class ProjectBuildFile extends Script {
   }
 
   /**
-   * Adds a target to the project. This method is called with a Map of values and a closure like this:
-   * <p>
+   * <p> Adds a target to the project. This method is called with a Map of values and a closure like this: </p>
    * <pre>
    *   target(name: "compile", description: "Compiles") {
    *     ...
    *   }
    * </pre>
-   * <p>
-   * The required attributes are:
-   * <p>
+   * <p> The required attributes are: </p>
    * <pre>
    *   name: The name of the target
    * </pre>
