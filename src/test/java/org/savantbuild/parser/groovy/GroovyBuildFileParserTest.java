@@ -41,6 +41,7 @@ import org.savantbuild.util.HashGraph;
 import org.savantbuild.util.MapBuilder;
 import org.testng.annotations.Test;
 
+import groovy.lang.MissingPropertyException;
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -136,7 +137,7 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
 
     try {
       project.targets.get("compile").invocation.run();
-    } catch (BuildFailureException e) {
+    } catch (MissingPropertyException e) {
       // Expected
       assertTrue(e.getMessage().contains("property [missingDependency]"));
     }

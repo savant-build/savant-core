@@ -69,7 +69,7 @@ public abstract class ProjectBuildFile extends Script {
     try {
       return super.getProperty(property);
     } catch (MissingPropertyException e) {
-      throw new BuildFailureException("You build file is attempting to access the property [" + property + "]. You might have forgotten to import a plugin or define this property or it could be a typo.");
+      throw new MissingPropertyException("You build file is attempting to access the property [" + property + "]. You might have forgotten to import a plugin or define this property or it could be a typo.", property, String.class);
     }
   }
 

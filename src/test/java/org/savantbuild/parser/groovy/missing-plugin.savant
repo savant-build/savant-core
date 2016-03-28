@@ -41,7 +41,7 @@ project(group: "group", name: "name", version: "1.1", licenses: ["Commercial"]) 
   }
 
   publications {
-    main{
+    main {
       publication(name: "publication1", type: "jar", file: "build/jars/${project.name}-${project.version}.jar", source: "build/jars/${project.name}-${project.version}-src.jar")
     }
     test {
