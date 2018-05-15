@@ -13,9 +13,9 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-savantVersion = "1.0.1-{integration}"
+savantVersion = "1.0.0"
 
-project(group: "org.savantbuild", name: "savant-core", version: "1.0.1", licenses: ["ApacheV2_0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "1.0.0", licenses: ["ApacheV2_0"]) {
   workflow {
     standard()
   }
