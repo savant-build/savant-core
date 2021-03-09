@@ -19,6 +19,6 @@ EXIT /B 1
 :savantHomeSet
 SET CLASSPATH=
 FOR %%f IN ("%SAVANT_HOME%\lib\*.jar") DO SET CLASSPATH=%%f;!CLASSPATH!
-%JAVA_HOME%\bin\java %SAVANT_OPTS% -cp "%CLASSPATH%" org.savantbuild.run.Main %*
+%JAVA_HOME%\bin\java %SAVANT_OPTS% -cp "%CLASSPATH%" org.savantbuild.runtime.Main %*
 
 ENDLOCAL
