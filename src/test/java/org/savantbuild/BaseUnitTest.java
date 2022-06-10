@@ -61,13 +61,13 @@ public abstract class BaseUnitTest {
     cache = projectDir.resolve("build/test/cache");
 
     workflow = new Workflow(
-        new FetchWorkflow(output, new CacheProcess(output, cache.toString()), new URLProcess(output, "http://localhost:7000/test-deps/savant", null, null)),
+        new FetchWorkflow(output, new CacheProcess(output, cache.toString()), new URLProcess(output, "http://localhost:7042/test-deps/savant", null, null)),
         new PublishWorkflow(new CacheProcess(output, cache.toString()))
     );
   }
 
   /**
-   * Creates a file server that will accept HTTP connections on localhost:7000 and return the bytes of the file in the
+   * Creates a file server that will accept HTTP connections on localhost:7042 and return the bytes of the file in the
    * request starting from the project directory.
    *
    * @param username (Optional) The username to verify was sent to the server in the Authentication header. Leave blank
@@ -78,7 +78,7 @@ public abstract class BaseUnitTest {
    * @throws IOException If the server could not be created.
    */
   protected HttpServer makeFileServer(String username, String password) throws IOException {
-    InetSocketAddress localhost = new InetSocketAddress(7000);
+    InetSocketAddress localhost = new InetSocketAddress(7042);
     HttpServer server = HttpServer.create(localhost, 0);
     server.createContext("/", (httpExchange) -> {
       if (username != null) {
