@@ -15,7 +15,7 @@
  */
 savantVersion = "1.0.0"
 
-project(group: "org.savantbuild", name: "savant-core", version: "1.0.2", licenses: ["ApacheV2_0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "1.0.3", licenses: ["ApacheV2_0"]) {
   workflow {
     fetch {
       cache()
@@ -33,6 +33,7 @@ project(group: "org.savantbuild", name: "savant-core", version: "1.0.2", license
   dependencies {
     group(name: "compile") {
       dependency(id: "org.apache.groovy:groovy:4.0.5:jar")
+      dependency(id: "org.apache.groovy:groovy-xml:4.0.5:jar")
       dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}")
       dependency(id: "org.savantbuild:savant-utils:${savantVersion}")
     }
