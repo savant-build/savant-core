@@ -34,10 +34,10 @@ jobs:
           mkdir -p ~/dev/savant
           mkdir -p ~/.savant/plugins
           cd ~/dev/savant
-          curl -fSL https://github.com/savant-build/savant-core/releases/download/1.0.2/savant-1.0.2.tar.gz > savant-1.0.2.tar.gz
-          tar -xzf savant-1.0.2.tar.gz
-          ln -s savant-1.0.2 current
-          rm savant-1.0.2.tar.gz
+          curl -fSL https://github.com/savant-build/savant-core/releases/download/1.0.3/savant-1.0.3.tar.gz > savant-1.0.3.tar.gz
+          tar -xzf savant-1.0.3.tar.gz
+          ln -s savant-1.0.3 current
+          rm savant-1.0.3.tar.gz
           cat <<EOF > ~/.savant/config.properties
           savantTestRepositoryUsername=username
           savantTestRepositoryPassword=password
