@@ -62,31 +62,30 @@ public class GroovyBuildFileParser implements BuildFileParser {
    * @param runtimeConfiguration The runtime configuration that is passed to the build script.
    * @return The Project.
    * @throws ArtifactMetaDataMissingException If any dependencies of the project are missing an AMD file in the
-   *                                          repository or local cache.
-   * @throws ArtifactMissingException         If any dependencies of the project are missing in the repository or local
-   *                                          cache.
-   * @throws BuildRunException                If the build can not be run (internally not due to a failure of the build
-   *                                          itself).
-   * @throws BuildFailureException            If the build fails while running.
-   * @throws CompatibilityException           If the project has incompatible versions of a dependency.
-   * @throws CyclicException                  If the project has cyclic dependencies.
-   * @throws LicenseException                 If the project has a dependency with an invalid license.
-   * @throws MD5Exception                     If a dependency is corrupt.
-   * @throws ParseException                   If the build file can not be parsed.
-   * @throws PublishException                 If there was an error publishing an artifact.
-   * @throws PluginLoadException              If a plugin load failed for any reason (the plugin might not exist, might
-   *                                          be invalid or could have thrown an exception during construction because
-   *                                          it was missing configuration or something.)
-   * @throws ProcessFailureException          If the downloading of a dependency fails.
-   * @throws VersionException                 If any of the versions are not semantic.
+   * repository or local cache.
+   * @throws ArtifactMissingException If any dependencies of the project are missing in the repository or local
+   * cache.
+   * @throws BuildRunException If the build can not be run (internally not due to a failure of the build
+   * itself).
+   * @throws BuildFailureException If the build fails while running.
+   * @throws CompatibilityException If the project has incompatible versions of a dependency.
+   * @throws CyclicException If the project has cyclic dependencies.
+   * @throws LicenseException If the project has a dependency with an invalid license.
+   * @throws MD5Exception If a dependency is corrupt.
+   * @throws ParseException If the build file can not be parsed.
+   * @throws PublishException If there was an error publishing an artifact.
+   * @throws PluginLoadException If a plugin load failed for any reason (the plugin might not exist, might
+   * be invalid or could have thrown an exception during construction because
+   * it was missing configuration or something.)
+   * @throws ProcessFailureException If the downloading of a dependency fails.
+   * @throws VersionException If any of the versions are not semantic.
    */
   @Override
   public Project parse(Path buildFile, RuntimeConfiguration runtimeConfiguration) throws ParseException {
-    try {
-      CompilerConfiguration compilerConfig = new CompilerConfiguration();
-      compilerConfig.setScriptBaseClass(ProjectBuildFile.class.getName());
+    CompilerConfiguration compilerConfig = new CompilerConfiguration();
+    compilerConfig.setScriptBaseClass(ProjectBuildFile.class.getName());
 
-      GroovyClassLoader groovyClassLoader = new GroovyClassLoader(ClassLoader.getSystemClassLoader(), compilerConfig);
+    try (GroovyClassLoader groovyClassLoader = new GroovyClassLoader(ClassLoader.getSystemClassLoader(), compilerConfig)) {
       Class<?> buildClass = groovyClassLoader.parseClass(buildFile.toFile());
       ProjectBuildFile script = (ProjectBuildFile) buildClass.newInstance();
       Project project = new Project(buildFile.toAbsolutePath().getParent(), output);

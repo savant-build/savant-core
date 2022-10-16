@@ -64,7 +64,7 @@ public class ProjectDelegate {
    *                class {@link DependenciesDelegate}.
    * @return The Dependencies.
    */
-  public Dependencies dependencies(@DelegatesTo(DependenciesDelegate.class) Closure closure) {
+  public Dependencies dependencies(@DelegatesTo(DependenciesDelegate.class) Closure<?> closure) {
     if (project.publications.allPublications().size() > 0) {
       throw new BuildFailureException("It looks like your project has defined its dependencies after its publications. " +
           "Because Savant parses the [project() {}] definition linearly, you need to define your publications AFTER your dependencies.");
@@ -72,6 +72,7 @@ public class ProjectDelegate {
 
     project.dependencies = new Dependencies();
     closure.setDelegate(new DependenciesDelegate(project.dependencies));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return project.dependencies;
   }
@@ -83,10 +84,10 @@ public class ProjectDelegate {
    * </p>
    * <pre>
    *   publications {
-   *     publication(name: "foo", file: "build/jars/foo-${project.version}.jar", source:
-   * "build/jars/foo-${project.version}-src.jar")
-   *     publication(name: "foo-test", file: "build/jars/foo-test-${project.version}.jar", source:
-   * "build/jars/foo-test${project.version}-src.jar")
+   *     main {
+   *       publication(name: "foo", file: "build/jars/foo-${project.version}.jar", source: "build/jars/foo-${project.version}-src.jar")
+   *       publication(name: "foo-test", file: "build/jars/foo-test-${project.version}.jar", source: "build/jars/foo-test${project.version}-src.jar")
+   *     }
    *   }
    * </pre>
    *
@@ -94,8 +95,9 @@ public class ProjectDelegate {
    *                PublicationsDelegate}.
    * @return The list of Publications.
    */
-  public Publications publications(@DelegatesTo(PublicationsDelegate.class) Closure closure) {
+  public Publications publications(@DelegatesTo(PublicationsDelegate.class) Closure<?> closure) {
     closure.setDelegate(new PublicationsDelegate(project, project.publications));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return project.publications;
   }
@@ -115,9 +117,10 @@ public class ProjectDelegate {
    *                delegate class {@link ProcessDelegate}.
    * @return The workflow.
    */
-  public Workflow publishWorkflow(@DelegatesTo(ProcessDelegate.class) Closure closure) {
+  public Workflow publishWorkflow(@DelegatesTo(ProcessDelegate.class) Closure<?> closure) {
     project.publishWorkflow = new PublishWorkflow();
     closure.setDelegate(new ProcessDelegate(output, project.publishWorkflow.processes));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return project.workflow;
   }
@@ -143,9 +146,10 @@ public class ProjectDelegate {
    *                {@link WorkflowDelegate}.
    * @return The workflow.
    */
-  public Workflow workflow(@DelegatesTo(WorkflowDelegate.class) Closure closure) {
+  public Workflow workflow(@DelegatesTo(WorkflowDelegate.class) Closure<?> closure) {
     project.workflow = new Workflow(new FetchWorkflow(output), new PublishWorkflow());
     closure.setDelegate(new WorkflowDelegate(output, project.workflow));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return project.workflow;
   }

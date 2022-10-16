@@ -32,7 +32,7 @@ project(group: "org.savantbuild", name: "savant-core", version: "1.0.1", license
 
   dependencies {
     group(name: "compile") {
-      dependency(id: "org.codehaus.groovy:groovy:groovy-all-indy:2.4.6:jar")
+      dependency(id: "org.apache.groovy:groovy:4.0.5:jar")
       dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}")
       dependency(id: "org.savantbuild:savant-utils:${savantVersion}")
     }
@@ -59,8 +59,10 @@ idea = loadPlugin(id: "org.savantbuild.plugin:idea:1.0.1")
 release = loadPlugin(id: "org.savantbuild.plugin:release-git:1.0.0")
 
 // Plugin settings
-java.settings.javaVersion = "1.8"
-javaTestNG.settings.javaVersion = "1.8"
+javaVersion = switches.has("javaVersion") ? switches.values("javaVersion")[0] : "1.8"
+output.infoln("Compiling using Java version ${javaVersion}")
+java.settings.javaVersion = javaVersion
+javaTestNG.settings.javaVersion = javaVersion
 idea.settings.moduleMap = [
     "org.savantbuild:savant-dependency-management:${savantVersion}":"savant-dependency-management",
     "org.savantbuild:savant-utils:${savantVersion}":"savant-utils"

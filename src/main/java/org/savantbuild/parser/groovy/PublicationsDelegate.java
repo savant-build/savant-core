@@ -56,8 +56,9 @@ public class PublicationsDelegate extends GroovyObjectSupport {
           "  }");
     }
 
-    Closure closure = (Closure) ((Object[]) args)[0];
+    Closure<?> closure = (Closure<?>) ((Object[]) args)[0];
     closure.setDelegate(new PublicationGroupDelegate(project, publications, name));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return publications.publicationGroups.get(name);
   }

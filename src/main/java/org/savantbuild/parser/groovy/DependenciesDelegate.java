@@ -44,7 +44,7 @@ public class DependenciesDelegate {
    * @param closure    The closure that defines the dependencies.
    * @return The dependency group object.
    */
-  public DependencyGroup group(Map<String, Object> attributes, @DelegatesTo(DependencyDelegate.class) Closure closure) {
+  public DependencyGroup group(Map<String, Object> attributes, @DelegatesTo(DependencyDelegate.class) Closure<?> closure) {
     if (!GroovyTools.hasAttributes(attributes, "name")) {
       throw new ParseException("Invalid group definition. It must have a [name] attribute like this:\n\n" +
           "  group(name: \"compile\") {\n" +
@@ -58,6 +58,7 @@ public class DependenciesDelegate {
     dependencies.groups.put(name, group);
 
     closure.setDelegate(new DependencyDelegate(group));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
 
     return group;

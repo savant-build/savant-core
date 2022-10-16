@@ -15,11 +15,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/.savant/cache/org/codehaus/groovy/groovy/2.4.6/groovy-all-indy-2.4.6.jar!/" />
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy/4.0.5/groovy-4.0.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/.savant/cache/org/codehaus/groovy/groovy/2.4.6/groovy-all-indy-2.4.6-src.jar!/" />
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy/4.0.5/groovy-4.0.5-src.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

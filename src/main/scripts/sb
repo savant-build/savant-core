@@ -1,28 +1,33 @@
 #!/bin/bash
 
-if [ -z "${JAVA_HOME}" ]; then
+if [[ -z ${JAVA_HOME} ]]; then
   echo "The JAVA_HOME environment variable is not set. Please set this to point to a JDK 8 installation of Java such that \$JAVA_HOME/bin/java points to the Java executable"
   exit 1
 fi
 
-bin_dir=$(dirname $0)
-cd ${bin_dir}/..
-home_dir=${PWD}
-cd - > /dev/null 2>&1
+# Move to the correct location
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -h ${SOURCE} ]]; do # resolve $SOURCE until the file is no longer a symlink
+  SCRIPT_DIR="$(cd -P "$(dirname "${SOURCE}")" >/dev/null && pwd)"
+  SOURCE="$(readlink "${SOURCE}")"
+  [[ ${SOURCE} != /* ]] && SOURCE="${SCRIPT_DIR}/${SOURCE}" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+HOME_DIR="$(cd -P "$(dirname "${SOURCE}")/.." > /dev/null && pwd)"
 
-classpath=
-for f in $(ls ${home_dir}/lib); do
-  classpath=${classpath}:${home_dir}/lib/${f}
+CLASSPATH=
+for f in "${HOME_DIR}"/lib/*; do
+  CLASSPATH=${CLASSPATH}:${f}
 done
 
 if [[ $(uname -a | grep -i cygwin) != "" ]]; then
-  classpath=$(cygpath -wp ${classpath})
-  home_dir=$(cygpath -wa ${home_dir})
+  CLASSPATH=$(cygpath -wp "${CLASSPATH}")
+  HOME_DIR=$(cygpath -wa "${HOME_DIR}")
 fi
 
-suspend=""
-if [[ $# > 1 && $1 == "--suspend" ]]; then
-  suspend="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000"
+JVM_ARGS=""
+if [[ ${#} -gt 1 && ${1} == "--suspend" ]]; then
+  JVM_ARGS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000"
 fi
 
-${JAVA_HOME}/bin/java ${suspend} -cp ${classpath} org.savantbuild.runtime.Main $@
+# shellcheck disable=SC2068
+exec "${JAVA_HOME}/bin/java" ${JVM_ARGS} -cp "${CLASSPATH}" org.savantbuild.runtime.Main ${@}

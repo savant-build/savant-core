@@ -52,8 +52,9 @@ public class WorkflowDelegate {
    *
    * @param closure The closure. This closure uses the delegate class {@link ProcessDelegate}.
    */
-  public void fetch(@DelegatesTo(ProcessDelegate.class) Closure closure) {
+  public void fetch(@DelegatesTo(ProcessDelegate.class) Closure<?> closure) {
     closure.setDelegate(new ProcessDelegate(output, workflow.fetchWorkflow.processes));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
   }
 
@@ -62,8 +63,9 @@ public class WorkflowDelegate {
    *
    * @param closure The closure. This closure uses the delegate class {@link ProcessDelegate}.
    */
-  public void publish(@DelegatesTo(ProcessDelegate.class) Closure closure) {
+  public void publish(@DelegatesTo(ProcessDelegate.class) Closure<?> closure) {
     closure.setDelegate(new ProcessDelegate(output, workflow.publishWorkflow.processes));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
   }
 

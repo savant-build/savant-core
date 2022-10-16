@@ -49,6 +49,7 @@ import static java.util.Arrays.asList;
  *
  * @author Brian Pontarelli
  */
+@SuppressWarnings("unused")
 public abstract class ProjectBuildFile extends Script {
   public final Map<String, String> ENV = System.getenv();
 
@@ -128,7 +129,7 @@ public abstract class ProjectBuildFile extends Script {
    * @param closure    The closure that is invoked for the project configuration handling.
    * @return The project.
    */
-  protected Project project(Map<String, Object> attributes, @DelegatesTo(ProjectDelegate.class) Closure closure) {
+  protected Project project(Map<String, Object> attributes, @DelegatesTo(ProjectDelegate.class) Closure<?> closure) {
     List<String> attrs = asList("group", "name", "version", "licenses");
     Map<String, Class<?>> attrTypes = new MapBuilder<String, Class<?>>().put("group", String.class)
                                                                         .put("name", String.class)
@@ -179,6 +180,7 @@ public abstract class ProjectBuildFile extends Script {
     }
 
     closure.setDelegate(new ProjectDelegate(output, project));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
 
     return project;
@@ -200,7 +202,7 @@ public abstract class ProjectBuildFile extends Script {
    * @param closure    The closure that contains the executable pieces of the target.
    * @return The Target.
    */
-  protected Target target(Map<String, Object> attributes, Closure closure) {
+  protected Target target(Map<String, Object> attributes, Closure<?> closure) {
     if (!GroovyTools.hasAttributes(attributes, "name")) {
       throw new ParseException("Invalid target definition. It should look like:\n\n" +
           "  target(name: \"compile\") {\n" +
