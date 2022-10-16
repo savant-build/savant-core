@@ -53,7 +53,7 @@ jobs:
       - name: Run the build
         run: |
           export PATH=~/dev/savant/current/bin:$PATH
-          sb clean int --javaVersion=${{ matrix.javaVersion }}
+          sb clean int --debug --javaVersion=${{ matrix.javaVersion }}
         shell: bash
       - name: Archive TestNG reports
         if: failure()
