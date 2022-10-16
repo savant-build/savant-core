@@ -42,6 +42,7 @@ jobs:
           11=${JAVA_HOME_11_x64}
           17=${JAVA_HOME_17_x64}
           EOF
+          cat ~/.savant/plugins/org.savantbuild.plugin.java.properties
         shell: bash
       - name: Run the build
         run: |
