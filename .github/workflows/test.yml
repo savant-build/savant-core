@@ -48,5 +48,10 @@ jobs:
       - name: Run the build
         run: |
           export PATH=$PATH:~/dev/savant/current/bin
-          sb clean int --debug --javaVersion=${{ matrix.javaVersion }}
+          sb clean int --javaVersion=${{ matrix.javaVersion }}
         shell: bash
+      - name: Archive TestNG reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: testng-reports
+          path: build/test-reports
