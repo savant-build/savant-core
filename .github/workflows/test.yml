@@ -15,7 +15,8 @@ jobs:
     # Multiple runs, one for each version of Java we support
     strategy:
       matrix:
-        javaVersion: [ '1.8', '11', '17' ]
+        java: [ '8', '11', '17' ]
+        javaVersion: [ '8', '11', '17' ]
 
     steps:
       # Java 8 is currently required to run Savant 1.0.0. We must install that but also the other versions we want to test
@@ -26,18 +27,17 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: |
-            17
-            11
-            8
+            ${{ matrix.java }}
+            ${{ matrix.javaVersion }}
       - name: Install Savant Build
         run: |
           mkdir -p ~/dev/savant
           mkdir -p ~/.savant/plugins
           cd ~/dev/savant
-          curl -fSL http://savant.inversoft.org/org/savantbuild/savant-core/1.0.0/savant-1.0.0.tar.gz > savant-1.0.0.tar.gz
-          tar -xzf savant-1.0.0.tar.gz
-          ln -s savant-1.0.0 current
-          rm savant-1.0.0.tar.gz
+          curl -fSL https://github.com/savant-build/savant-core/releases/download/1.0.2/savant-1.0.2.tar.gz > savant-1.0.2.tar.gz
+          tar -xzf savant-1.0.2.tar.gz
+          ln -s savant-1.0.2 current
+          rm savant-1.0.2.tar.gz
           cat <<EOF > ~/.savant/config.properties
           savantTestRepositoryUsername=username
           savantTestRepositoryPassword=password
@@ -45,14 +45,14 @@ jobs:
           savantTestSVNPassword=svn-password
           EOF
           cat <<EOF > ~/.savant/plugins/org.savantbuild.plugin.java.properties
-          1.8=${JAVA_HOME_8_X64}
+          8=${JAVA_HOME_8_X64}
           11=${JAVA_HOME_11_X64}
           17=${JAVA_HOME_17_X64}
           EOF
         shell: bash
       - name: Run the build
         run: |
-          export PATH=$PATH:~/dev/savant/current/bin
+          export PATH=~/dev/savant/current/bin:$PATH
           sb clean int --javaVersion=${{ matrix.javaVersion }}
         shell: bash
       - name: Archive TestNG reports
