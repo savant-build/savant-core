@@ -38,12 +38,17 @@ jobs:
           tar -xzf savant-1.0.0.tar.gz
           ln -s savant-1.0.0 current
           rm savant-1.0.0.tar.gz
+          cat <<EOF > ~/.savant/config.properties
+          savantTestRepositoryUsername=username
+          savantTestRepositoryPassword=password
+          savantTestSVNUsername=svn-username
+          savantTestSVNPassword=svn-password
+          EOF
           cat <<EOF > ~/.savant/plugins/org.savantbuild.plugin.java.properties
           1.8=${JAVA_HOME_8_X64}
           11=${JAVA_HOME_11_X64}
           17=${JAVA_HOME_17_X64}
           EOF
-          cat ~/.savant/plugins/org.savantbuild.plugin.java.properties
         shell: bash
       - name: Run the build
         run: |
@@ -51,8 +56,9 @@ jobs:
           sb clean int --javaVersion=${{ matrix.javaVersion }}
         shell: bash
       - name: Archive TestNG reports
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: testng-reports
           path: build/test-reports
+          retention-days: 1
