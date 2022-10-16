@@ -15,7 +15,7 @@
  */
 savantVersion = "1.0.0"
 
-project(group: "org.savantbuild", name: "savant-core", version: "1.0.1", licenses: ["ApacheV2_0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "1.0.2", licenses: ["ApacheV2_0"]) {
   workflow {
     fetch {
       cache()
@@ -104,6 +104,10 @@ target(name: "bundle", description: "Generates the Tarball bundle", dependsOn: [
 
   file.tar(file: "build/distributions/savant-${project.version}.tar.gz", compress: true) {
     tarFileSet(prefix: "savant-${project.version}", dir: "build/distributions/exploded")
+  }
+
+  file.zip(file: "build/distributions/savant-${project.version}.zip") {
+    zipFileSet(prefix: "savant-${project.version}", dir: "build/distributions/exploded")
   }
 }
 
