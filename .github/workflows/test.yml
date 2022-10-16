@@ -1,26 +1,22 @@
 name: test
 
-# Controls when the action will run.
+# Run the tests when code is pushed to `master`
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
-
-  strategy:
-    matrix:
-      javaVersion: [ '1.8', '11', '17' ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "deploy_website"
   test:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    # Multiple runs, one for each version of Java we support
+    strategy:
+      matrix:
+        javaVersion: [ '1.8', '11', '17' ]
+
     steps:
       # Java 8 is currently required to run Savant 1.0.0. We must install that but also the other versions we want to test
       # against. This separates the matrix from the Java versions, but it simplifies the Savant configuration setup
