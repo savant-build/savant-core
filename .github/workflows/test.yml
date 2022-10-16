@@ -51,6 +51,7 @@ jobs:
           sb clean int --javaVersion=${{ matrix.javaVersion }}
         shell: bash
       - name: Archive TestNG reports
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: testng-reports
