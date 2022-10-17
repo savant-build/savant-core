@@ -12,16 +12,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # Multiple runs, one for each version of Java we support
+    # Multiple runs, one for each version of Java we support and each runtime that Savant can run inside
     strategy:
       matrix:
         java: [ '8', '11', '17' ]
         javaVersion: [ '8', '11', '17' ]
 
     steps:
-      # Java 8 is currently required to run Savant 1.0.0. We must install that but also the other versions we want to test
-      # against. This separates the matrix from the Java versions, but it simplifies the Savant configuration setup.
-      # Java 8 is installed last so that it is in the path first.
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
         with:
@@ -53,7 +50,7 @@ jobs:
       - name: Run the build
         run: |
           export PATH=~/dev/savant/current/bin:$PATH
-          sb clean int --debug --javaVersion=${{ matrix.javaVersion }}
+          sb clean int --javaVersion=${{ matrix.javaVersion }}
         shell: bash
       - name: Archive TestNG reports
         if: failure()
