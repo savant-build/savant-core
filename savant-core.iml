@@ -15,6 +15,17 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-xml/4.0.5/groovy-xml-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-xml/4.0.5/groovy-xml-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
           <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy/4.0.5/groovy-4.0.5.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -77,17 +88,6 @@
         <JAVADOC />
         <SOURCES>
           <root url="jar://$USER_HOME$/.savant/cache/com/beust/jcommander/1.27.0/jcommander-1.27.0-src.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="RUNTIME">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/.savant/cache/ch/ethz/ganymed/ganymed-ssh2/261.0.0/ganymed-ssh2-261.0.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$USER_HOME$/.savant/cache/ch/ethz/ganymed/ganymed-ssh2/261.0.0/ganymed-ssh2-261.0.0-src.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
