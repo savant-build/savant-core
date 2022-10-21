@@ -15,6 +15,7 @@
  */
 package org.savantbuild.runtime;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import org.savantbuild.BaseUnitTest;
@@ -39,9 +40,22 @@ public class DefaultBuildRunnerTest extends BaseUnitTest {
 
     BuildRunner runner = new DefaultBuildRunner(output, new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
     runner.run(projectDir.resolve("test-project/build.savant"), new RuntimeConfiguration(false, "write"));
-    assertEquals(new String(Files.readAllBytes(projectDir.resolve("test-project/build/test-file.txt")), "UTF-8"), "File contents");
+    assertEquals(new String(Files.readAllBytes(projectDir.resolve("test-project/build/test-file.txt")), StandardCharsets.UTF_8), "File contents");
 
     runner.run(projectDir.resolve("test-project/build.savant"), new RuntimeConfiguration(true, "delete"));
     assertFalse(Files.isDirectory(projectDir.resolve("test-project/build")));
+  }
+
+  @Test
+  public void javaProjectWithLicenses() throws Exception {
+    PathTools.prune(projectDir.resolve("test-project-licenses/build"));
+    Files.createDirectories(projectDir.resolve("test-project-licenses/build"));
+
+    BuildRunner runner = new DefaultBuildRunner(output, new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder()), new DefaultProjectRunner(output));
+    runner.run(projectDir.resolve("test-project-licenses/build.savant"), new RuntimeConfiguration(false, "write"));
+    assertEquals(new String(Files.readAllBytes(projectDir.resolve("test-project-licenses/build/test-file.txt")), StandardCharsets.UTF_8), "File contents");
+
+    runner.run(projectDir.resolve("test-project-licenses/build.savant"), new RuntimeConfiguration(true, "delete"));
+    assertFalse(Files.isDirectory(projectDir.resolve("test-project-licenses/build")));
   }
 }

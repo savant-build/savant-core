@@ -20,10 +20,10 @@ import java.nio.file.Path;
 import org.savantbuild.dep.LicenseException;
 import org.savantbuild.dep.PublishException;
 import org.savantbuild.dep.domain.CompatibilityException;
-import org.savantbuild.dep.domain.VersionException;
 import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
 import org.savantbuild.dep.workflow.ArtifactMissingException;
 import org.savantbuild.dep.workflow.process.ProcessFailureException;
+import org.savantbuild.domain.VersionException;
 import org.savantbuild.parser.ParseException;
 import org.savantbuild.plugin.PluginLoadException;
 import org.savantbuild.security.MD5Exception;
@@ -41,23 +41,23 @@ public interface BuildRunner {
    * @param buildFile            The build file.
    * @param runtimeConfiguration The runtime configuration.
    * @throws ArtifactMetaDataMissingException If any dependencies of the project are missing an AMD file in the
-   *                                          repository or local cache.
-   * @throws ArtifactMissingException         If any dependencies of the project are missing in the repository or local
-   *                                          cache.
-   * @throws BuildRunException                If the build can not be run (internally not due to a failure of the build
-   *                                          itself).
-   * @throws BuildFailureException            If the build fails while running.
-   * @throws CompatibilityException           If the project has incompatible versions of a dependency.
-   * @throws CyclicException                  If the project has cyclic dependencies.
-   * @throws LicenseException                 If the project has a dependency with an invalid license.
-   * @throws MD5Exception                     If a dependency is corrupt.
-   * @throws ParseException                   If the build file can not be parsed.
-   * @throws PublishException                 If there was an error publishing an artifact.
-   * @throws PluginLoadException              If a plugin load failed for any reason (the plugin might not exist, might
-   *                                          be invalid or could have thrown an exception during construction because
-   *                                          it was missing configuration or something.)
-   * @throws ProcessFailureException          If the downloading of a dependency fails.
-   * @throws VersionException                 If any of the versions are not semantic.
+   * repository or local cache.
+   * @throws ArtifactMissingException If any dependencies of the project are missing in the repository or local
+   * cache.
+   * @throws BuildRunException If the build can not be run (internally not due to a failure of the build
+   * itself).
+   * @throws BuildFailureException If the build fails while running.
+   * @throws CompatibilityException If the project has incompatible versions of a dependency.
+   * @throws CyclicException If the project has cyclic dependencies.
+   * @throws LicenseException If the project has a dependency with an invalid license.
+   * @throws MD5Exception If a dependency is corrupt.
+   * @throws ParseException If the build file can not be parsed.
+   * @throws PublishException If there was an error publishing an artifact.
+   * @throws PluginLoadException If a plugin load failed for any reason (the plugin might not exist, might
+   * be invalid or could have thrown an exception during construction because
+   * it was missing configuration or something.)
+   * @throws ProcessFailureException If the downloading of a dependency fails.
+   * @throws VersionException If any of the versions are not semantic.
    */
   void run(Path buildFile, RuntimeConfiguration runtimeConfiguration) throws ArtifactMetaDataMissingException, ArtifactMissingException,
       BuildRunException, BuildFailureException, CompatibilityException, CyclicException, LicenseException, MD5Exception,

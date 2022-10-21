@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.1", licenses: ["ApacheV2_0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.2", licenses: ["ApacheV2_0"]) {
   workflow {
     fetch {
       cache()
@@ -32,8 +32,9 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.1", li
     group(name: "compile") {
       dependency(id: "org.apache.groovy:groovy:4.0.5:jar")
       dependency(id: "org.apache.groovy:groovy-xml:4.0.5:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.1")
-      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.1")
+      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.2")
+      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.2")
+      dependency(id: "org.savantbuild:savant-version:2.0.0-RC.2")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
@@ -63,8 +64,9 @@ output.infoln("Compiling using Java version ${javaVersion}")
 java.settings.javaVersion = javaVersion
 javaTestNG.settings.javaVersion = javaVersion
 idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:2.0.0-RC.1" : "savant-dependency-management",
-    "org.savantbuild:savant-utils:2.0.0-RC.1"                 : "savant-utils"
+    "org.savantbuild:savant-dependency-management:2.0.0-RC.2": "savant-dependency-management",
+    "org.savantbuild:savant-utils:2.0.0-RC.2"                : "savant-utils",
+    "org.savantbuild:savant-version:2.0.0-RC.2"              : "savant-version"
 ]
 
 target(name: "clean", description: "Cleans the project") {

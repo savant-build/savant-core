@@ -17,7 +17,9 @@ package org.savantbuild.domain;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.savantbuild.dep.DefaultDependencyService;
@@ -26,7 +28,6 @@ import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.ReifiedArtifact;
-import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.graph.ArtifactGraph;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
@@ -46,7 +47,7 @@ public class Project {
 
   public final Path directory;
 
-  public final Map<License, String> licenses = new HashMap<>();
+  public final List<License> licenses = new ArrayList<>();
 
   public final Output output;
 

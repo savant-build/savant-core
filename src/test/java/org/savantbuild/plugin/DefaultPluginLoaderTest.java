@@ -18,12 +18,12 @@ package org.savantbuild.plugin;
 import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.License;
-import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.domain.Project;
+import org.savantbuild.domain.Version;
 import org.savantbuild.output.Output;
 import org.savantbuild.output.SystemOutOutput;
 import org.savantbuild.runtime.RuntimeConfiguration;
@@ -166,7 +166,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     project.group = "org.savantbuild.test";
     project.name = "plugin-loader-test";
     project.version = new Version("0.1.0");
-    project.licenses.put(License.BSD_2_Clause, null);
+    project.licenses.add(License.parse("BSD_2_Clause", null));
     project.workflow = new Workflow(
         new FetchWorkflow(output, new CacheProcess(output, projectDir.resolve("src/test/plugin-repository").toString())),
         new PublishWorkflow(new CacheProcess(output, projectDir.resolve("src/test/plugin-repository").toString()))

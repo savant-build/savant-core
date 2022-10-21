@@ -18,8 +18,6 @@ package org.savantbuild.domain;
 import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.ReifiedArtifact;
-import org.savantbuild.dep.domain.Version;
-import org.savantbuild.util.MapBuilder;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -36,7 +34,7 @@ public class ProjectTest extends BaseUnitTest {
     project.group = "group";
     project.name = "name";
     project.version = new Version("1.1.1");
-    project.licenses.put(License.BSD_2_Clause, null);
-    assertEquals(project.toArtifact(), new ReifiedArtifact("group:name:name:1.1.1:jar", MapBuilder.simpleMap(License.BSD_2_Clause, null)));
+    project.licenses.add(License.parse("BSD_2_Clause", null));
+    assertEquals(project.toArtifact(), new ReifiedArtifact("group:name:name:1.1.1:jar", License.parse("BSD_2_Clause", null)));
   }
 }

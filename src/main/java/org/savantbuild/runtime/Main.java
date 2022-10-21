@@ -24,12 +24,12 @@ import org.savantbuild.dep.DependencyTreePrinter;
 import org.savantbuild.dep.LicenseException;
 import org.savantbuild.dep.PublishException;
 import org.savantbuild.dep.domain.CompatibilityException;
-import org.savantbuild.dep.domain.VersionException;
 import org.savantbuild.dep.graph.DependencyGraph;
 import org.savantbuild.dep.graph.DependencyGraph.Dependency;
 import org.savantbuild.dep.workflow.ArtifactMetaDataMissingException;
 import org.savantbuild.dep.workflow.ArtifactMissingException;
 import org.savantbuild.dep.workflow.process.ProcessFailureException;
+import org.savantbuild.domain.VersionException;
 import org.savantbuild.output.Output;
 import org.savantbuild.output.SystemOutOutput;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
@@ -86,8 +86,8 @@ public class Main {
       output.debug(e);
       System.exit(1);
     } catch (ArtifactMetaDataMissingException | ArtifactMissingException | BuildRunException | BuildFailureException |
-        LicenseException | MD5Exception | ParseException | PluginLoadException | ProcessFailureException |
-        PublishException | VersionException e) {
+             LicenseException | MD5Exception | ParseException | PluginLoadException | ProcessFailureException |
+             PublishException | VersionException e) {
       int lineNumber = determineLineNumber(e);
       output.errorln(e.getMessage() + (lineNumber > 0 ? " Error occurred on line [" + lineNumber + "]" : ""));
       output.debug(e);

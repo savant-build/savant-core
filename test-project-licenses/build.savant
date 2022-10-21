@@ -1,0 +1,13 @@
+import java.nio.file.Files
+
+project(name: "test-project", group: "org.savantbuild.test", version: "0.1.0", licenses: ["ApacheV2_0", "Apache-1.0", "BSD-2-Clause", "Commercial"]) {
+}
+
+target(name: "delete", description: "Used to test the build runner") {
+  Files.delete(project.directory.resolve("build/test-file.txt"))
+  Files.delete(project.directory.resolve("build"))
+}
+
+target(name: "write", description: "Used to test the build runner") {
+  project.directory.resolve("build/test-file.txt").toFile() << "File contents"
+}

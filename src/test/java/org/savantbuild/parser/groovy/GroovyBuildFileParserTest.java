@@ -16,6 +16,8 @@
 package org.savantbuild.parser.groovy;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 
 import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.Artifact;
@@ -26,19 +28,17 @@ import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.domain.ReifiedArtifact;
-import org.savantbuild.dep.domain.Version;
 import org.savantbuild.dep.workflow.process.CacheProcess;
 import org.savantbuild.dep.workflow.process.SVNProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Publications;
 import org.savantbuild.domain.Target;
+import org.savantbuild.domain.Version;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
-import org.savantbuild.runtime.BuildFailureException;
 import org.savantbuild.runtime.RuntimeConfiguration;
 import org.savantbuild.util.Graph;
 import org.savantbuild.util.HashGraph;
-import org.savantbuild.util.MapBuilder;
 import org.testng.annotations.Test;
 
 import groovy.lang.MissingPropertyException;
@@ -62,6 +62,12 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertEquals(project.group, "group");
     assertEquals(project.name, "name");
     assertEquals(project.version, new Version("1.1"));
+    assertEquals(project.licenses.get(0).identifier, "Apache-2.0");
+    assertEquals(project.licenses.get(1).identifier, "Apache-1.0");
+    assertEquals(project.licenses.get(2).identifier, "BSD-2-Clause");
+    assertEquals(project.licenses.get(2).text, "BSD license");
+    assertEquals(project.licenses.get(3).identifier, "Commercial");
+    assertEquals(project.licenses.get(3).text, "Commercial license file.");
 
     // Verify the targets
     assertEquals(project.targets.get("compile").name, "compile");
@@ -107,22 +113,28 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertEquals(project.dependencies, expectedDependencies);
 
     // Verify the publications
+    List<License> licenses = Arrays.asList(
+        License.parse("Apache-2.0", null),
+        License.parse("Apache-1.0", null),
+        License.parse("BSD-2-Clause", "BSD license"),
+        License.parse("Commercial", "Commercial license file.")
+    );
     Publications expectedPublications = new Publications();
     expectedPublications.add("main",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
-            new ArtifactMetaData(expectedDependencies, MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), licenses),
+            new ArtifactMetaData(expectedDependencies, licenses),
             buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );
     expectedPublications.add("main",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication3", "jar"), new Version("1.1"), MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
-            new ArtifactMetaData(new Dependencies(), MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication3", "jar"), new Version("1.1"), licenses),
+            new ArtifactMetaData(new Dependencies(), licenses),
             buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );
     expectedPublications.add("test",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
-            new ArtifactMetaData(expectedDependencies, MapBuilder.simpleMap(License.Commercial, "Commercial license file.")),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), licenses),
+            new ArtifactMetaData(expectedDependencies, licenses),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar").toAbsolutePath())
     );

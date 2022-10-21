@@ -22,12 +22,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.savantbuild.dep.LicenseException;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.License;
-import org.savantbuild.dep.domain.Version;
-import org.savantbuild.dep.domain.VersionException;
 import org.savantbuild.domain.Project;
 import org.savantbuild.domain.Target;
+import org.savantbuild.domain.Version;
+import org.savantbuild.domain.VersionException;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
 import org.savantbuild.plugin.DefaultPluginLoader;
@@ -152,21 +153,16 @@ public abstract class ProjectBuildFile extends Script {
 
     for (String licenseName : licenseNames) {
       try {
-        License license = License.valueOf(licenseName);
-        String text = null;
         Path licenseOverrideFile = project.directory.resolve("license-" + licenseName + ".txt");
+        String text = null;
         if (Files.isRegularFile(licenseOverrideFile)) {
           text = new String(Files.readAllBytes(licenseOverrideFile));
         }
 
-        if (license.requiresText && text == null) {
-          throw new ParseException("Invalid license configuration. You specified the [" + license + "] but did not provide a [license-" + license +
-              ".txt] file in the root of your project. This license requires a custom license definition.");
-        }
-
-        project.licenses.put(license, text);
-      } catch (IllegalArgumentException e) {
-        throw new ParseException("Invalid license [" + licenseName + "]. It must be one of these values " + asList(License.values()));
+        License license = License.parse(licenseName, text);
+        project.licenses.add(license);
+      } catch (LicenseException e) {
+        throw new ParseException(e.getMessage());
       } catch (IOException e) {
         throw new ParseException("Unable to load the license override file [license-" + licenseName + ".txt].", e);
       }

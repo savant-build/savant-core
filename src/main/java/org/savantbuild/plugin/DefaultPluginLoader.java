@@ -81,7 +81,7 @@ public class DefaultPluginLoader implements PluginLoader {
 
     // This doesn't use the project as the root because the project might be in the graph and that would cause failures.
     // This is how Savant is self building
-    ReifiedArtifact root = new ReifiedArtifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", MapBuilder.simpleMap(License.ApacheV2_0, null));
+    ReifiedArtifact root = new ReifiedArtifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", License.Licenses.get("ApacheV2_0"));
     Dependencies dependencies = new Dependencies(new DependencyGroup("runtime", false, pluginDependency));
     DependencyGraph dependencyGraph = project.dependencyService.buildGraph(root, dependencies, project.workflow);
     ArtifactGraph artifactGraph = project.dependencyService.reduce(dependencyGraph);

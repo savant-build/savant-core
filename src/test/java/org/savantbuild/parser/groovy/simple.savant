@@ -1,6 +1,6 @@
 package org.savantbuild.parser.groovy
 
-project(group: "group", name: "name", version: "1.1", licenses: ["Commercial"]) {
+project(group: "group", name: "name", version: "1.1", licenses: ["ApacheV2_0", "Apache-1.0", "BSD-2-Clause", "Commercial"]) {
   workflow {
     fetch {
       cache()
