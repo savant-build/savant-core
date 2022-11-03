@@ -13,15 +13,19 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.3", licenses: ["ApacheV2_0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.4", licenses: ["ApacheV2_0"]) {
   workflow {
     fetch {
       cache()
       url(url: "https://repository.savantbuild.org")
+//      maven()
     }
     publish {
       cache()
     }
+//    mavenMappings {
+//      map("org.jboss.netty:netty:4.2.2.Final": "org.jboss.netty:netty:4.2.2")
+//    }
   }
 
   publishWorkflow {
@@ -42,9 +46,21 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.3", li
       dependency(id: "org.apache.groovy:groovy-templates:4.0.5:jar")
       dependency(id: "org.apache.groovy:groovy-xml:4.0.5:jar")
       dependency(id: "org.apache.groovy:groovy-yaml:4.0.5:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.3")
-      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.3")
-      dependency(id: "org.savantbuild:savant-version:2.0.0-RC.3")
+//      dependency(id: "org.apache.groovy:groovy:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-datetime:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-groovydoc:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-jmx:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-json:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-jsr223:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-macro:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-nio:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-sql:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-templates:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-xml:4.0.6:jar")
+//      dependency(id: "org.apache.groovy:groovy-yaml:4.0.6:jar")
+      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.4.{integration}")
+      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.4.{integration}")
+      dependency(id: "org.savantbuild:savant-version:2.0.0-RC.4.{integration}")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
@@ -74,9 +90,9 @@ output.infoln("Compiling using Java version ${javaVersion}")
 java.settings.javaVersion = javaVersion
 javaTestNG.settings.javaVersion = javaVersion
 idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:2.0.0-RC.3.{integration}": "savant-dependency-management",
-    "org.savantbuild:savant-utils:2.0.0-RC.3.{integration}"                : "savant-utils",
-    "org.savantbuild:savant-version:2.0.0-RC.3.{integration}"              : "savant-version"
+    "org.savantbuild:savant-dependency-management:2.0.0-RC.4.{integration}": "savant-dependency-management",
+    "org.savantbuild:savant-utils:2.0.0-RC.4.{integration}"                : "savant-utils",
+    "org.savantbuild:savant-version:2.0.0-RC.4.{integration}"              : "savant-version"
 ]
 
 target(name: "clean", description: "Cleans the project") {

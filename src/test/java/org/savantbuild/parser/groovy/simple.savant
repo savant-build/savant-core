@@ -17,7 +17,11 @@ project(group: "group", name: "name", version: "1.1", licenses: ["ApacheV2_0", "
 
   dependencies {
     group(name: "compile") {
-      dependency(id: "org.example:compile:1.0")
+      dependency(id: "org.example:compile:1.0") {
+        exclusion(id: "org.example:exclude")
+        exclusion(id: "org.example:exclude-2:zip")
+        exclusion(id: "org.example:exclude-3:exclude-4:xml")
+      }
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.example:test:1.0")

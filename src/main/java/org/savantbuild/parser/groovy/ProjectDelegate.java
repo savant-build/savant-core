@@ -142,12 +142,12 @@ public class ProjectDelegate {
    *   }
    * </pre>
    *
-   * @param closure The closure that is called to setup the workflow configuration. This closure uses the delegate class
-   *                {@link WorkflowDelegate}.
+   * @param closure The closure that is called to set up the workflow configuration. This closure uses the delegate
+   *                class {@link WorkflowDelegate}.
    * @return The workflow.
    */
   public Workflow workflow(@DelegatesTo(WorkflowDelegate.class) Closure<?> closure) {
-    project.workflow = new Workflow(new FetchWorkflow(output), new PublishWorkflow());
+    project.workflow = new Workflow(new FetchWorkflow(output), new PublishWorkflow(), output);
     closure.setDelegate(new WorkflowDelegate(output, project.workflow));
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();

@@ -17,6 +17,7 @@ package org.savantbuild.parser.groovy;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.savantbuild.BaseUnitTest;
@@ -78,7 +79,7 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertEquals(project.targets.get("test").name, "test");
     assertEquals(project.targets.get("test").description, "This runs the tests");
     assertNotNull(project.targets.get("test").invocation);
-    assertEquals(project.targets.get("test").dependencies, asList("compile"));
+    assertEquals(project.targets.get("test").dependencies, Collections.singletonList("compile"));
 
     // Verify the target graph
     Graph<Target, Object> expected = new HashGraph<>();
@@ -107,8 +108,13 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).password, "svn-password");
 
     // Verify the dependencies
+    final List<ArtifactID> exclusions = asList(
+        new ArtifactID("org.example", "exclude", "exclude", "jar"),
+        new ArtifactID("org.example", "exclude-2", "exclude-2", "zip"),
+        new ArtifactID("org.example", "exclude-3", "exclude-4", "xml")
+    );
     Dependencies expectedDependencies = new Dependencies(
-        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", false)),
+        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", false, exclusions)),
         new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0", false), new Artifact("org.example:test2:2.0", false)));
     assertEquals(project.dependencies, expectedDependencies);
 

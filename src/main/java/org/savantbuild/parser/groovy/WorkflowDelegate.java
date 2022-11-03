@@ -18,15 +18,18 @@ package org.savantbuild.parser.groovy;
 import java.util.List;
 import java.util.Map;
 
+import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
+import org.savantbuild.dep.maven.workflow.process.MavenProcess;
 import org.savantbuild.dep.workflow.process.Process;
 import org.savantbuild.dep.workflow.process.SVNProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
+import org.savantbuild.parser.groovy.WorkflowDelegate.ProcessDelegate.MavenDelegate;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
@@ -54,6 +57,16 @@ public class WorkflowDelegate {
    */
   public void fetch(@DelegatesTo(ProcessDelegate.class) Closure<?> closure) {
     closure.setDelegate(new ProcessDelegate(output, workflow.fetchWorkflow.processes));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+    closure.run();
+  }
+
+  /**
+   * Adds mappings to the Maven mappings.
+   */
+  public void maven(@DelegatesTo(MavenDelegate.class) Closure<?> closure) {
+    MavenDelegate delegate = new MavenDelegate(workflow.mappings);
+    closure.setDelegate(delegate);
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
   }
@@ -115,6 +128,20 @@ public class WorkflowDelegate {
     }
 
     /**
+     * Adds a {@link MavenProcess} to the workflow that uses the given attributes.
+     *
+     * @param attributes Optionally a map that contains a URL attribute.
+     */
+    public void maven(Map<String, Object> attributes) {
+      String url = GroovyTools.toString(attributes, "url");
+      if (url == null) {
+        url = "https://repo1.maven.org/maven2";
+      }
+
+      processes.add(new MavenProcess(output, url, GroovyTools.toString(attributes, "username"), GroovyTools.toString(attributes, "password")));
+    }
+
+    /**
      * Adds a {@link SVNProcess} to the workflow that uses the given attributes.
      *
      * @param attributes The SVN attributes.
@@ -142,6 +169,18 @@ public class WorkflowDelegate {
 
       processes.add(new URLProcess(output, GroovyTools.toString(attributes, "url"), GroovyTools.toString(attributes, "username"),
           GroovyTools.toString(attributes, "password")));
+    }
+
+    public static class MavenDelegate {
+      public final Map<String, Artifact> mapping;
+
+      public MavenDelegate(Map<String, Artifact> mapping) {
+        this.mapping = mapping;
+      }
+
+      public void map(Map<String, Object> attributes) {
+        attributes.forEach((key, value) -> mapping.put(key, new Artifact(value.toString(), false)));
+      }
     }
   }
 }
