@@ -37,7 +37,7 @@ public class ExclusionDelegate {
    *
    * @param attributes The attributes.
    * @return Nothing
-   * @see Artifact#Artifact(String, boolean)
+   * @see Artifact#Artifact(String)
    */
   public ArtifactID exclusion(Map<String, Object> attributes) {
     if (!GroovyTools.hasAttributes(attributes, "id")) {

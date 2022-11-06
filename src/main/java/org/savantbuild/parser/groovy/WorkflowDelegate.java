@@ -23,7 +23,7 @@ import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
-import org.savantbuild.dep.maven.workflow.process.MavenProcess;
+import org.savantbuild.dep.workflow.process.MavenProcess;
 import org.savantbuild.dep.workflow.process.Process;
 import org.savantbuild.dep.workflow.process.SVNProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
@@ -179,7 +179,7 @@ public class WorkflowDelegate {
       }
 
       public void map(Map<String, Object> attributes) {
-        attributes.forEach((key, value) -> mapping.put(key, new Artifact(value.toString(), false)));
+        attributes.forEach((key, value) -> mapping.put(key, new Artifact(value.toString())));
       }
     }
   }

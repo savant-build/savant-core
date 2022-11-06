@@ -43,7 +43,7 @@ public class DependencyDelegate {
    *
    * @param attributes The attributes.
    * @return The dependency object.
-   * @see Artifact#Artifact(String, boolean)
+   * @see Artifact#Artifact(String)
    */
   public Artifact dependency(Map<String, Object> attributes) {
     return dependency(attributes, null);
@@ -57,7 +57,7 @@ public class DependencyDelegate {
    * @param attributes The attributes.
    * @param closure    The exclusion delegate if one was provided.
    * @return The dependency object.
-   * @see Artifact#Artifact(String, boolean)
+   * @see Artifact#Artifact(String)
    */
   public Artifact dependency(Map<String, Object> attributes, @DelegatesTo(ExclusionDelegate.class) Closure<?> closure) {
     if (!GroovyTools.hasAttributes(attributes, "id")) {
@@ -76,7 +76,7 @@ public class DependencyDelegate {
 
     String id = GroovyTools.toString(attributes, "id");
     boolean skipCompatibilityCheck = attributes.containsKey("skipCompatibilityCheck") ? (Boolean) attributes.get("skipCompatibilityCheck") : false;
-    Artifact dependency = new Artifact(id, skipCompatibilityCheck, exclusions);
+    Artifact dependency = new Artifact(id, null, skipCompatibilityCheck, exclusions);
     group.dependencies.add(dependency);
     return dependency;
   }

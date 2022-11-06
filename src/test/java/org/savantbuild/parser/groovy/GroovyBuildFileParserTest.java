@@ -114,8 +114,8 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
         new ArtifactID("org.example", "exclude-3", "exclude-4", "xml")
     );
     Dependencies expectedDependencies = new Dependencies(
-        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", false, exclusions)),
-        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0", false), new Artifact("org.example:test2:2.0", false)));
+        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", null, false, exclusions)),
+        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0"), new Artifact("org.example:test2:2.0")));
     assertEquals(project.dependencies, expectedDependencies);
 
     // Verify the publications
