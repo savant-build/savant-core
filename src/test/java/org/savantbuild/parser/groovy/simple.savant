@@ -4,15 +4,21 @@ project(group: "group", name: "name", version: "1.1", licenses: ["ApacheV2_0", "
   workflow {
     fetch {
       cache()
-      url(url: "http://repository.savantbuild.org", username: "${global.savantTestRepositoryUsername}", password: "${global.savantTestRepositoryPassword}")
+      mavenCache()
+      url(url: "https://repository.savantbuild.org", username: "${global.savantTestRepositoryUsername}", password: "${global.savantTestRepositoryPassword}")
+      maven(url: "https://repo1.maven.org/maven2", username: "${global.savantTestRepositoryUsername}", password: "${global.savantTestRepositoryPassword}")
     }
     publish {
       cache()
+      mavenCache()
+    }
+    semanticVersions {
+      mapping(id: "org.badver:badver:1.0.0.Final", version: "1.0.0")
     }
   }
 
   publishWorkflow {
-    subversion(repository: "http://svn.example.com", username: "${global.savantTestSVNUsername}", password: "${global.savantTestSVNPassword}")
+    subversion(repository: "https://svn.example.com", username: "${global.savantTestSVNUsername}", password: "${global.savantTestSVNPassword}")
   }
 
   dependencies {

@@ -18,18 +18,18 @@ package org.savantbuild.parser.groovy;
 import java.util.List;
 import java.util.Map;
 
-import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
+import org.savantbuild.dep.workflow.process.MavenCacheProcess;
 import org.savantbuild.dep.workflow.process.MavenProcess;
 import org.savantbuild.dep.workflow.process.Process;
 import org.savantbuild.dep.workflow.process.SVNProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
+import org.savantbuild.domain.Version;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
-import org.savantbuild.parser.groovy.WorkflowDelegate.ProcessDelegate.MavenDelegate;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
@@ -62,16 +62,6 @@ public class WorkflowDelegate {
   }
 
   /**
-   * Adds mappings to the Maven mappings.
-   */
-  public void maven(@DelegatesTo(MavenDelegate.class) Closure<?> closure) {
-    MavenDelegate delegate = new MavenDelegate(workflow.mappings);
-    closure.setDelegate(delegate);
-    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
-    closure.run();
-  }
-
-  /**
    * Configures the publish workflow processes.
    *
    * @param closure The closure. This closure uses the delegate class {@link ProcessDelegate}.
@@ -84,12 +74,34 @@ public class WorkflowDelegate {
 
   /**
    * <p>
+   * Configures the project's semantic version mappings. This method is called with a closure that contains the
+   * mappings. It should look like:
+   * </p>
+   * <pre>
+   *   semanticVersions {
+   *     mapping(id: "org.badver:badver:1.0.0.Final", version: "1.0.0")
+   *   }
+   * </pre>
+   *
+   * @param closure The closure that is called to set up the semantic version mappings. This closure uses the delegate
+   *                class {@link SemanticVersionDelegate}.
+   * @return The mappings.
+   */
+  public Map<String, Version> semanticVersions(@DelegatesTo(SemanticVersionDelegate.class) Closure<?> closure) {
+    closure.setDelegate(new SemanticVersionDelegate(workflow.mappings));
+    closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+    closure.run();
+    return workflow.mappings;
+  }
+
+  /**
+   * <p>
    * Configures the standard project workflow as follows:
    * </p>
    * <pre>
    *   fetch {
    *     cache()
-   *     url(url: "http://savant.inversoft.org/repository")
+   *     url(url: "https://repository.savantbuild.org")
    *   }
    *   publish {
    *     cache()
@@ -103,8 +115,8 @@ public class WorkflowDelegate {
   }
 
   /**
-   * Process delegate class that is used to configure {@link Process} instances for the {@link FetchWorkflow} and {@link
-   * PublishWorkflow} of the {@link Workflow}.
+   * Process delegate class that is used to configure {@link Process} instances for the {@link FetchWorkflow} and
+   * {@link PublishWorkflow} of the {@link Workflow}.
    *
    * @author Brian Pontarelli
    */
@@ -142,6 +154,15 @@ public class WorkflowDelegate {
     }
 
     /**
+     * Adds a {@link MavenCacheProcess} to the workflow that uses the given attributes.
+     *
+     * @param attributes Optionally a map that contains a URL attribute.
+     */
+    public void mavenCache(Map<String, Object> attributes) {
+      processes.add(new MavenCacheProcess(output, GroovyTools.toString(attributes, "dir")));
+    }
+
+    /**
      * Adds a {@link SVNProcess} to the workflow that uses the given attributes.
      *
      * @param attributes The SVN attributes.
@@ -169,18 +190,6 @@ public class WorkflowDelegate {
 
       processes.add(new URLProcess(output, GroovyTools.toString(attributes, "url"), GroovyTools.toString(attributes, "username"),
           GroovyTools.toString(attributes, "password")));
-    }
-
-    public static class MavenDelegate {
-      public final Map<String, Artifact> mapping;
-
-      public MavenDelegate(Map<String, Artifact> mapping) {
-        this.mapping = mapping;
-      }
-
-      public void map(Map<String, Object> attributes) {
-        attributes.forEach((key, value) -> mapping.put(key, new Artifact(value.toString())));
-      }
     }
   }
 }

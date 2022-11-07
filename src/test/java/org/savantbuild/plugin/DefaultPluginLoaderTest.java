@@ -147,7 +147,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   }
 
   @Test
-  public void loadMissingManifest() throws Exception {
+  public void loadMissingManifest() {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
@@ -169,7 +169,8 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     project.licenses.add(License.parse("BSD_2_Clause", null));
     project.workflow = new Workflow(
         new FetchWorkflow(output, new CacheProcess(output, projectDir.resolve("src/test/plugin-repository").toString())),
-        new PublishWorkflow(new CacheProcess(output, projectDir.resolve("src/test/plugin-repository").toString()))
+        new PublishWorkflow(new CacheProcess(output, projectDir.resolve("src/test/plugin-repository").toString())),
+        output
     );
     return project;
   }

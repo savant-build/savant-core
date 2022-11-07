@@ -62,7 +62,8 @@ public abstract class BaseUnitTest {
 
     workflow = new Workflow(
         new FetchWorkflow(output, new CacheProcess(output, cache.toString()), new URLProcess(output, "http://localhost:7042/test-deps/savant", null, null)),
-        new PublishWorkflow(new CacheProcess(output, cache.toString()))
+        new PublishWorkflow(new CacheProcess(output, cache.toString())),
+        output
     );
   }
 
