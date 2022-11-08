@@ -17,7 +17,10 @@ package org.savantbuild.parser.groovy;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.Artifact;
@@ -29,6 +32,8 @@ import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.domain.ReifiedArtifact;
 import org.savantbuild.dep.workflow.process.CacheProcess;
+import org.savantbuild.dep.workflow.process.MavenCacheProcess;
+import org.savantbuild.dep.workflow.process.MavenProcess;
 import org.savantbuild.dep.workflow.process.SVNProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.domain.Project;
@@ -78,7 +83,7 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertEquals(project.targets.get("test").name, "test");
     assertEquals(project.targets.get("test").description, "This runs the tests");
     assertNotNull(project.targets.get("test").invocation);
-    assertEquals(project.targets.get("test").dependencies, asList("compile"));
+    assertEquals(project.targets.get("test").dependencies, Collections.singletonList("compile"));
 
     // Verify the target graph
     Graph<Target, Object> expected = new HashGraph<>();
@@ -90,26 +95,41 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertEquals(project.name, "changed");
 
     // Verify the workflow
-    assertEquals(project.workflow.fetchWorkflow.processes.size(), 2);
+    assertEquals(project.workflow.fetchWorkflow.processes.size(), 4);
     assertTrue(project.workflow.fetchWorkflow.processes.get(0) instanceof CacheProcess);
     assertEquals(((CacheProcess) project.workflow.fetchWorkflow.processes.get(0)).dir, System.getProperty("user.home") + "/.savant/cache");
-    assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(1)).url, "http://repository.savantbuild.org");
-    assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(1)).username, "username");
-    assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(1)).password, "password");
-    assertEquals(project.workflow.publishWorkflow.processes.size(), 1);
+    assertEquals(((MavenCacheProcess) project.workflow.fetchWorkflow.processes.get(1)).dir, System.getProperty("user.home") + "/.m2/repository");
+    assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(2)).url, "https://repository.savantbuild.org");
+    assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(2)).username, "username");
+    assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(2)).password, "password");
+    assertEquals(((MavenProcess) project.workflow.fetchWorkflow.processes.get(3)).url, "https://repo1.maven.org/maven2");
+    assertEquals(((MavenProcess) project.workflow.fetchWorkflow.processes.get(3)).username, "username");
+    assertEquals(((MavenProcess) project.workflow.fetchWorkflow.processes.get(3)).password, "password");
+    assertEquals(project.workflow.publishWorkflow.processes.size(), 2);
     assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(0)).dir, System.getProperty("user.home") + "/.savant/cache");
+    assertEquals(((MavenCacheProcess) project.workflow.publishWorkflow.processes.get(1)).dir, System.getProperty("user.home") + "/.m2/repository");
+
+    // Version mappings
+    Map<String, Version> expectedMappings = new HashMap<>();
+    expectedMappings.put("org.badver:badver:1.0.0.Final", new Version("1.0.0"));
+    assertEquals(project.workflow.mappings, expectedMappings);
 
     // Verify the PublishWorkflow
     assertEquals(project.publishWorkflow.processes.size(), 1);
     assertTrue(project.publishWorkflow.processes.get(0) instanceof SVNProcess);
-    assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).repository, "http://svn.example.com");
+    assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).repository, "https://svn.example.com");
     assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).username, "svn-username");
     assertEquals(((SVNProcess) project.publishWorkflow.processes.get(0)).password, "svn-password");
 
     // Verify the dependencies
+    final List<ArtifactID> exclusions = asList(
+        new ArtifactID("org.example", "exclude", "exclude", "jar"),
+        new ArtifactID("org.example", "exclude-2", "exclude-2", "zip"),
+        new ArtifactID("org.example", "exclude-3", "exclude-4", "xml")
+    );
     Dependencies expectedDependencies = new Dependencies(
-        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", false)),
-        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0", false), new Artifact("org.example:test2:2.0", false)));
+        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", null, false, exclusions)),
+        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0"), new Artifact("org.example:test2:2.0")));
     assertEquals(project.dependencies, expectedDependencies);
 
     // Verify the publications

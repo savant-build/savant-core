@@ -15,11 +15,121 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-datetime/4.0.5/groovy-datetime-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-datetime/4.0.5/groovy-datetime-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-groovydoc/4.0.5/groovy-groovydoc-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-groovydoc/4.0.5/groovy-groovydoc-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-templates/4.0.5/groovy-templates-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-templates/4.0.5/groovy-templates-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
           <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-xml/4.0.5/groovy-xml-4.0.5.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
           <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-xml/4.0.5/groovy-xml-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-jmx/4.0.5/groovy-jmx-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-jmx/4.0.5/groovy-jmx-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-jsr223/4.0.5/groovy-jsr223-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-jsr223/4.0.5/groovy-jsr223-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-macro/4.0.5/groovy-macro-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-macro/4.0.5/groovy-macro-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-nio/4.0.5/groovy-nio-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-nio/4.0.5/groovy-nio-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-sql/4.0.5/groovy-sql-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-sql/4.0.5/groovy-sql-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-yaml/4.0.5/groovy-yaml-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-yaml/4.0.5/groovy-yaml-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-json/4.0.5/groovy-json-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-json/4.0.5/groovy-json-4.0.5-src.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -89,6 +199,61 @@
         <JAVADOC />
         <SOURCES>
           <root url="jar://$USER_HOME$/.savant/cache/com/beust/jcommander/1.27.0/jcommander-1.27.0-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-docgenerator/4.0.5/groovy-docgenerator-4.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/apache/groovy/groovy-docgenerator/4.0.5/groovy-docgenerator-4.0.5-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/com/thoughtworks/qdox/qdox/1.12.1/qdox-1.12.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/com/thoughtworks/qdox/qdox/1.12.1/qdox-1.12.1-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/com/github/javaparser/javaparser-core/3.24.4/javaparser-core-3.24.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/com/github/javaparser/javaparser-core/3.24.4/javaparser-core-3.24.4-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.13.4/jackson-dataformat-yaml-2.13.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.13.4/jackson-dataformat-yaml-2.13.4-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/yaml/snakeyaml/1.31.0/snakeyaml-1.31.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/yaml/snakeyaml/1.31.0/snakeyaml-1.31.0-src.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>

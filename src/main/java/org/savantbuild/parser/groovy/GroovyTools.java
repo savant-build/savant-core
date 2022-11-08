@@ -16,10 +16,10 @@
 package org.savantbuild.parser.groovy;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import groovy.lang.GString;
@@ -43,7 +43,6 @@ public class GroovyTools {
    * @param types              The attribute types.
    * @return True if the attributes are valid, false otherwise.
    */
-  @SuppressWarnings("unchecked")
   public static boolean attributesValid(Map<String, Object> attributes, Collection<String> possibleAttributes,
                                         Collection<String> requiredAttributes, Map<String, Class<?>> types) {
     if (attributes == null && requiredAttributes.isEmpty()) {
@@ -56,24 +55,6 @@ public class GroovyTools {
   }
 
   /**
-   * Converts all of the list elements to the specified type by calling the function for any list elements that are not
-   * the correct type.
-   *
-   * @param list     The list.
-   * @param type     The type.
-   * @param function The function that is used to convert to the correct type.
-   * @param <T>      The type.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T> void convertListItems(List list, Class<T> type, Function<Object, T> function) {
-    for (int i = 0; i < list.size(); i++) {
-      if (!type.isInstance(list.get(i))) {
-        list.set(i, function.apply(list.get(i)));
-      }
-    }
-  }
-
-  /**
    * Checks if the given attributes Map has the correct types. This handles the GString case since that is a Groovy
    * special class that is converted to String dynamically.
    *
@@ -81,7 +62,6 @@ public class GroovyTools {
    * @param types      The types.
    * @return True if the map contains the correct types, false otherwise.
    */
-  @SuppressWarnings("unchecked")
   public static boolean hasAttributeTypes(Map<String, Object> attributes, Map<String, Class<?>> types) {
     if (attributes == null) {
       return false;
@@ -93,7 +73,7 @@ public class GroovyTools {
         continue;
       }
 
-      Class type = types.get(key);
+      Class<?> type = types.get(key);
       if (type == String.class && !(value instanceof String || value instanceof GString)) {
         return false;
       } else if (type != String.class && !type.isAssignableFrom(value.getClass())) {
@@ -105,12 +85,12 @@ public class GroovyTools {
   }
 
   /**
-   * Checks if the given attributes Map has all of the given attribute names. The values for the attribute names must be
+   * Checks if the given attributes Map has all the given attribute names. The values for the attribute names must be
    * non-null.
    *
    * @param attributes     The attributes map.
    * @param attributeNames The attribute names.
-   * @return True if the map contains all of the attribute names, false otherwise.
+   * @return True if the map contains all the attribute names, false otherwise.
    */
   public static boolean hasAttributes(Map<String, Object> attributes, Iterable<String> attributeNames) {
     if (attributes == null) {
@@ -128,19 +108,19 @@ public class GroovyTools {
   }
 
   /**
-   * Checks if the given attributes Map has all of the given attribute names. The values for the attribute names must be
+   * Checks if the given attributes Map has all the given attribute names. The values for the attribute names must be
    * non-null and non-empty.
    *
    * @param attributes     The attributes map.
    * @param attributeNames The attribute names.
-   * @return True if the map contains all of the attribute names, false otherwise.
+   * @return True if the map contains all the attribute names, false otherwise.
    */
   public static boolean hasAttributes(Map<String, Object> attributes, String... attributeNames) {
     return hasAttributes(attributes, asList(attributeNames));
   }
 
   /**
-   * Puts all of the values from the defaults map into the main map if they are absent. This is a good way to setup
+   * Puts all the values from the defaults map into the main map if they are absent. This is a good way to set up
    * default values.
    *
    * @param map      The main map.
@@ -168,7 +148,7 @@ public class GroovyTools {
       return list.stream().filter(Objects::nonNull).map(Object::toString).collect(Collectors.toList());
     }
 
-    return asList(value.toString());
+    return Collections.singletonList(value.toString());
   }
 
   /**
