@@ -13,7 +13,7 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.4", licenses: ["Apache-2.0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.5", licenses: ["Apache-2.0"]) {
   workflow {
     fetch {
       cache()
@@ -66,9 +66,9 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.4", li
 //      dependency(id: "org.apache.groovy:groovy-templates:4.0.6:jar")
 //      dependency(id: "org.apache.groovy:groovy-xml:4.0.6:jar")
 //      dependency(id: "org.apache.groovy:groovy-yaml:4.0.6:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.4")
-      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.4")
-      dependency(id: "org.savantbuild:savant-version:2.0.0-RC.4")
+      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.5")
+      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.5")
+      dependency(id: "org.savantbuild:savant-version:2.0.0-RC.5")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
