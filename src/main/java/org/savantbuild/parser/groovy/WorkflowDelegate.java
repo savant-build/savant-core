@@ -112,12 +112,12 @@ public class WorkflowDelegate {
    * </pre>
    */
   public void standard() {
-    workflow.fetchWorkflow.processes.add(new CacheProcess(output, null));
-    workflow.fetchWorkflow.processes.add(new MavenCacheProcess(output, null));
+    workflow.fetchWorkflow.processes.add(new CacheProcess(output, null, null));
+    workflow.fetchWorkflow.processes.add(new MavenCacheProcess(output, null, null));
     workflow.fetchWorkflow.processes.add(new URLProcess(output, "https://repository.savantbuild.org", null, null));
     workflow.fetchWorkflow.processes.add(new MavenProcess(output, "https://repo1.maven.org/maven2", null, null));
-    workflow.publishWorkflow.processes.add(new CacheProcess(output, null));
-    workflow.publishWorkflow.processes.add(new MavenCacheProcess(output, null));
+    workflow.publishWorkflow.processes.add(new CacheProcess(output, null, null));
+    workflow.publishWorkflow.processes.add(new MavenCacheProcess(output, null, null));
   }
 
   /**
@@ -142,7 +142,7 @@ public class WorkflowDelegate {
      * @param attributes The attributes.
      */
     public void cache(Map<String, Object> attributes) {
-      processes.add(new CacheProcess(output, GroovyTools.toString(attributes, "dir")));
+      processes.add(new CacheProcess(output, GroovyTools.toString(attributes, "dir"), GroovyTools.toString(attributes, "integrationDir")));
     }
 
     /**
@@ -165,7 +165,7 @@ public class WorkflowDelegate {
      * @param attributes Optionally a map that contains a URL attribute.
      */
     public void mavenCache(Map<String, Object> attributes) {
-      processes.add(new MavenCacheProcess(output, GroovyTools.toString(attributes, "dir")));
+      processes.add(new MavenCacheProcess(output, GroovyTools.toString(attributes, "dir"), GroovyTools.toString(attributes, "integrationDir")));
     }
 
     /**

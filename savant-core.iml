@@ -144,9 +144,39 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="savant-dependency-management" />
-    <orderEntry type="module" module-name="savant-utils" />
-    <orderEntry type="module" module-name="savant-version" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/savantbuild/savant-dependency-management/2.0.0-RC.6/savant-dependency-management-2.0.0-RC.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/savantbuild/savant-dependency-management/2.0.0-RC.6/savant-dependency-management-2.0.0-RC.6-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/savantbuild/savant-utils/2.0.0-RC.6/savant-utils-2.0.0-RC.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/savantbuild/savant-utils/2.0.0-RC.6/savant-utils-2.0.0-RC.6-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/savantbuild/savant-version/2.0.0-RC.6/savant-version-2.0.0-RC.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.savant/cache/org/savantbuild/savant-version/2.0.0-RC.6/savant-version-2.0.0-RC.6-src.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>

@@ -49,6 +49,8 @@ public abstract class BaseUnitTest {
 
   public static Path cache;
 
+  public static Path integration;
+
   public static Workflow workflow;
 
   @BeforeSuite
@@ -59,10 +61,11 @@ public abstract class BaseUnitTest {
     }
 
     cache = projectDir.resolve("build/test/cache");
+    integration = projectDir.resolve("build/test/integration");
 
     workflow = new Workflow(
-        new FetchWorkflow(output, new CacheProcess(output, cache.toString()), new URLProcess(output, "http://localhost:7042/test-deps/savant", null, null)),
-        new PublishWorkflow(new CacheProcess(output, cache.toString())),
+        new FetchWorkflow(output, new CacheProcess(output, cache.toString(), integration.toString()), new URLProcess(output, "http://localhost:7042/test-deps/savant", null, null)),
+        new PublishWorkflow(new CacheProcess(output, cache.toString(), integration.toString())),
         output
     );
   }
