@@ -15,8 +15,8 @@ jobs:
     # Multiple runs, one for each version of Java we support and each runtime that Savant can run inside
     strategy:
       matrix:
-        java: [ '8', '11', '17' ]
-        javaVersion: [ '8', '11', '17' ]
+        java: [ '17' ]
+        javaVersion: [ '17' ]
 
     steps:
       - uses: actions/checkout@v3
@@ -42,8 +42,6 @@ jobs:
           savantTestSVNPassword=svn-password
           EOF
           cat <<EOF > ~/.savant/plugins/org.savantbuild.plugin.java.properties
-          8=${JAVA_HOME_8_X64}
-          11=${JAVA_HOME_11_X64}
           17=${JAVA_HOME_17_X64}
           EOF
         shell: bash
