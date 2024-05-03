@@ -98,6 +98,15 @@ public class DependencyDelegate {
       return;
     }
 
+    // we want the semanticVersions/DSL to function the same way in all cases
+    // meaning mapping(id: "net.sf.saxon:Saxon-HE:10.9", version: "10.9.0")
+    // where 10.9 is the bad version
+
+    // and we want the actual dependency specs to be "good" versions, e.g.
+    // dependency(id: "net.sf.saxon:Saxon-HE:10.9.0")
+
+    // therefore, when we are handling a direct dependency, we have to swap our mapping
+    // and use the good versions as the keys and the bad versions as the values
     Function<String, String> getWithoutVersion = artifact -> {
       var id = new ArtifactSpec(artifact, false).id;
       return id.group + ":" + id.name;
