@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2024, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,18 +42,18 @@ public class MainTest extends BaseUnitTest {
     ArtifactID multipleVersionsDifferentDeps = new ArtifactID("org.savantbuild.test", "multiple-versions-different-dependencies", "multiple-versions-different-dependencies", "jar");
 
     DependencyGraph incompatible = new DependencyGraph(project);
-    incompatible.addEdge(new Dependency(project.id), new Dependency(multipleVersions), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "compile", new License()));
-    incompatible.addEdge(new Dependency(project.id), new Dependency(intermediate), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "runtime", new License()));
-    incompatible.addEdge(new Dependency(project.id), new Dependency(multipleVersionsDifferentDeps), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "compile", new License()));
-    incompatible.addEdge(new Dependency(intermediate), new Dependency(multipleVersions), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.1.0"), "compile", new License()));
-    incompatible.addEdge(new Dependency(intermediate), new Dependency(multipleVersionsDifferentDeps), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.1.0"), "runtime", new License()));
-    incompatible.addEdge(new Dependency(multipleVersions), new Dependency(leaf), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "compile", new License()));
-    incompatible.addEdge(new Dependency(multipleVersions), new Dependency(leaf), new DependencyEdgeValue(new Version("1.1.0"), new Version("1.0.0"), "compile", new License()));
-    incompatible.addEdge(new Dependency(multipleVersionsDifferentDeps), new Dependency(leaf), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "runtime", new License()));
-    incompatible.addEdge(new Dependency(multipleVersionsDifferentDeps), new Dependency(leaf), new DependencyEdgeValue(new Version("1.1.0"), new Version("2.0.0"), "compile", new License()));
+    incompatible.addEdge(new Dependency(project.id, project.nonSemanticVersion), new Dependency(multipleVersions, null), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "compile", new License()));
+    incompatible.addEdge(new Dependency(project.id, project.nonSemanticVersion), new Dependency(intermediate, null), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "runtime", new License()));
+    incompatible.addEdge(new Dependency(project.id, project.nonSemanticVersion), new Dependency(multipleVersionsDifferentDeps, null), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "compile", new License()));
+    incompatible.addEdge(new Dependency(intermediate, null), new Dependency(multipleVersions, null), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.1.0"), "compile", new License()));
+    incompatible.addEdge(new Dependency(intermediate, null), new Dependency(multipleVersionsDifferentDeps, null), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.1.0"), "runtime", new License()));
+    incompatible.addEdge(new Dependency(multipleVersions, null), new Dependency(leaf, null), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "compile", new License()));
+    incompatible.addEdge(new Dependency(multipleVersions, null), new Dependency(leaf, null), new DependencyEdgeValue(new Version("1.1.0"), new Version("1.0.0"), "compile", new License()));
+    incompatible.addEdge(new Dependency(multipleVersionsDifferentDeps, null), new Dependency(leaf, null), new DependencyEdgeValue(new Version("1.0.0"), new Version("1.0.0"), "runtime", new License()));
+    incompatible.addEdge(new Dependency(multipleVersionsDifferentDeps, null), new Dependency(leaf, null), new DependencyEdgeValue(new Version("1.1.0"), new Version("2.0.0"), "compile", new License()));
 
     output = new SystemOutOutput(true);
-    Main.printCompatibilityError(new CompatibilityException(incompatible, new Dependency(leaf), new Version("1.0.0"), new Version("2.0.0")), output);
+    Main.printCompatibilityError(new CompatibilityException(incompatible, new Dependency(leaf, null), new Version("1.0.0"), new Version("2.0.0")), output);
   }
 
   @Test(enabled = false)

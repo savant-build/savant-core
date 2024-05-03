@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2024, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,14 @@ package org.savantbuild.parser.groovy;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
+import org.savantbuild.dep.domain.ArtifactSpec;
 import org.savantbuild.dep.domain.DependencyGroup;
+import org.savantbuild.domain.Version;
 import org.savantbuild.parser.ParseException;
 
 import groovy.lang.Closure;
@@ -34,8 +38,14 @@ import groovy.lang.DelegatesTo;
 public class DependencyDelegate {
   private final DependencyGroup group;
 
-  public DependencyDelegate(DependencyGroup group) {
+  private final Map<String, Version> semanticVersionMappings;
+
+  private Map<String, String> reverseSemanticMappings;
+
+  public DependencyDelegate(DependencyGroup group,
+                            Map<String, Version> semanticVersionMappings) {
     this.group = group;
+    this.semanticVersionMappings = semanticVersionMappings;
   }
 
   /**
@@ -76,8 +86,30 @@ public class DependencyDelegate {
 
     String id = GroovyTools.toString(attributes, "id");
     boolean skipCompatibilityCheck = attributes.containsKey("skipCompatibilityCheck") ? (Boolean) attributes.get("skipCompatibilityCheck") : false;
-    Artifact dependency = new Artifact(id, null, skipCompatibilityCheck, exclusions);
+    buildReverseSemanticMappings();
+    var nonSemanticVersion = reverseSemanticMappings.get(id);
+    Artifact dependency = new Artifact(id, nonSemanticVersion, skipCompatibilityCheck, exclusions);
     group.dependencies.add(dependency);
     return dependency;
+  }
+
+  private void buildReverseSemanticMappings() {
+    if (reverseSemanticMappings != null) {
+      return;
+    }
+
+    Function<String, String> getWithoutVersion = artifact -> {
+      var id = new ArtifactSpec(artifact, false).id;
+      return id.group + ":" + id.name;
+    };
+    Function<String, String> getVersion = artifact -> {
+      var withoutVersion = getWithoutVersion.apply(artifact);
+      return artifact.replace(withoutVersion + ":", "");
+    };
+
+    reverseSemanticMappings = semanticVersionMappings.entrySet()
+                                                     .stream()
+                                                     .collect(Collectors.toMap(kv -> getWithoutVersion.apply(kv.getKey()) + ":" + kv.getValue().toString(),
+                                                         kv -> getVersion.apply(kv.getKey())));
   }
 }

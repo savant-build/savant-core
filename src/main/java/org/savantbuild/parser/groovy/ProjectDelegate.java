@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2024, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,7 +71,7 @@ public class ProjectDelegate {
     }
 
     project.dependencies = new Dependencies();
-    closure.setDelegate(new DependenciesDelegate(project.dependencies));
+    closure.setDelegate(new DependenciesDelegate(project.dependencies, project.workflow.mappings));
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return project.dependencies;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2024, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.Artifact;
@@ -112,6 +113,7 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     // Version mappings
     Map<String, Version> expectedMappings = new HashMap<>();
     expectedMappings.put("org.badver:badver:1.0.0.Final", new Version("1.0.0"));
+    expectedMappings.put("org.badver:directbadver:1.0", new Version("1.0.0"));
     assertEquals(project.workflow.mappings, expectedMappings);
 
     // Verify the PublishWorkflow
@@ -128,9 +130,20 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
         new ArtifactID("org.example", "exclude-3", "exclude-4", "xml")
     );
     Dependencies expectedDependencies = new Dependencies(
-        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", null, false, exclusions)),
+        new DependencyGroup("compile", true,
+            new Artifact("org.example:compile:1.0", null, false, exclusions),
+            new Artifact(new ArtifactID("org.badver:directbadver"), new Version("1.0.0"), "1.0", Collections.emptyList())
+        ),
         new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0"), new Artifact("org.example:test2:2.0")));
     assertEquals(project.dependencies, expectedDependencies);
+    var actualDirectBadVerDependency = project.dependencies
+        .groups.get("compile")
+        .dependencies
+        .stream()
+        .filter(d -> Objects.equals(d.id, new ArtifactID("org.badver:directbadver")))
+        .findFirst()
+        .get();
+    assertEquals(actualDirectBadVerDependency.nonSemanticVersion, "1.0");
 
     // Verify the publications
     List<License> licenses = Arrays.asList(
