@@ -44,6 +44,10 @@ public class DependencyDelegate {
 
   public DependencyDelegate(DependencyGroup group,
                             Map<String, Version> semanticVersionMappings) {
+    // TODO: Add guard to ensure workflow DSL method has run already
+    // TODO: ensure only janky left side of mapping in semantic thing
+    // TODO: Tighten up version constructor
+
     this.group = group;
     this.semanticVersionMappings = semanticVersionMappings;
   }
