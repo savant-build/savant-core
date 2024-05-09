@@ -17,14 +17,14 @@ package org.savantbuild.parser.groovy;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import org.savantbuild.dep.ArtifactTools;
 import org.savantbuild.dep.domain.Artifact;
 import org.savantbuild.dep.domain.ArtifactID;
 import org.savantbuild.dep.domain.ArtifactSpec;
 import org.savantbuild.dep.domain.DependencyGroup;
 import org.savantbuild.domain.Version;
+import org.savantbuild.domain.VersionException;
 import org.savantbuild.parser.ParseException;
 
 import groovy.lang.Closure;
@@ -40,10 +40,7 @@ public class DependencyDelegate {
 
   private final Map<String, Version> semanticVersionMappings;
 
-  private Map<String, String> reverseSemanticMappings;
-
-  public DependencyDelegate(DependencyGroup group,
-                            Map<String, Version> semanticVersionMappings) {
+  public DependencyDelegate(DependencyGroup group, Map<String, Version> semanticVersionMappings) {
     this.group = group;
     this.semanticVersionMappings = semanticVersionMappings;
   }
@@ -71,8 +68,11 @@ public class DependencyDelegate {
    */
   public Artifact dependency(Map<String, Object> attributes, @DelegatesTo(ExclusionDelegate.class) Closure<?> closure) {
     if (!GroovyTools.hasAttributes(attributes, "id")) {
-      throw new ParseException("Invalid dependency definition. It must have the id attribute like this:\n\n" +
-          "  dependency(id: \"org.example:foo:0.1.0\", optional: false)");
+      throw new ParseException("""
+          Invalid dependency definition. It must have the id attribute like this:
+
+            dependency(id: "org.example:foo:0.1.0", optional: false)
+          """);
     }
 
     List<ArtifactID> exclusions = null;
@@ -84,41 +84,21 @@ public class DependencyDelegate {
       exclusions = delegate.getExclusions();
     }
 
-    String id = GroovyTools.toString(attributes, "id");
     boolean skipCompatibilityCheck = attributes.containsKey("skipCompatibilityCheck") ? (Boolean) attributes.get("skipCompatibilityCheck") : false;
-    buildReverseSemanticMappings();
-    var nonSemanticVersion = reverseSemanticMappings.get(id);
-    Artifact dependency = new Artifact(id, nonSemanticVersion, skipCompatibilityCheck, exclusions);
-    group.dependencies.add(dependency);
-    return dependency;
-  }
+    String id = GroovyTools.toString(attributes, "id");
+    ArtifactSpec spec = new ArtifactSpec(id);
+    try {
+      Version version = ArtifactTools.determineSemanticVersion(spec, semanticVersionMappings);
+      String nonSemanticVersion = null;
+      if (!version.toString().equals(spec.version)) {
+        nonSemanticVersion = spec.version;
+      }
 
-  private void buildReverseSemanticMappings() {
-    if (reverseSemanticMappings != null) {
-      return;
+      Artifact dependency = new Artifact(spec.id, version, nonSemanticVersion, skipCompatibilityCheck, exclusions);
+      group.dependencies.add(dependency);
+      return dependency;
+    } catch (VersionException e) {
+      throw new ParseException("Invalid dependency definition [" + id + "]. This dependency has an invalid version and caused this error:\n\n\t" + e.getMessage().replace("\n", "\n\t"));
     }
-
-    // we want the semanticVersions/DSL to function the same way in all cases
-    // meaning mapping(id: "net.sf.saxon:Saxon-HE:10.9", version: "10.9.0")
-    // where 10.9 is the bad version
-
-    // and we want the actual dependency specs to be "good" versions, e.g.
-    // dependency(id: "net.sf.saxon:Saxon-HE:10.9.0")
-
-    // therefore, when we are handling a direct dependency, we have to swap our mapping
-    // and use the good versions as the keys and the bad versions as the values
-    Function<String, String> getWithoutVersion = artifact -> {
-      var id = new ArtifactSpec(artifact, false).id;
-      return id.group + ":" + id.name;
-    };
-    Function<String, String> getVersion = artifact -> {
-      var withoutVersion = getWithoutVersion.apply(artifact);
-      return artifact.replace(withoutVersion + ":", "");
-    };
-
-    reverseSemanticMappings = semanticVersionMappings.entrySet()
-                                                     .stream()
-                                                     .collect(Collectors.toMap(kv -> getWithoutVersion.apply(kv.getKey()) + ":" + kv.getValue().toString(),
-                                                         kv -> getVersion.apply(kv.getKey())));
   }
 }

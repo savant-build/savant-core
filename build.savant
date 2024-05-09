@@ -66,9 +66,9 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.7", li
 //      dependency(id: "org.apache.groovy:groovy-templates:4.0.6:jar")
 //      dependency(id: "org.apache.groovy:groovy-xml:4.0.6:jar")
 //      dependency(id: "org.apache.groovy:groovy-yaml:4.0.6:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.7")
-      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.7")
-      dependency(id: "org.savantbuild:savant-version:2.0.0-RC.7")
+      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.7.{integration}")
+      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.7.{integration}")
+      dependency(id: "org.savantbuild:savant-version:2.0.0-RC.7.{integration}")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
@@ -85,20 +85,20 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.7", li
 }
 
 // Plugins
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:2.0.0-RC.7")
-file = loadPlugin(id: "org.savantbuild.plugin:file:2.0.0-RC.7")
-java = loadPlugin(id: "org.savantbuild.plugin:java:2.0.0-RC.7")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:2.0.0-RC.7")
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:2.0.0-RC.7")
-release = loadPlugin(id: "org.savantbuild.plugin:release-git:2.0.0-RC.7")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:2.0.0-RC.6")
+file = loadPlugin(id: "org.savantbuild.plugin:file:2.0.0-RC.6")
+java = loadPlugin(id: "org.savantbuild.plugin:java:2.0.0-RC.6")
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:2.0.0-RC.6")
+idea = loadPlugin(id: "org.savantbuild.plugin:idea:2.0.0-RC.6")
+release = loadPlugin(id: "org.savantbuild.plugin:release-git:2.0.0-RC.6")
 
 // Plugin settings
 java.settings.javaVersion = "17"
 javaTestNG.settings.javaVersion = "17"
 idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:2.0.0-RC.7": "savant-dependency-management",
-    "org.savantbuild:savant-utils:2.0.0-RC.7"                : "savant-utils",
-    "org.savantbuild:savant-version:2.0.0-RC.7"              : "savant-version"
+    "org.savantbuild:savant-dependency-management:2.0.0-RC.6" : "savant-dependency-management",
+    "org.savantbuild:savant-utils:2.0.0-RC.6"                 : "savant-utils",
+    "org.savantbuild:savant-version:2.0.0-RC.6"               : "savant-version"
 ]
 
 target(name: "clean", description: "Cleans the project") {

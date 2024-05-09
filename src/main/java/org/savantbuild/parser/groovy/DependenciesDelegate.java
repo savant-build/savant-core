@@ -35,8 +35,7 @@ public class DependenciesDelegate {
 
   private final Map<String, Version> semanticVersionMappings;
 
-  public DependenciesDelegate(Dependencies dependencies,
-                              Map<String, Version> semanticVersionMappings) {
+  public DependenciesDelegate(Dependencies dependencies, Map<String, Version> semanticVersionMappings) {
     this.dependencies = dependencies;
     this.semanticVersionMappings = semanticVersionMappings;
   }

@@ -67,7 +67,7 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     Project project = parser.parse(buildFile, new RuntimeConfiguration());
     assertEquals(project.group, "group");
     assertEquals(project.name, "name");
-    assertEquals(project.version, new Version("1.1"));
+    assertEquals(project.version, new Version("1.1.0"));
     assertEquals(project.licenses.get(0).identifier, "Apache-2.0");
     assertEquals(project.licenses.get(1).identifier, "Apache-1.0");
     assertEquals(project.licenses.get(2).identifier, "BSD-2-Clause");
@@ -131,10 +131,10 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     );
     Dependencies expectedDependencies = new Dependencies(
         new DependencyGroup("compile", true,
-            new Artifact("org.example:compile:1.0", null, false, exclusions),
+            new Artifact("org.example:compile:1.0.0", null, false, exclusions),
             new Artifact(new ArtifactID("org.badver:directbadver"), new Version("1.0.0"), "1.0", Collections.emptyList())
         ),
-        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0"), new Artifact("org.example:test2:2.0")));
+        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0.0"), new Artifact("org.example:test2:2.0.0")));
     assertEquals(project.dependencies, expectedDependencies);
     var actualDirectBadVerDependency = project.dependencies
         .groups.get("compile")
@@ -142,7 +142,7 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
         .stream()
         .filter(d -> Objects.equals(d.id, new ArtifactID("org.badver:directbadver")))
         .findFirst()
-        .get();
+        .orElseThrow();
     assertEquals(actualDirectBadVerDependency.nonSemanticVersion, "1.0");
 
     // Verify the publications
@@ -154,19 +154,19 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     );
     Publications expectedPublications = new Publications();
     expectedPublications.add("main",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), licenses),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1.0"), licenses),
             new ArtifactMetaData(expectedDependencies, licenses),
             buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );
     expectedPublications.add("main",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication3", "jar"), new Version("1.1"), licenses),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication3", "jar"), new Version("1.1.0"), licenses),
             new ArtifactMetaData(new Dependencies(), licenses),
             buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );
     expectedPublications.add("test",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), licenses),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1.0"), licenses),
             new ArtifactMetaData(expectedDependencies, licenses),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar").toAbsolutePath())

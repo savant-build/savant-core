@@ -76,7 +76,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   }
 
   @Test
-  public void loadBadClass() throws Exception {
+  public void loadBadClass() {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
@@ -91,7 +91,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   }
 
   @Test
-  public void loadBadConstructor() throws Exception {
+  public void loadBadConstructor() {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
@@ -106,7 +106,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   }
 
   @Test
-  public void loadBadManifest() throws Exception {
+  public void loadBadManifest() {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
@@ -121,7 +121,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   }
 
   @Test
-  public void loadGood() throws Exception {
+  public void loadGood() {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);
@@ -132,7 +132,7 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
   }
 
   @Test
-  public void loadMissingClass() throws Exception {
+  public void loadMissingClass() {
     Output output = new SystemOutOutput(false);
     Project project = makeProject(output);
     DefaultPluginLoader loader = new DefaultPluginLoader(project, new RuntimeConfiguration(), output);

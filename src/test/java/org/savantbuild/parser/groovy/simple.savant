@@ -15,7 +15,7 @@
  */
 package org.savantbuild.parser.groovy
 
-project(group: "group", name: "name", version: "1.1", licenses: ["ApacheV2_0", "Apache-1.0", "BSD-2-Clause", "Commercial"]) {
+project(group: "group", name: "name", version: "1.1.0", licenses: ["ApacheV2_0", "Apache-1.0", "BSD-2-Clause", "Commercial"]) {
   workflow {
     fetch {
       cache()
@@ -39,16 +39,17 @@ project(group: "group", name: "name", version: "1.1", licenses: ["ApacheV2_0", "
 
   dependencies {
     group(name: "compile") {
-      dependency(id: "org.example:compile:1.0") {
+      dependency(id: "org.example:compile:1.0.0") {
         exclusion(id: "org.example:exclude")
         exclusion(id: "org.example:exclude-2:zip")
         exclusion(id: "org.example:exclude-3:exclude-4:xml")
       }
-      dependency(id: "org.badver:directbadver:1.0.0")
+      dependency(id: "org.badver:directbadver:1.0")
+      dependency(id: "org.badver:directbadver2:fuck")
     }
     group(name: "test-compile", export: false) {
-      dependency(id: "org.example:test:1.0")
-      dependency(id: "org.example:test2:2.0", optional: true)
+      dependency(id: "org.example:test:1.0.0")
+      dependency(id: "org.example:test2:2.0.0", optional: true)
     }
   }
 
