@@ -89,6 +89,9 @@ public class DependencyDelegate {
     ArtifactSpec spec = new ArtifactSpec(id);
     try {
       Version version = ArtifactTools.determineSemanticVersion(spec, semanticVersionMappings);
+
+      // Double check if the original was a short version (i.e. 1.0) and the ArtifactTools method fixed it to semantic (i.e. 1.0.0).
+      // In this case, the original is non-semantic, and we need to save it so that we can fetch it from Maven.
       String nonSemanticVersion = null;
       if (!version.toString().equals(spec.version)) {
         nonSemanticVersion = spec.version;

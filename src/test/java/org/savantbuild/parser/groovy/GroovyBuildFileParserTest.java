@@ -42,6 +42,7 @@ import org.savantbuild.domain.Publications;
 import org.savantbuild.domain.Target;
 import org.savantbuild.domain.Version;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
+import org.savantbuild.parser.ParseException;
 import org.savantbuild.runtime.RuntimeConfiguration;
 import org.savantbuild.util.Graph;
 import org.savantbuild.util.HashGraph;
@@ -112,8 +113,8 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
 
     // Version mappings
     Map<String, Version> expectedMappings = new HashMap<>();
-    expectedMappings.put("org.badver:badver:1.0.0.Final", new Version("1.0.0"));
-    expectedMappings.put("org.badver:directbadver:1.0", new Version("1.0.0"));
+    expectedMappings.put("org.example:non-semantic-version:1.0.0.Final", new Version("1.0.0"));
+    expectedMappings.put("org.example:short-non-semantic-version:1.0", new Version("1.0.0"));
     assertEquals(project.workflow.mappings, expectedMappings);
 
     // Verify the PublishWorkflow
@@ -132,18 +133,20 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     Dependencies expectedDependencies = new Dependencies(
         new DependencyGroup("compile", true,
             new Artifact("org.example:compile:1.0.0", null, false, exclusions),
-            new Artifact(new ArtifactID("org.badver:directbadver"), new Version("1.0.0"), "1.0", Collections.emptyList())
+            new Artifact(new ArtifactID("org.example:short-non-semantic-version"), new Version("1.0.0"), "1.0", Collections.emptyList())
         ),
         new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0.0"), new Artifact("org.example:test2:2.0.0")));
     assertEquals(project.dependencies, expectedDependencies);
-    var actualDirectBadVerDependency = project.dependencies
-        .groups.get("compile")
+
+    var nonSemanticVersionedArtifact = project.dependencies
+        .groups
+        .get("compile")
         .dependencies
         .stream()
-        .filter(d -> Objects.equals(d.id, new ArtifactID("org.badver:directbadver")))
+        .filter(d -> Objects.equals(d.id, new ArtifactID("org.example:short-non-semantic-version")))
         .findFirst()
         .orElseThrow();
-    assertEquals(actualDirectBadVerDependency.nonSemanticVersion, "1.0");
+    assertEquals(nonSemanticVersionedArtifact.nonSemanticVersion, "1.0");
 
     // Verify the publications
     List<License> licenses = Arrays.asList(
@@ -186,6 +189,41 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
       // Expected
       assertTrue(e.getMessage().contains("property [missingDependency]"));
     }
+  }
+
+  @Test
+  public void parseNonSemanticVersion() {
+    GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
+    Path buildFile = projectDir.resolve("src/test/java/org/savantbuild/parser/groovy/non-semantic-version.savant");
+    try {
+      parser.parse(buildFile, new RuntimeConfiguration());
+    } catch (ParseException e) {
+      // Expected
+      assertTrue(e.getMessage().contains("1.0.0.Final"));
+      assertTrue(e.getMessage().contains("semanticVersions"));
+    }
+  }
+
+  @Test
+  public void parseShortNonSemanticVersion() {
+    GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
+    Path buildFile = projectDir.resolve("src/test/java/org/savantbuild/parser/groovy/short-non-semantic-version.savant");
+    Project project = parser.parse(buildFile, new RuntimeConfiguration());
+
+    // Verify the dependencies
+    Dependencies expectedDependencies = new Dependencies(
+        new DependencyGroup("compile", true,
+            new Artifact("org.example:short-non-semantic-version:1.0.0", null, false, List.of())
+        )
+    );
+    assertEquals(project.dependencies, expectedDependencies);
+
+    var nonSemanticVersionedArtifact = project.dependencies
+        .groups
+        .get("compile")
+        .dependencies
+        .get(0);
+    assertEquals(nonSemanticVersionedArtifact.nonSemanticVersion, "1.0");
   }
 
   @Test

@@ -28,8 +28,8 @@ project(group: "group", name: "name", version: "1.1.0", licenses: ["ApacheV2_0",
       mavenCache()
     }
     semanticVersions {
-      mapping(id: "org.badver:badver:1.0.0.Final", version: "1.0.0")
-      mapping(id: "org.badver:directbadver:1.0", version: "1.0.0")
+      mapping(id: "org.example:non-semantic-version:1.0.0.Final", version: "1.0.0")
+      mapping(id: "org.example:short-non-semantic-version:1.0", version: "1.0.0")
     }
   }
 
@@ -44,8 +44,7 @@ project(group: "group", name: "name", version: "1.1.0", licenses: ["ApacheV2_0",
         exclusion(id: "org.example:exclude-2:zip")
         exclusion(id: "org.example:exclude-3:exclude-4:xml")
       }
-      dependency(id: "org.badver:directbadver:1.0")
-      dependency(id: "org.badver:directbadver2:fuck")
+      dependency(id: "org.example:short-non-semantic-version:1.0")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.example:test:1.0.0")
