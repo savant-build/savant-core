@@ -104,10 +104,11 @@ public class DefaultPluginLoader implements PluginLoader {
       Classpath classpath = resolvedArtifactGraph.toClasspath();
       output.debugln("Classpath for plugin [%s] is [%s]", pluginDependency, classpath);
 
-      try (URLClassLoader pluginClassLoader = classpath.toURLClassLoader()) {
-        Class<?> pluginClass = pluginClassLoader.loadClass(pluginClassName);
-        return (Plugin) pluginClass.getConstructor(Project.class, RuntimeConfiguration.class, Output.class).newInstance(project, runtimeConfiguration, output);
-      }
+      // URLClassLoader is closeable, but we need to keep it open while Savant is running. Therefore, we do not wrap this
+      // in a try-with-resource block
+      @SuppressWarnings("resource") URLClassLoader pluginClassLoader = classpath.toURLClassLoader();
+      Class<?> pluginClass = pluginClassLoader.loadClass(pluginClassName);
+      return (Plugin) pluginClass.getConstructor(Project.class, RuntimeConfiguration.class, Output.class).newInstance(project, runtimeConfiguration, output);
     } catch (IOException e) {
       throw new PluginLoadException("Unable to load plugin [" + pluginDependency + "] because the plugin JAR could not be read", e);
     } catch (ClassNotFoundException e) {
