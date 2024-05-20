@@ -1,6 +1,21 @@
+/*
+ * Copyright (c) 2024, Inversoft Inc., All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License.
+ */
 package org.savantbuild.parser.groovy
 
-project(group: "group", name: "name", version: "1.1", licenses: ["ApacheV2_0", "Apache-1.0", "BSD-2-Clause", "Commercial"]) {
+project(group: "group", name: "name", version: "1.1.0", licenses: ["ApacheV2_0", "Apache-1.0", "BSD-2-Clause", "Commercial"]) {
   workflow {
     fetch {
       cache()
@@ -13,7 +28,8 @@ project(group: "group", name: "name", version: "1.1", licenses: ["ApacheV2_0", "
       mavenCache()
     }
     semanticVersions {
-      mapping(id: "org.badver:badver:1.0.0.Final", version: "1.0.0")
+      mapping(id: "org.example:non-semantic-version:1.0.0.Final", version: "1.0.0")
+      mapping(id: "org.example:short-non-semantic-version:1.0", version: "1.0.0")
     }
   }
 
@@ -23,15 +39,16 @@ project(group: "group", name: "name", version: "1.1", licenses: ["ApacheV2_0", "
 
   dependencies {
     group(name: "compile") {
-      dependency(id: "org.example:compile:1.0") {
+      dependency(id: "org.example:compile:1.0.0") {
         exclusion(id: "org.example:exclude")
         exclusion(id: "org.example:exclude-2:zip")
         exclusion(id: "org.example:exclude-3:exclude-4:xml")
       }
+      dependency(id: "org.example:short-non-semantic-version:1.0")
     }
     group(name: "test-compile", export: false) {
-      dependency(id: "org.example:test:1.0")
-      dependency(id: "org.example:test2:2.0", optional: true)
+      dependency(id: "org.example:test:1.0.0")
+      dependency(id: "org.example:test2:2.0.0", optional: true)
     }
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2013-2024, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,13 +65,13 @@ public class ProjectDelegate {
    * @return The Dependencies.
    */
   public Dependencies dependencies(@DelegatesTo(DependenciesDelegate.class) Closure<?> closure) {
-    if (project.publications.allPublications().size() > 0) {
+    if (!project.publications.allPublications().isEmpty()) {
       throw new BuildFailureException("It looks like your project has defined its dependencies after its publications. " +
           "Because Savant parses the [project() {}] definition linearly, you need to define your publications AFTER your dependencies.");
     }
 
     project.dependencies = new Dependencies();
-    closure.setDelegate(new DependenciesDelegate(project.dependencies));
+    closure.setDelegate(new DependenciesDelegate(project.dependencies, project.workflow.mappings));
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return project.dependencies;
@@ -147,11 +147,15 @@ public class ProjectDelegate {
    * @return The workflow.
    */
   public Workflow workflow(@DelegatesTo(WorkflowDelegate.class) Closure<?> closure) {
+    if (project.dependencies != null && !project.dependencies.getAllArtifacts().isEmpty()) {
+      throw new BuildFailureException("It looks like your project has defined its workflows after its dependencies. " +
+          "Because Savant parses the [project() {}] definition linearly, you need to define your dependencies AFTER your workflows.");
+    }
+
     project.workflow = new Workflow(new FetchWorkflow(output), new PublishWorkflow(), output);
     closure.setDelegate(new WorkflowDelegate(output, project.workflow));
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return project.workflow;
   }
-
 }

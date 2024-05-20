@@ -37,7 +37,6 @@ import org.savantbuild.lang.Classpath;
 import org.savantbuild.output.Output;
 import org.savantbuild.runtime.BuildFailureException;
 import org.savantbuild.runtime.RuntimeConfiguration;
-import org.savantbuild.util.MapBuilder;
 
 /**
  * Default plugin loader that uses the Savant dependency service and a URLClassLoader to load the plugin.
@@ -68,20 +67,22 @@ public class DefaultPluginLoader implements PluginLoader {
   public Plugin load(Artifact pluginDependency) {
     output.debugln("Loading plugin [%s]", pluginDependency);
 
-    if (project.workflow == null || project.workflow.fetchWorkflow == null || project.workflow.fetchWorkflow.processes.size() == 0 ||
-        project.workflow.publishWorkflow == null || project.workflow.publishWorkflow.processes.size() == 0) {
-      output.errorln("Your project uses plugins but doesn't have a workflow defined to fetch them. Define a workflow in your project definition section like this:\n\n" +
-          "  project(...) {\n" +
-          "    workflow {\n" +
-          "      standard()\n" +
-          "    }\n" +
-          "  }");
+    if (project.workflow == null || project.workflow.fetchWorkflow == null || project.workflow.fetchWorkflow.processes.isEmpty() ||
+        project.workflow.publishWorkflow == null || project.workflow.publishWorkflow.processes.isEmpty()) {
+      output.errorln("""
+          Your project uses plugins but doesn't have a workflow defined to fetch them. Define a workflow in your project definition section like this:
+
+            project(...) {
+              workflow {
+                standard()
+              }
+            }""");
       throw new BuildFailureException();
     }
 
     // This doesn't use the project as the root because the project might be in the graph and that would cause failures.
     // This is how Savant is self building
-    ReifiedArtifact root = new ReifiedArtifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0", License.Licenses.get("ApacheV2_0"));
+    ReifiedArtifact root = new ReifiedArtifact("__savantLoadPluginGroup__:__savantLoadPluginName__:0.0.0", License.Licenses.get("ApacheV2_0"));
     Dependencies dependencies = new Dependencies(new DependencyGroup("runtime", false, pluginDependency));
     DependencyGraph dependencyGraph = project.dependencyService.buildGraph(root, dependencies, project.workflow);
     ArtifactGraph artifactGraph = project.dependencyService.reduce(dependencyGraph);
@@ -89,8 +90,7 @@ public class DefaultPluginLoader implements PluginLoader {
 
     Path pluginJarFilePath = resolvedArtifactGraph.getPath(pluginDependency.id);
     String pluginClassName = null;
-    try {
-      JarFile pluginJarFile = new JarFile(pluginJarFilePath.toFile());
+    try (JarFile pluginJarFile = new JarFile(pluginJarFilePath.toFile())) {
       Manifest manifest = pluginJarFile.getManifest();
       if (manifest == null) {
         throw new PluginLoadException("Invalid plugin [" + pluginDependency + "]. The JAR file does not contain a valid Manifest entry for Savant-Plugin-Class");
@@ -104,7 +104,9 @@ public class DefaultPluginLoader implements PluginLoader {
       Classpath classpath = resolvedArtifactGraph.toClasspath();
       output.debugln("Classpath for plugin [%s] is [%s]", pluginDependency, classpath);
 
-      URLClassLoader pluginClassLoader = classpath.toURLClassLoader();
+      // URLClassLoader is closeable, but we need to keep it open while Savant is running. Therefore, we do not wrap this
+      // in a try-with-resource block
+      @SuppressWarnings("resource") URLClassLoader pluginClassLoader = classpath.toURLClassLoader();
       Class<?> pluginClass = pluginClassLoader.loadClass(pluginClassName);
       return (Plugin) pluginClass.getConstructor(Project.class, RuntimeConfiguration.class, Output.class).newInstance(project, runtimeConfiguration, output);
     } catch (IOException e) {

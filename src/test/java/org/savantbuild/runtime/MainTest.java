@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2014-2024, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 public class MainTest extends BaseUnitTest {
   @Test
   public void compatibilityErrorOutput() {
-    ReifiedArtifact project = new ReifiedArtifact("org.savantbuild.test:project:1.0", License.parse("ApacheV2_0", null));
+    ReifiedArtifact project = new ReifiedArtifact("org.savantbuild.test:project:1.0.0", License.parse("ApacheV2_0", null));
     ArtifactID leaf = new ArtifactID("org.savantbuild.test", "leaf", "leaf", "jar");
     ArtifactID intermediate = new ArtifactID("org.savantbuild.test", "intermediate", "intermediate", "jar");
     ArtifactID multipleVersions = new ArtifactID("org.savantbuild.test", "multiple-versions", "multiple-versions", "jar");

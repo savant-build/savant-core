@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2013-2024, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.savantbuild.dep.domain.Dependencies;
 import org.savantbuild.dep.domain.DependencyGroup;
+import org.savantbuild.domain.Version;
 import org.savantbuild.parser.ParseException;
 
 import groovy.lang.Closure;
@@ -32,8 +33,11 @@ import groovy.lang.DelegatesTo;
 public class DependenciesDelegate {
   private final Dependencies dependencies;
 
-  public DependenciesDelegate(Dependencies dependencies) {
+  private final Map<String, Version> semanticVersionMappings;
+
+  public DependenciesDelegate(Dependencies dependencies, Map<String, Version> semanticVersionMappings) {
     this.dependencies = dependencies;
+    this.semanticVersionMappings = semanticVersionMappings;
   }
 
   /**
@@ -57,7 +61,7 @@ public class DependenciesDelegate {
     DependencyGroup group = new DependencyGroup(name, export);
     dependencies.groups.put(name, group);
 
-    closure.setDelegate(new DependencyDelegate(group));
+    closure.setDelegate(new DependencyDelegate(group, semanticVersionMappings));
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
 

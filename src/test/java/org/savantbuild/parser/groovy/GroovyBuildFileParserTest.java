@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2014-2024, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.savantbuild.BaseUnitTest;
 import org.savantbuild.dep.domain.Artifact;
@@ -41,6 +42,7 @@ import org.savantbuild.domain.Publications;
 import org.savantbuild.domain.Target;
 import org.savantbuild.domain.Version;
 import org.savantbuild.parser.DefaultTargetGraphBuilder;
+import org.savantbuild.parser.ParseException;
 import org.savantbuild.runtime.RuntimeConfiguration;
 import org.savantbuild.util.Graph;
 import org.savantbuild.util.HashGraph;
@@ -66,7 +68,7 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     Project project = parser.parse(buildFile, new RuntimeConfiguration());
     assertEquals(project.group, "group");
     assertEquals(project.name, "name");
-    assertEquals(project.version, new Version("1.1"));
+    assertEquals(project.version, new Version("1.1.0"));
     assertEquals(project.licenses.get(0).identifier, "Apache-2.0");
     assertEquals(project.licenses.get(1).identifier, "Apache-1.0");
     assertEquals(project.licenses.get(2).identifier, "BSD-2-Clause");
@@ -111,7 +113,8 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
 
     // Version mappings
     Map<String, Version> expectedMappings = new HashMap<>();
-    expectedMappings.put("org.badver:badver:1.0.0.Final", new Version("1.0.0"));
+    expectedMappings.put("org.example:non-semantic-version:1.0.0.Final", new Version("1.0.0"));
+    expectedMappings.put("org.example:short-non-semantic-version:1.0", new Version("1.0.0"));
     assertEquals(project.workflow.mappings, expectedMappings);
 
     // Verify the PublishWorkflow
@@ -128,9 +131,22 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
         new ArtifactID("org.example", "exclude-3", "exclude-4", "xml")
     );
     Dependencies expectedDependencies = new Dependencies(
-        new DependencyGroup("compile", true, new Artifact("org.example:compile:1.0", null, false, exclusions)),
-        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0"), new Artifact("org.example:test2:2.0")));
+        new DependencyGroup("compile", true,
+            new Artifact("org.example:compile:1.0.0", null, false, exclusions),
+            new Artifact(new ArtifactID("org.example:short-non-semantic-version"), new Version("1.0.0"), "1.0", Collections.emptyList())
+        ),
+        new DependencyGroup("test-compile", false, new Artifact("org.example:test:1.0.0"), new Artifact("org.example:test2:2.0.0")));
     assertEquals(project.dependencies, expectedDependencies);
+
+    var nonSemanticVersionedArtifact = project.dependencies
+        .groups
+        .get("compile")
+        .dependencies
+        .stream()
+        .filter(d -> Objects.equals(d.id, new ArtifactID("org.example:short-non-semantic-version")))
+        .findFirst()
+        .orElseThrow();
+    assertEquals(nonSemanticVersionedArtifact.nonSemanticVersion, "1.0");
 
     // Verify the publications
     List<License> licenses = Arrays.asList(
@@ -141,19 +157,19 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     );
     Publications expectedPublications = new Publications();
     expectedPublications.add("main",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1"), licenses),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication1", "jar"), new Version("1.1.0"), licenses),
             new ArtifactMetaData(expectedDependencies, licenses),
             buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );
     expectedPublications.add("main",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication3", "jar"), new Version("1.1"), licenses),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication3", "jar"), new Version("1.1.0"), licenses),
             new ArtifactMetaData(new Dependencies(), licenses),
             buildFile.getParent().resolve("build/jars/name-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-1.1.0-src.jar").toAbsolutePath())
     );
     expectedPublications.add("test",
-        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1"), licenses),
+        new Publication(new ReifiedArtifact(new ArtifactID("group", "name", "publication2", "jar"), new Version("1.1.0"), licenses),
             new ArtifactMetaData(expectedDependencies, licenses),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0.jar").toAbsolutePath(),
             buildFile.getParent().resolve("build/jars/name-test-1.1.0-src.jar").toAbsolutePath())
@@ -173,6 +189,41 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
       // Expected
       assertTrue(e.getMessage().contains("property [missingDependency]"));
     }
+  }
+
+  @Test
+  public void parseNonSemanticVersion() {
+    GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
+    Path buildFile = projectDir.resolve("src/test/java/org/savantbuild/parser/groovy/non-semantic-version.savant");
+    try {
+      parser.parse(buildFile, new RuntimeConfiguration());
+    } catch (ParseException e) {
+      // Expected
+      assertTrue(e.getMessage().contains("1.0.0.Final"));
+      assertTrue(e.getMessage().contains("semanticVersions"));
+    }
+  }
+
+  @Test
+  public void parseShortNonSemanticVersion() {
+    GroovyBuildFileParser parser = new GroovyBuildFileParser(output, new DefaultTargetGraphBuilder());
+    Path buildFile = projectDir.resolve("src/test/java/org/savantbuild/parser/groovy/short-non-semantic-version.savant");
+    Project project = parser.parse(buildFile, new RuntimeConfiguration());
+
+    // Verify the dependencies
+    Dependencies expectedDependencies = new Dependencies(
+        new DependencyGroup("compile", true,
+            new Artifact("org.example:short-non-semantic-version:1.0.0", null, false, List.of())
+        )
+    );
+    assertEquals(project.dependencies, expectedDependencies);
+
+    var nonSemanticVersionedArtifact = project.dependencies
+        .groups
+        .get("compile")
+        .dependencies
+        .get(0);
+    assertEquals(nonSemanticVersionedArtifact.nonSemanticVersion, "1.0");
   }
 
   @Test
