@@ -73,8 +73,8 @@ java.settings.javaVersion = "17"
 javaTestNG.settings.javaVersion = "17"
 idea.settings.moduleMap = [
     "org.savantbuild:savant-dependency-management:2.0.0-RC.7" : "savant-dependency-management",
-    "org.savantbuild:savant-utils:2.0.0-RC.6"                 : "savant-utils",
-    "org.savantbuild:savant-version:2.0.0-RC.6"               : "savant-version"
+    "org.savantbuild:savant-utils:2.0.0-RC.7"                 : "savant-utils",
+    "org.savantbuild:savant-version:2.0.0-RC.7"               : "savant-version"
 ]
 
 target(name: "clean", description: "Cleans the project") {
