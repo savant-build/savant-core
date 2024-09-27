@@ -13,7 +13,8 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.8", licenses: ["Apache-2.0"]) {
+def savantVersion = "2.0.0-{integration}"
+project(group: "org.savantbuild", name: "savant-core", version: "2.0.0", licenses: ["Apache-2.0"]) {
   workflow {
     fetch {
       cache()
@@ -42,9 +43,9 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.0-RC.8", li
       dependency(id: "org.apache.groovy:groovy-templates:4.0.22:jar")
       dependency(id: "org.apache.groovy:groovy-xml:4.0.22:jar")
       dependency(id: "org.apache.groovy:groovy-yaml:4.0.22:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:2.0.0-RC.7")
-      dependency(id: "org.savantbuild:savant-utils:2.0.0-RC.7")
-      dependency(id: "org.savantbuild:savant-version:2.0.0-RC.7")
+      dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}")
+      dependency(id: "org.savantbuild:savant-utils:${savantVersion}")
+      dependency(id: "org.savantbuild:savant-version:${savantVersion}")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
@@ -72,9 +73,9 @@ release = loadPlugin(id: "org.savantbuild.plugin:release-git:2.0.0-RC.6")
 java.settings.javaVersion = "17"
 javaTestNG.settings.javaVersion = "17"
 idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:2.0.0-RC.7" : "savant-dependency-management",
-    "org.savantbuild:savant-utils:2.0.0-RC.6"                 : "savant-utils",
-    "org.savantbuild:savant-version:2.0.0-RC.6"               : "savant-version"
+    "org.savantbuild:savant-dependency-management:${savantVersion}": "savant-dependency-management",
+    "org.savantbuild:savant-utils:${savantVersion}"                : "savant-utils",
+    "org.savantbuild:savant-version:${savantVersion}"              : "savant-version"
 ]
 
 target(name: "clean", description: "Cleans the project") {

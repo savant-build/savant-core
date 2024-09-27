@@ -145,28 +145,8 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="savant-dependency-management" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/.savant/cache/org/savantbuild/savant-utils/2.0.0-RC.7/savant-utils-2.0.0-RC.7.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/.savant/cache/org/savantbuild/savant-utils/2.0.0-RC.7/savant-utils-2.0.0-RC.7-src.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/.savant/cache/org/savantbuild/savant-version/2.0.0-RC.7/savant-version-2.0.0-RC.7.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/.savant/cache/org/savantbuild/savant-version/2.0.0-RC.7/savant-version-2.0.0-RC.7-src.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="savant-utils" />
+    <orderEntry type="module" module-name="savant-version" />
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
