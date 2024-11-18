@@ -14,7 +14,7 @@
  * language governing permissions and limitations under the License.
  */
 savantVersion = "2.0.0"
-project(group: "org.savantbuild", name: "savant-core", version: "2.0.0", licenses: ["Apache-2.0"]) {
+project(group: "org.savantbuild", name: "savant-core", version: "2.0.1", licenses: ["Apache-2.0"]) {
   workflow {
     fetch {
       cache()
@@ -43,8 +43,8 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.0", license
       dependency(id: "org.apache.groovy:groovy-templates:4.0.22:jar")
       dependency(id: "org.apache.groovy:groovy-xml:4.0.22:jar")
       dependency(id: "org.apache.groovy:groovy-yaml:4.0.22:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}")
-      dependency(id: "org.savantbuild:savant-utils:${savantVersion}")
+      dependency(id: "org.savantbuild:savant-dependency-management:2.0.1")
+      dependency(id: "org.savantbuild:savant-utils:2.0.1")
       dependency(id: "org.savantbuild:savant-version:${savantVersion}")
     }
     group(name: "test-compile", export: false) {
@@ -62,12 +62,12 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.0", license
 }
 
 // Plugins
-dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:2.0.0-RC.7")
-file = loadPlugin(id: "org.savantbuild.plugin:file:2.0.0-RC.6")
-java = loadPlugin(id: "org.savantbuild.plugin:java:2.0.0-RC.6")
-javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:2.0.0-RC.6")
-idea = loadPlugin(id: "org.savantbuild.plugin:idea:2.0.0-RC.7")
-release = loadPlugin(id: "org.savantbuild.plugin:release-git:2.0.0-RC.6")
+dependency = loadPlugin(id: "org.savantbuild.plugin:dependency:2.0.0")
+file = loadPlugin(id: "org.savantbuild.plugin:file:2.0.0")
+java = loadPlugin(id: "org.savantbuild.plugin:java:2.0.0")
+javaTestNG = loadPlugin(id: "org.savantbuild.plugin:java-testng:2.0.0")
+idea = loadPlugin(id: "org.savantbuild.plugin:idea:2.0.0")
+release = loadPlugin(id: "org.savantbuild.plugin:release-git:2.0.0")
 
 // Plugin settings
 java.settings.javaVersion = "17"
