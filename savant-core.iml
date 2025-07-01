@@ -147,11 +147,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/.savant/cache/org/savantbuild/savant-dependency-management/2.0.1/savant-dependency-management-2.0.1.jar!/" />
+          <root url="jar://$USER_HOME$/.savant/cache/org/savantbuild/savant-dependency-management/2.0.2-{integration}/savant-dependency-management-2.0.2-{integration}.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/.savant/cache/org/savantbuild/savant-dependency-management/2.0.1/savant-dependency-management-2.0.1-src.jar!/" />
+          <root url="jar://$USER_HOME$/.savant/cache/org/savantbuild/savant-dependency-management/2.0.2-{integration}/savant-dependency-management-2.0.2-{integration}-src.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
