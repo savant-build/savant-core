@@ -73,7 +73,7 @@ release = loadPlugin(id: "org.savantbuild.plugin:release-git:2.0.0")
 java.settings.javaVersion = "17"
 javaTestNG.settings.javaVersion = "17"
 idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:${savantVersion}": "savant-dependency-management",
+    "org.savantbuild:savant-dependency-management:2.0.2-{integration}": "savant-dependency-management",
     "org.savantbuild:savant-utils:${savantVersion}"                : "savant-utils",
     "org.savantbuild:savant-version:${savantVersion}"              : "savant-version"
 ]

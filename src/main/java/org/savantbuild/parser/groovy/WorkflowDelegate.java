@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2013-2025, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public class WorkflowDelegate {
    * @return The mappings.
    */
   public Map<String, Version> semanticVersions(@DelegatesTo(SemanticVersionDelegate.class) Closure<?> closure) {
-    closure.setDelegate(new SemanticVersionDelegate(workflow.mappings));
+    closure.setDelegate(new SemanticVersionDelegate(workflow.mappings, workflow.rangeMappings));
     closure.setResolveStrategy(Closure.DELEGATE_FIRST);
     closure.run();
     return workflow.mappings;
