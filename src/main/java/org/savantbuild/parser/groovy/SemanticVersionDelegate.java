@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Inversoft Inc., All Rights Reserved
+ * Copyright (c) 2022-2025, Inversoft Inc., All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,18 +28,41 @@ import org.savantbuild.parser.ParseException;
 public class SemanticVersionDelegate {
   public final Map<String, Version> mapping;
 
-  public SemanticVersionDelegate(Map<String, Version> mapping) {
+  public final Map<String, String> rangeMapping;
+
+  public SemanticVersionDelegate(Map<String, Version> mapping, Map<String, String> rangeMapping) {
     this.mapping = mapping;
+    this.rangeMapping = rangeMapping;
   }
 
   public void mapping(Map<String, Object> attributes) {
     if (!GroovyTools.hasAttributes(attributes, "id", "version")) {
-      throw new ParseException("Invalid mapping definition. It must have an [id] and a [version] attribute like this:\n\n" +
-          "  mapping(id: \"org.badver:badver:1.0.0.Final\", version: \"1.0.0\")");
+      throw new ParseException("""
+          Invalid mapping definition. It must have an [id] and a [version] attribute like this:
+          
+            mapping(id: "org.badver:badver:1.0.0.Final", version: "1.0.0")
+          """);
     }
 
     String id = GroovyTools.toString(attributes, "id");
     String version = GroovyTools.toString(attributes, "version");
     mapping.put(id, new Version(version));
+  }
+
+  public void rangeMapping(Map<String, Object> attributes) {
+    if (!GroovyTools.hasAttributes(attributes, "id", "version")) {
+      throw new ParseException("""
+          Invalid rangeMapping definition. It must have an [id] and a [version] attribute like this:
+          
+            rangeMapping(id: "org.range:mc-range-face:[1.0,2.0)", version: "1.0")
+          
+          Note, the version should be a concrete version found in the Maven repository. If this version is not
+          semantic, it is possible you will also require a version mapping.
+          """);
+    }
+
+    String id = GroovyTools.toString(attributes, "id");
+    String version = GroovyTools.toString(attributes, "version");
+    rangeMapping.put(id, version);
   }
 }
