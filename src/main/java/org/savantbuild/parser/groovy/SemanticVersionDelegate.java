@@ -37,8 +37,11 @@ public class SemanticVersionDelegate {
 
   public void mapping(Map<String, Object> attributes) {
     if (!GroovyTools.hasAttributes(attributes, "id", "version")) {
-      throw new ParseException("Invalid mapping definition. It must have an [id] and a [version] attribute like this:\n\n" +
-          "  mapping(id: \"org.badver:badver:1.0.0.Final\", version: \"1.0.0\")");
+      throw new ParseException("""
+          Invalid mapping definition. It must have an [id] and a [version] attribute like this:
+          
+            mapping(id: "org.badver:badver:1.0.0.Final", version: "1.0.0")
+          """);
     }
 
     String id = GroovyTools.toString(attributes, "id");
@@ -48,8 +51,14 @@ public class SemanticVersionDelegate {
 
   public void rangeMapping(Map<String, Object> attributes) {
     if (!GroovyTools.hasAttributes(attributes, "id", "version")) {
-      throw new ParseException("Invalid mapping definition. It must have an [id] and a [version] attribute like this:\n\n" +
-          "  mapping(id: \"org.range:mc-range-face:[1.0,2.0)\", version: \"1.0\")");
+      throw new ParseException("""
+          Invalid rangeMapping definition. It must have an [id] and a [version] attribute like this:
+          
+            rangeMapping(id: "org.range:mc-range-face:[1.0,2.0)", version: "1.0")
+          
+          Note, the version should be a concrete version found in the Maven repository. If this version is not
+          semantic, it is possible you will also require a version mapping.
+          """);
     }
 
     String id = GroovyTools.toString(attributes, "id");
