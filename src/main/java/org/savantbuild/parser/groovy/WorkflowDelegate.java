@@ -15,6 +15,8 @@
  */
 package org.savantbuild.parser.groovy;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -131,9 +133,12 @@ public class WorkflowDelegate {
 
     public final List<Process> processes;
 
+    private final GlobalConfiguration globalConfiguration;
+
     public ProcessDelegate(Output output, List<Process> processes) {
       this.output = output;
       this.processes = processes;
+      globalConfiguration = new GlobalConfiguration();
     }
 
     /**
@@ -156,7 +161,10 @@ public class WorkflowDelegate {
         url = "https://repo1.maven.org/maven2";
       }
 
-      processes.add(new MavenProcess(output, url, GroovyTools.toString(attributes, "username"), GroovyTools.toString(attributes, "password")));
+      processes.add(new MavenProcess(output, url,
+          GroovyTools.toString(attributes, "username"),
+          GroovyTools.toString(attributes, "password"),
+          getCacheDir()));
     }
 
     /**
@@ -194,8 +202,14 @@ public class WorkflowDelegate {
             "  url(url: \"https://repository.savantbuild.org\")");
       }
 
-      processes.add(new URLProcess(output, GroovyTools.toString(attributes, "url"), GroovyTools.toString(attributes, "username"),
-          GroovyTools.toString(attributes, "password")));
+      processes.add(new URLProcess(output, GroovyTools.toString(attributes, "url"),
+          GroovyTools.toString(attributes, "username"),
+          GroovyTools.toString(attributes, "password"),
+          getCacheDir()));
+    }
+
+    private Path getCacheDir() {
+      return Paths.get((String) globalConfiguration.getProperty("cache.directory"));
     }
   }
 }
