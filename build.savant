@@ -13,8 +13,8 @@
  * either express or implied. See the License for the specific
  * language governing permissions and limitations under the License.
  */
-savantVersion = "2.0.0"
-project(group: "org.savantbuild", name: "savant-core", version: "2.0.2", licenses: ["Apache-2.0"]) {
+savantVersion = "2.1.0"
+project(group: "org.savantbuild", name: "savant-core", version: "2.1.0", licenses: ["Apache-2.0"]) {
   workflow {
     fetch {
       cache()
@@ -43,9 +43,9 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.0.2", license
       dependency(id: "org.apache.groovy:groovy-templates:4.0.22:jar")
       dependency(id: "org.apache.groovy:groovy-xml:4.0.22:jar")
       dependency(id: "org.apache.groovy:groovy-yaml:4.0.22:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:2.0.2")
-      dependency(id: "org.savantbuild:savant-utils:2.0.1")
-      dependency(id: "org.savantbuild:savant-version:${savantVersion}")
+      dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}-{integration}")
+      dependency(id: "org.savantbuild:savant-utils:${savantVersion}-{integration}")
+      dependency(id: "org.savantbuild:savant-version:${savantVersion}-{integration}")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
@@ -73,9 +73,9 @@ release = loadPlugin(id: "org.savantbuild.plugin:release-git:2.0.0")
 java.settings.javaVersion = "17"
 javaTestNG.settings.javaVersion = "17"
 idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:2.0.2": "savant-dependency-management",
-    "org.savantbuild:savant-utils:${savantVersion}"                : "savant-utils",
-    "org.savantbuild:savant-version:${savantVersion}"              : "savant-version"
+    "org.savantbuild:savant-dependency-management:${savantVersion}-{integration}": "savant-dependency-management",
+    "org.savantbuild:savant-utils:${savantVersion}-{integration}"                : "savant-utils",
+    "org.savantbuild:savant-version:${savantVersion}-{integration}"              : "savant-version"
 ]
 
 target(name: "clean", description: "Cleans the project") {
