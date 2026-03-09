@@ -169,8 +169,8 @@ public class DefaultPluginLoaderTest extends BaseUnitTest {
     project.licenses.add(License.parse("BSD_2_Clause", null));
     String pluginDir = projectDir.resolve("src/test/plugin-repository").toString();
     project.workflow = new Workflow(
-        new FetchWorkflow(output, new CacheProcess(output, pluginDir, integration.toString())),
-        new PublishWorkflow(new CacheProcess(output, pluginDir, integration.toString())),
+        new FetchWorkflow(output, new CacheProcess(output, pluginDir, null, null)),
+        new PublishWorkflow(new CacheProcess(output, pluginDir, null, null)),
         output
     );
     return project;

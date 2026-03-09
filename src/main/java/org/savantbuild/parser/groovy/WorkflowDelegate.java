@@ -22,7 +22,6 @@ import org.savantbuild.dep.workflow.FetchWorkflow;
 import org.savantbuild.dep.workflow.PublishWorkflow;
 import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.dep.workflow.process.CacheProcess;
-import org.savantbuild.dep.workflow.process.MavenCacheProcess;
 import org.savantbuild.dep.workflow.process.MavenProcess;
 import org.savantbuild.dep.workflow.process.Process;
 import org.savantbuild.dep.workflow.process.SVNProcess;
@@ -41,6 +40,10 @@ import groovy.lang.DelegatesTo;
  * @author Brian Pontarelli
  */
 public class WorkflowDelegate {
+  public static final String defaultSavantDir = System.getProperty("user.home") + "/.savant/cache";
+
+  public static final String defaultMavenDir = System.getProperty("user.home") + "/.m2/repository";
+
   public final Output output;
 
   public final Workflow workflow;
@@ -101,23 +104,19 @@ public class WorkflowDelegate {
    * <pre>
    *   fetch {
    *     cache()
-   *     mavenCache()
    *     url(url: "https://repository.savantbuild.org")
    *     maven(url: "https://repo1.maven.org/maven2")
    *   }
    *   publish {
    *     cache()
-   *     mavenCache()
    *   }
    * </pre>
    */
   public void standard() {
-    workflow.fetchWorkflow.processes.add(new CacheProcess(output, null, null));
-    workflow.fetchWorkflow.processes.add(new MavenCacheProcess(output, null, null));
+    workflow.fetchWorkflow.processes.add(new CacheProcess(output, defaultSavantDir, defaultSavantDir, defaultMavenDir));
     workflow.fetchWorkflow.processes.add(new URLProcess(output, "https://repository.savantbuild.org", null, null));
     workflow.fetchWorkflow.processes.add(new MavenProcess(output, "https://repo1.maven.org/maven2", null, null));
-    workflow.publishWorkflow.processes.add(new CacheProcess(output, null, null));
-    workflow.publishWorkflow.processes.add(new MavenCacheProcess(output, null, null));
+    workflow.publishWorkflow.processes.add(new CacheProcess(output, defaultSavantDir, defaultSavantDir, defaultMavenDir));
   }
 
   /**
@@ -137,12 +136,19 @@ public class WorkflowDelegate {
     }
 
     /**
-     * Adds a {@link CacheProcess} to the workflow that uses the given attributes.
+     * Adds a {@link CacheProcess} to the workflow that uses the given attributes. Creates a Savant-only cache
+     * (savantDir set, mavenDir null).
      *
      * @param attributes The attributes.
      */
     public void cache(Map<String, Object> attributes) {
-      processes.add(new CacheProcess(output, GroovyTools.toString(attributes, "dir"), GroovyTools.toString(attributes, "integrationDir")));
+      String dir = GroovyTools.toString(attributes, "dir");
+      String intDir = GroovyTools.toString(attributes, "integrationDir");
+      String mavenDir = GroovyTools.toString(attributes, "mavenDir");
+      processes.add(new CacheProcess(output,
+          dir != null ? dir : defaultSavantDir,
+          intDir != null ? intDir : defaultSavantDir,
+          mavenDir != null ? mavenDir : defaultMavenDir));
     }
 
     /**
@@ -160,12 +166,18 @@ public class WorkflowDelegate {
     }
 
     /**
-     * Adds a {@link MavenCacheProcess} to the workflow that uses the given attributes.
+     * Adds a {@link CacheProcess} to the workflow that handles Maven-sourced artifacts
+     * (mavenDir set, savantDir null).
      *
-     * @param attributes Optionally a map that contains a URL attribute.
+     * @param attributes Optionally a map that contains a dir attribute.
      */
     public void mavenCache(Map<String, Object> attributes) {
-      processes.add(new MavenCacheProcess(output, GroovyTools.toString(attributes, "dir"), GroovyTools.toString(attributes, "integrationDir")));
+      String dir = GroovyTools.toString(attributes, "dir");
+      String intDir = GroovyTools.toString(attributes, "integrationDir");
+      processes.add(new CacheProcess(output,
+          null,
+          intDir != null ? intDir : defaultSavantDir,
+          dir != null ? dir : defaultMavenDir));
     }
 
     /**

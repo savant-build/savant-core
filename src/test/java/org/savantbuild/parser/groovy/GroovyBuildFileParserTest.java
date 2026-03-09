@@ -33,7 +33,6 @@ import org.savantbuild.dep.domain.License;
 import org.savantbuild.dep.domain.Publication;
 import org.savantbuild.dep.domain.ReifiedArtifact;
 import org.savantbuild.dep.workflow.process.CacheProcess;
-import org.savantbuild.dep.workflow.process.MavenCacheProcess;
 import org.savantbuild.dep.workflow.process.MavenProcess;
 import org.savantbuild.dep.workflow.process.SVNProcess;
 import org.savantbuild.dep.workflow.process.URLProcess;
@@ -99,8 +98,12 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     // Verify the workflow
     assertEquals(project.workflow.fetchWorkflow.processes.size(), 4);
     assertTrue(project.workflow.fetchWorkflow.processes.get(0) instanceof CacheProcess);
-    assertEquals(((CacheProcess) project.workflow.fetchWorkflow.processes.get(0)).dir, ".savant/cache");
-    assertEquals(((MavenCacheProcess) project.workflow.fetchWorkflow.processes.get(1)).dir, System.getProperty("user.home") + "/.m2/repository");
+    assertEquals(((CacheProcess) project.workflow.fetchWorkflow.processes.get(0)).savantDir, System.getProperty("user.home") + "/.savant/cache");
+    assertEquals(((CacheProcess) project.workflow.fetchWorkflow.processes.get(0)).integrationDir, System.getProperty("user.home") + "/.savant/cache");
+    assertEquals(((CacheProcess) project.workflow.fetchWorkflow.processes.get(0)).mavenDir, System.getProperty("user.home") + "/.m2/repository");
+    assertTrue(project.workflow.fetchWorkflow.processes.get(1) instanceof CacheProcess);
+    assertEquals(((CacheProcess) project.workflow.fetchWorkflow.processes.get(1)).mavenDir, System.getProperty("user.home") + "/.m2/repository");
+    assertEquals(((CacheProcess) project.workflow.fetchWorkflow.processes.get(1)).integrationDir, System.getProperty("user.home") + "/.savant/cache");
     assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(2)).url, "https://repository.savantbuild.org");
     assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(2)).username, "username");
     assertEquals(((URLProcess) project.workflow.fetchWorkflow.processes.get(2)).password, "password");
@@ -108,8 +111,11 @@ public class GroovyBuildFileParserTest extends BaseUnitTest {
     assertEquals(((MavenProcess) project.workflow.fetchWorkflow.processes.get(3)).username, "username");
     assertEquals(((MavenProcess) project.workflow.fetchWorkflow.processes.get(3)).password, "password");
     assertEquals(project.workflow.publishWorkflow.processes.size(), 2);
-    assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(0)).dir, ".savant/cache");
-    assertEquals(((MavenCacheProcess) project.workflow.publishWorkflow.processes.get(1)).dir, System.getProperty("user.home") + "/.m2/repository");
+    assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(0)).savantDir, System.getProperty("user.home") + "/.savant/cache");
+    assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(0)).integrationDir, System.getProperty("user.home") + "/.savant/cache");
+    assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(0)).mavenDir, System.getProperty("user.home") + "/.m2/repository");
+    assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(1)).mavenDir, System.getProperty("user.home") + "/.m2/repository");
+    assertEquals(((CacheProcess) project.workflow.publishWorkflow.processes.get(1)).integrationDir, System.getProperty("user.home") + "/.savant/cache");
 
     // Version mappings
     Map<String, Version> expectedMappings = new HashMap<>();
