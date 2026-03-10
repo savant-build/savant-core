@@ -43,9 +43,9 @@ project(group: "org.savantbuild", name: "savant-core", version: "2.1.0", license
       dependency(id: "org.apache.groovy:groovy-templates:4.0.22:jar")
       dependency(id: "org.apache.groovy:groovy-xml:4.0.22:jar")
       dependency(id: "org.apache.groovy:groovy-yaml:4.0.22:jar")
-      dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}-{integration}")
-      dependency(id: "org.savantbuild:savant-utils:${savantVersion}-{integration}")
-      dependency(id: "org.savantbuild:savant-version:${savantVersion}-{integration}")
+      dependency(id: "org.savantbuild:savant-dependency-management:${savantVersion}")
+      dependency(id: "org.savantbuild:savant-utils:${savantVersion}")
+      dependency(id: "org.savantbuild:savant-version:${savantVersion}")
     }
     group(name: "test-compile", export: false) {
       dependency(id: "org.easymock:easymock:3.2")
@@ -73,9 +73,9 @@ release = loadPlugin(id: "org.savantbuild.plugin:release-git:2.0.0")
 java.settings.javaVersion = "17"
 javaTestNG.settings.javaVersion = "17"
 idea.settings.moduleMap = [
-    "org.savantbuild:savant-dependency-management:${savantVersion}-{integration}": "savant-dependency-management",
-    "org.savantbuild:savant-utils:${savantVersion}-{integration}"                : "savant-utils",
-    "org.savantbuild:savant-version:${savantVersion}-{integration}"              : "savant-version"
+    "org.savantbuild:savant-dependency-management:${savantVersion}": "savant-dependency-management",
+    "org.savantbuild:savant-utils:${savantVersion}"                : "savant-utils",
+    "org.savantbuild:savant-version:${savantVersion}"              : "savant-version"
 ]
 
 target(name: "clean", description: "Cleans the project") {
