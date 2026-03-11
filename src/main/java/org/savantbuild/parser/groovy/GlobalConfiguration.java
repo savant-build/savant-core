@@ -27,9 +27,9 @@ import org.savantbuild.util.SavantPaths;
 import groovy.lang.GroovyObjectSupport;
 
 /**
- * This class loads an optional global configuration file named config.properties in the ~/.savant/ directory. This is a
- * dynamic Groovy object that fails if lookups fail. This ensures that values from the configuration that the project
- * depends on exist.
+ * This class loads an optional global configuration file named config.properties in the XDG config directory
+ * ($XDG_CONFIG_HOME/savant/ or ~/.config/savant/). This is a dynamic Groovy object that fails if lookups fail. This
+ * ensures that values from the configuration that the project depends on exist.
  *
  * @author Brian Pontarelli
  */
