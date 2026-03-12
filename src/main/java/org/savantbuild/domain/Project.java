@@ -16,7 +16,6 @@
 package org.savantbuild.domain;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.savantbuild.dep.workflow.Workflow;
 import org.savantbuild.output.Output;
 import org.savantbuild.plugin.Plugin;
 import org.savantbuild.util.Graph;
+import org.savantbuild.util.SavantPaths;
 
 /**
  * This class defines the project.
@@ -61,7 +61,7 @@ public class Project {
 
   public String name;
 
-  public Path pluginConfigurationDirectory = Paths.get(System.getProperty("user.home") + "/.savant/plugins");
+  public Path pluginConfigurationDirectory = SavantPaths.get().configDir().resolve("plugins");
 
   public Map<Artifact, Plugin> plugins = new HashMap<>();
 

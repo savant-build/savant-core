@@ -29,6 +29,7 @@ import org.savantbuild.dep.workflow.process.URLProcess;
 import org.savantbuild.domain.Version;
 import org.savantbuild.output.Output;
 import org.savantbuild.parser.ParseException;
+import org.savantbuild.util.SavantPaths;
 
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
@@ -40,8 +41,6 @@ import groovy.lang.DelegatesTo;
  * @author Brian Pontarelli
  */
 public class WorkflowDelegate {
-  public static final String defaultSavantDir = System.getProperty("user.home") + "/.savant/cache";
-
   public static final String defaultMavenDir = System.getProperty("user.home") + "/.m2/repository";
 
   public final Output output;
@@ -113,10 +112,11 @@ public class WorkflowDelegate {
    * </pre>
    */
   public void standard() {
-    workflow.fetchWorkflow.processes.add(new CacheProcess(output, defaultSavantDir, defaultSavantDir, defaultMavenDir));
+    String savantCache = SavantPaths.get().cacheDir().toString();
+    workflow.fetchWorkflow.processes.add(new CacheProcess(output, savantCache, savantCache, defaultMavenDir));
     workflow.fetchWorkflow.processes.add(new URLProcess(output, "https://repository.savantbuild.org", null, null));
     workflow.fetchWorkflow.processes.add(new MavenProcess(output, "https://repo1.maven.org/maven2", null, null));
-    workflow.publishWorkflow.processes.add(new CacheProcess(output, defaultSavantDir, defaultSavantDir, defaultMavenDir));
+    workflow.publishWorkflow.processes.add(new CacheProcess(output, savantCache, savantCache, defaultMavenDir));
   }
 
   /**
@@ -145,9 +145,10 @@ public class WorkflowDelegate {
       String dir = GroovyTools.toString(attributes, "dir");
       String intDir = GroovyTools.toString(attributes, "integrationDir");
       String mavenDir = GroovyTools.toString(attributes, "mavenDir");
+      String savantCache = SavantPaths.get().cacheDir().toString();
       processes.add(new CacheProcess(output,
-          dir != null ? dir : defaultSavantDir,
-          intDir != null ? intDir : defaultSavantDir,
+          dir != null ? dir : savantCache,
+          intDir != null ? intDir : savantCache,
           mavenDir != null ? mavenDir : defaultMavenDir));
     }
 
@@ -174,9 +175,10 @@ public class WorkflowDelegate {
     public void mavenCache(Map<String, Object> attributes) {
       String dir = GroovyTools.toString(attributes, "dir");
       String intDir = GroovyTools.toString(attributes, "integrationDir");
+      String savantCache = SavantPaths.get().cacheDir().toString();
       processes.add(new CacheProcess(output,
           null,
-          intDir != null ? intDir : defaultSavantDir,
+          intDir != null ? intDir : savantCache,
           dir != null ? dir : defaultMavenDir));
     }
 

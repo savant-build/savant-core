@@ -71,7 +71,7 @@ public class BaseGroovyPlugin extends GroovyObjectSupport implements Plugin {
    * The location pattern is as follows:
    * </p>
    * <pre>
-   *   &lt;user.home&gt;/plugins/&lt;id.group&gt;.&lt;id.name&gt;.properties
+   *   $XDG_CONFIG_HOME/savant/plugins/&lt;id.group&gt;.&lt;id.name&gt;.properties
    * </pre>
    *
    * @param id           The artifact Id that is used to load the configuration file.

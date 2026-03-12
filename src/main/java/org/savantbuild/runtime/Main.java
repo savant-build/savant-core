@@ -38,6 +38,7 @@ import org.savantbuild.parser.groovy.GroovyBuildFileParser;
 import org.savantbuild.plugin.PluginLoadException;
 import org.savantbuild.security.MD5Exception;
 import org.savantbuild.util.CyclicException;
+import org.savantbuild.util.SavantPaths;
 
 import static java.util.Arrays.asList;
 
@@ -61,6 +62,8 @@ public class Main {
     if (runtimeConfiguration.debug) {
       output.enableDebug();
     }
+
+    SavantPaths.get().migrate(output);
 
     Path buildFile = projectDir.resolve("build.savant");
     if (!Files.isRegularFile(buildFile) || !Files.isReadable(buildFile)) {

@@ -19,17 +19,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.savantbuild.runtime.BuildFailureException;
+import org.savantbuild.util.SavantPaths;
 
 import groovy.lang.GroovyObjectSupport;
 
 /**
- * This class loads an optional global configuration file named config.properties in the ~/.savant/ directory. This is a
- * dynamic Groovy object that fails if lookups fail. This ensures that values from the configuration that the project
- * depends on exist.
+ * This class loads an optional global configuration file named config.properties in the XDG config directory
+ * ($XDG_CONFIG_HOME/savant/ or ~/.config/savant/). This is a dynamic Groovy object that fails if lookups fail. This
+ * ensures that values from the configuration that the project depends on exist.
  *
  * @author Brian Pontarelli
  */
@@ -37,12 +37,12 @@ public class GlobalConfiguration extends GroovyObjectSupport {
   public final Properties properties = new Properties();
 
   public GlobalConfiguration() {
-    Path configFile = Paths.get(System.getProperty("user.home"), ".savant/config.properties");
+    Path configFile = SavantPaths.get().configDir().resolve("config.properties");
     if (Files.isRegularFile(configFile)) {
       try (InputStream is = Files.newInputStream(configFile)) {
         properties.load(is);
       } catch (IOException e) {
-        throw new BuildFailureException("Unable to load global configuration file ~/.savant/config.properties", e);
+        throw new BuildFailureException("Unable to load global configuration file " + configFile, e);
       }
     }
   }
@@ -51,8 +51,9 @@ public class GlobalConfiguration extends GroovyObjectSupport {
   public Object getProperty(String property) {
     String value = properties.getProperty(property);
     if (value == null) {
+      Path configFile = SavantPaths.get().configDir().resolve("config.properties");
       throw new BuildFailureException("Missing global configuration property [" + property + "]. You must define this " +
-          "property in the global configuration file ~/.savant/config.properties");
+          "property in the global configuration file " + configFile);
     }
 
     return value;
